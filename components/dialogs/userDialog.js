@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { HiOutlineX } from "react-icons/hi";
 
 export default function UserDialog({ user, onClose, onCloseFetch }) {
   const [formData, setFormData] = useState({
@@ -52,6 +53,22 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
       setFormData((prev) => ({ ...prev, profile_photo: null }));
     } catch (err) {
       console.error("Error deleting image:", err);
+    }
+  };
+
+  // delete a user
+  const handleDelete = async (id) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (!confirm) return;
+    try {
+      await fetch(`/api/users/${id}`, { method: "DELETE" });
+      onCloseFetch();
+      toast.success("User deleted successfully!");
+    } catch (err) {
+      toast.error("Error deleting user");
+      console.error("Error deleting user:", err);
     }
   };
 
@@ -119,7 +136,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
         toast.success("User added");
       } else {
         // here we want to know if changes have been made. (used to trigger fetchUsers())
-        setChanges(true)
+        setChanges(true);
         toast.success("Changes saved");
       }
     } catch (err) {
@@ -133,9 +150,21 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-white text-gray-900 p-6 rounded-lg w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">
-          {user ? "Edit User" : "Add User"}
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          {" "}
+          <h2 className="text-xl font-bold">
+            {user ? "Edit User" : "Add User"}
+          </h2>
+          <button
+            type="button"
+            onClick={changes ? onCloseFetch : onClose}
+            className=" cursor-pointer"
+            disabled={submitting}
+          >
+            <HiOutlineX className="text-3xl" />
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {/** we do not allow image process when Adding user in this app */}
           {user && (
@@ -152,7 +181,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
                 disabled={!formData.profile_photo}
                 className="cursor-pointer text-red-500"
               >
-                Remove
+                <HiOutlineX className="text-3xl hover:bg-gray-100 rounded-full" />
               </button>
             </div>
           )}
@@ -245,15 +274,15 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
           <div className="flex justify-end gap-3">
             <button
               type="button"
-              onClick={changes ? onCloseFetch : onClose}
-              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 cursor-pointer"
+              onClick={() => handleDelete(user._id)}
+              className="px-4 py-2 rounded bg-red-300 hover:bg-red-400 cursor-pointer text-red-900"
               disabled={submitting}
             >
-              Close
+              Delete User
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 cursor-pointer disabled:opacity-50"
+              className="px-7 py-2 rounded bg-green-600 text-white hover:bg-green-700 cursor-pointer disabled:opacity-50"
               disabled={submitting}
             >
               {submitting ? "Saving..." : "Save"}
