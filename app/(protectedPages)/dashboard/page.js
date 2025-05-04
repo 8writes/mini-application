@@ -123,7 +123,7 @@ export default function Page() {
 
         {/** users table (paginated) */}
         {user?.role !== "user" ? (
-          <div className="overflow-auto">
+          <div className="overflow-auto hide-scrollbar">
             {loading ? (
               <div className="text-center py-10 text-gray-200">
                 Loading users...
