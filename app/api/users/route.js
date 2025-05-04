@@ -1,5 +1,6 @@
 import clientPromise from "@/lib/mongodb";
 
+// GET all users
 export async function GET() {
   try {
     const client = await clientPromise;
