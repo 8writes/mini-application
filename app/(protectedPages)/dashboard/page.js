@@ -58,11 +58,17 @@ export default function Page() {
     setShowDialog(true);
   };
 
-  // close dialog
-  const closeDialog = () => {
+  // close dialog fetch data
+  const closeDialogFetch = () => {
     setEditingUser(null);
     setShowDialog(false);
     fetchUsers();
+  };
+
+  // close dialog no fetch
+  const closeDialog = () => {
+    setEditingUser(null);
+    setShowDialog(false);
   };
 
   // filter users for search
@@ -234,7 +240,13 @@ export default function Page() {
       </section>
 
       {/** dialog to add and edit user */}
-      {showDialog && <UserDialog user={editingUser} onClose={closeDialog} />}
+      {showDialog && (
+        <UserDialog
+          user={editingUser}
+          onCloseFetch={closeDialogFetch}
+          onClose={closeDialog}
+        />
+      )}
     </div>
   );
 }

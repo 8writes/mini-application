@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-export default function UserDialog({ user, onClose }) {
+export default function UserDialog({ user, onClose, onCloseFetch }) {
   const [formData, setFormData] = useState({
     first_name: user?.first_name || "",
     last_name: user?.last_name || "",
@@ -15,6 +15,7 @@ export default function UserDialog({ user, onClose }) {
   });
   const [preview, setPreview] = useState(user?.profile || null);
   const [submitting, setSubmitting] = useState(false);
+  const [changes, setChanges] = useState(false);
 
   // handle image select and preview. also handle the checkbox
   const handleChange = (e) => {
@@ -114,9 +115,11 @@ export default function UserDialog({ user, onClose }) {
       }
       // only close when adding new user
       if (!user) {
-        onClose();
+        onCloseFetch();
         toast.success("User added");
       } else {
+        // here we want to know if changes have been made. (used to trigger fetchUsers())
+        setChanges(true)
         toast.success("Changes saved");
       }
     } catch (err) {
@@ -242,7 +245,7 @@ export default function UserDialog({ user, onClose }) {
           <div className="flex justify-end gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={changes ? onCloseFetch : onClose}
               className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 cursor-pointer"
               disabled={submitting}
             >
