@@ -128,7 +128,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
           return;
         }
       }
-      
+
       // only close when adding new user
       if (!user) {
         onCloseFetch();
@@ -209,7 +209,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             placeholder="First Name"
             value={formData.first_name}
             onChange={handleChange}
-            className="w-full p-2 border rounded outline-none"
+            className="w-full p-2 border border-gray-400 rounded outline-none"
             required
           />
           <input
@@ -217,7 +217,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             placeholder="Last Name"
             value={formData.last_name}
             onChange={handleChange}
-            className="w-full p-2 border rounded outline-none"
+            className="w-full p-2 border border-gray-400 rounded outline-none"
             required
           />
           <input
@@ -226,7 +226,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             value={formData.email}
             onChange={handleChange}
             type="email"
-            className="w-full p-2 border rounded outline-none"
+            className="w-full p-2 border border-gray-400 rounded outline-none"
             required
           />
 
@@ -240,7 +240,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className="w-full p-2 border rounded outline-none"
+            className="w-full p-2 border border-gray-400 rounded outline-none"
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>
@@ -264,7 +264,13 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
                 }`}
               />
             </button>
-            <span className="text-base">
+            <span
+              className={`px-3 py-1 rounded-full text-base ${
+                formData.status
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
               {formData.status ? "Active" : "Suspended"}
             </span>
           </div>

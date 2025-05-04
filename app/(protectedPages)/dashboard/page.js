@@ -175,8 +175,17 @@ export default function Page() {
                         <td className="p-3 border">{u.email}</td>
                         <td className="p-3 border capitalize">{u.role}</td>
                         <td className="p-3 border">
-                          {u.status ? "Active" : "Suspended"}
+                          <span
+                            className={`px-3 py-1 rounded-full ${
+                              u.status
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {u.status ? "Active" : "Suspended"}
+                          </span>
                         </td>
+
                         <td className="p-3 border text-center whitespace-nowrap">
                           <button
                             onClick={(e) => {
