@@ -4,6 +4,7 @@ import UserDialog from "@/components/dialogs/userDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { HiOutlineSearch } from "react-icons/hi";
 import { toast } from "react-toastify";
 
 export default function Page() {
@@ -108,16 +109,19 @@ export default function Page() {
 
           {/** search */}
           <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Search by name, role, or status..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="w-full max-w-md p-2 border rounded outline-none"
-            />
+            <div className="flex items-center border rounded w-full max-w-md px-2">
+              <HiOutlineSearch className="text-gray-400 text-xl mr-2" />
+              <input
+                type="text"
+                placeholder="Search by name, role, or status..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="flex-1 p-2 outline-none"
+              />
+            </div>
           </div>
         </div>
 
