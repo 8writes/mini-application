@@ -1,6 +1,14 @@
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { v2 as cloudinary } from "cloudinary";
 import { z } from "zod";
+
+// configure cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // validate schema
 const userSchema = z.object({
@@ -137,7 +145,6 @@ export async function DELETE(_, { params }) {
       });
     }
 
-    // delete their profile photo
     if (user?.profile_photo?.public_id) {
       await cloudinary.uploader.destroy(user.profile_photo.public_id);
     }

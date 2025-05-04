@@ -59,7 +59,6 @@ export default function NavBar() {
     };
   }, []);
 
-  console.log(user);
   return (
     <div className="bg-gray-900 text-white">
       <section className="flex justify-between items-center p-4 md:px-10 w-full md:max-w-7xl mx-auto">

@@ -56,17 +56,24 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
   };
 
   // delete a user
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     const confirm = window.confirm(
       "Are you sure you want to delete this user?"
     );
     if (!confirm) return;
+
     try {
-      await fetch(`/api/users/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/users/${user?._id}`, { method: "DELETE" });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to delete user");
+      }
+
       onCloseFetch();
       toast.success("User deleted successfully!");
     } catch (err) {
-      toast.error("Error deleting user");
+      toast.error(err.message || "Error deleting user");
       console.error("Error deleting user:", err);
     }
   };
@@ -202,7 +209,10 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
                   <HiOutlineX className="text-3xl hover:bg-gray-100 rounded-full" />
                 </button>
               )}
-              <p className="text-sm" title="Files larger than 6MB will not be accepted.">
+              <p
+                className="text-sm"
+                title="Files larger than 6MB will not be accepted."
+              >
                 Max upload size: 5MB
               </p>
             </div>
