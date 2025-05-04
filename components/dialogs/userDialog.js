@@ -202,6 +202,9 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
                   <HiOutlineX className="text-3xl hover:bg-gray-100 rounded-full" />
                 </button>
               )}
+              <p className="text-sm" title="Files larger than 6MB will not be accepted.">
+                Max upload size: 5MB
+              </p>
             </div>
           )}
 

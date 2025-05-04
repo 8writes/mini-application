@@ -32,6 +32,17 @@ export async function POST(req, { params }) {
       );
     }
 
+    // file size limit
+    const maxSize = 5 * 1024 * 1024; // 6MB
+    if (image.size > maxSize) {
+      return new Response(
+        JSON.stringify({ message: "Image exceeds 5MB limit" }),
+        {
+          status: 400,
+        }
+      );
+    }
+
     // we prep the image to be uploaded to the cloud service
     const arrayBuffer = await image.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
@@ -84,7 +95,7 @@ export async function POST(req, { params }) {
   }
 }
 
-// PUT 
+// PUT
 export async function PUT(req, { params }) {
   const { id } = params;
 
@@ -101,6 +112,17 @@ export async function PUT(req, { params }) {
     if (!image || typeof image === "string") {
       return new Response(
         JSON.stringify({ message: "No valid image provided" }),
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // file size limit
+    const maxSize = 5 * 1024 * 1024; // 6MB
+    if (image.size > maxSize) {
+      return new Response(
+        JSON.stringify({ message: "Image exceeds 5MB limit" }),
         {
           status: 400,
         }
