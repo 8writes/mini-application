@@ -9,6 +9,7 @@ import { HiOutlineLogout } from "react-icons/hi";
 export default function NavBar() {
   const { user } = useGlobalContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
   const dropdownRef = useRef(null);
 
@@ -19,6 +20,7 @@ export default function NavBar() {
 
   // handle logout
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
       // logout user
       const res = await fetch("/api/auth/logout", {
@@ -37,6 +39,8 @@ export default function NavBar() {
       }
     } catch (err) {
       console.error("Error during logout:", err);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -86,7 +90,7 @@ export default function NavBar() {
                   className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
                 >
                   <HiOutlineLogout className="text-xl" />
-                  Logout
+                  {isLoggingOut ? "Logging out..." : "Logout"}
                 </li>
               </ul>
             </div>
