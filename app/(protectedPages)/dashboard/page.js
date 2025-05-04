@@ -87,6 +87,9 @@ export default function Page() {
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
+  if (!user) {
+    return
+  }
   return (
     <div>
       <section className="px-4 py-10 md:p-10 w-full md:max-w-7xl mx-auto">
