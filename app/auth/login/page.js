@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const router = useRouter();
-  
+
   useEffect(() => {
     // check for token
     const token = localStorage.getItem("token_mini_app");
@@ -46,7 +46,7 @@ export default function LoginPage() {
         toast.success("Logged in successfully");
       } else {
         const data = await res.json();
-        toast.success(data.message || "Login failed");
+        toast.error(data.message || "Login failed");
         console.log(data.message || "Login failed");
       }
     } catch (err) {

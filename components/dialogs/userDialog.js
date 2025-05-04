@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 import { HiOutlineUpload, HiOutlineX } from "react-icons/hi";
 
 export default function UserDialog({ user, onClose, onCloseFetch }) {
@@ -274,6 +275,12 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
               {formData.status ? "Active" : "Suspended"}
             </span>
           </div>
+
+          {user && (
+            <h2 className="text-base text-gray-500">
+              User since: {dayjs(user.createdAt).format("MMMM D, YYYY")}
+            </h2>
+          )}
 
           <div className="flex justify-end gap-3 pt-7">
             {user && (

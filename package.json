@@ -12,6 +12,7 @@
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.0",
     "cookie": "^1.0.2",
+    "dayjs": "^1.11.13",
     "jose": "^6.0.10",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0",
