@@ -1,14 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { toast } from "react-toastify";
+import { HiOutlineLogout } from "react-icons/hi";
 
 export default function NavBar() {
   const { user } = useGlobalContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
+  const dropdownRef = useRef(null);
 
   // toggle dropdown
   const toggleDropdown = () => {
@@ -38,6 +40,21 @@ export default function NavBar() {
     }
   };
 
+  // close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   console.log(user);
   return (
     <div className="bg-gray-900 text-white">
@@ -56,12 +73,19 @@ export default function NavBar() {
 
           {/* Dropdown Menu */}
           {isDropdownOpen && (
-            <div className="absolute right-0 top-14 mt-2 p-2 bg-white text-black shadow-lg rounded-md w-40 border border-gray-200">
-              <ul>
+            <div
+              ref={dropdownRef}
+              className="absolute right-0 top-14 mt-2 w-44 bg-white shadow-lg rounded-md border border-gray-200"
+            >
+              <ul className="py-2 text-sm text-gray-700">
+                <li className="text-base px-4 py-2 text-gray-800 border-b border-gray-200">
+                  {user?.last_name} {user?.first_name?.charAt(0)}.
+                </li>
                 <li
                   onClick={handleLogout}
-                  className="cursor-pointer px-3 py-1 hover:bg-gray-200 transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
                 >
+                  <HiOutlineLogout className="text-xl" />
                   Logout
                 </li>
               </ul>
