@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📦 MINI APP
 
-## Getting Started
+_A fullstack web application built with **Next.js**, **MongoDB Atlas**, and **Cloudinary** for seamless user and media management._
 
-First, run the development server:
+---
+
+## 🚀 Tech Stack
+
+- **Frontend:** Next.js (App Router or Pages Router)
+- **Backend:** Next.js API Routes
+- **Database:** MongoDB Atlas
+- **Storage:** Cloudinary (for image uploads)
+- **Authentication:** [JWT / NEXT.JS MIDDLEWARE / COOKIES]
+
+---
+
+## ✨ Features
+
+- 🔐 User Authentication (Login/Logout)
+- 📋 Create, Edit, Delete Users
+- 📸 Upload, Update, Delete profile photos in Cloudinary
+- ✅ Status toggling (Active/Suspended)
+- 📱 Responsive Design
+- 🔔 Toast Notifications
+- 🛡️ Protected Routes
+
+---
+
+## 📁 Folder Structure
+
+/components/ → Reusable UI components
+/lib/ or /utils/ → Helpers (DB connect, JWT)
+/app/api/ → API endpoints
+/public/ → Static files
+
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone the repository
 
 ```bash
+git clone https://github.com/8writes/mini-application.git
+cd mini-application
+
+npm install
+# or
+yarn install
+
+MONGODB_URI=your_mongodb_atlas_connection_string
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+JWT_SECRET=your_jwt_secret
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+.
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Deployment
+Deploy easily with Vercel or Brimble
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Ensure all required .env values are configured
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Allow IP access in MongoDB Atlas for production domain or all 
