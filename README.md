@@ -70,6 +70,28 @@ JWT_SECRET=your_jwt_secret
 
 ---
 
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.6.0",
+    "cookie": "^1.0.2",
+    "jose": "^6.0.10",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.16.0",
+    "next": "15.3.1",
+    "next-cloudinary": "^6.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "react-toastify": "^11.0.5",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4"
+  }
+
+---
+
 ## 🚀 Deployment
 Deploy easily with Vercel or Brimble
 
