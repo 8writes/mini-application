@@ -126,24 +126,24 @@ export async function DELETE(_, { params }) {
     const client = await clientPromise;
     const db = client.db("mini_app");
 
-    // fetch the user 
-     const user = await db
-       .collection("users")
-       .findOne({ _id: new ObjectId(id) });
+    // fetch the user
+    const user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
 
-     if (!user) {
-       return new Response(JSON.stringify({ message: "User not found" }), {
-         status: 404,
-       });
+    if (!user) {
+      return new Response(JSON.stringify({ message: "User not found" }), {
+        status: 404,
+      });
     }
-    
+
     // delete their profile photo
     if (user?.profile_photo?.public_id) {
       await cloudinary.uploader.destroy(user.profile_photo.public_id);
     }
 
     // then we delete the user
-    const result = await db.collection("users").deleteOne({
+    await db.collection("users").deleteOne({
       _id: new ObjectId(id),
     });
 
