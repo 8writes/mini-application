@@ -43,8 +43,8 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
       });
 
       if (!res.ok) {
-        const errMsg = await res.text();
-        toast.error("Failed to remove image");
+        const errMsg = await res.json();
+        toast.error(errMsg.message || "Failed to remove image");
         console.log(errMsg || "Failed to remove image.");
         return;
       }
@@ -97,8 +97,8 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
       });
 
       if (!res.ok) {
-        const errMsg = await res.text();
-        toast.error("Failed to save");
+        const errMsg = await res.json();
+        toast.error(errMsg.message || "Failed to save");
         console.log(errMsg || "Failed to save.");
         return;
       }
@@ -122,12 +122,13 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
         );
 
         if (!imageRes.ok) {
-          const errMsg = await imageRes.text();
-          toast.error("Failed to upload image.");
+          const errMsg = await imageRes.json();
+          toast.error(errMsg.message || "Failed to upload image.");
           console.log(errMsg || "Failed to upload image.");
           return;
         }
       }
+      
       // only close when adding new user
       if (!user) {
         onCloseFetch();
