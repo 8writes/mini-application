@@ -74,6 +74,7 @@ JWT_SECRET=your_jwt_secret
     "cookie": "^1.0.2",
     "jose": "^6.0.10",
     "jsonwebtoken": "^9.0.2",
+    "dayjs": "^1.11.13",
     "mongodb": "^6.16.0",
     "next": "15.3.1",
     "next-cloudinary": "^6.16.0",
