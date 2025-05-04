@@ -104,7 +104,7 @@ export default function Page() {
         </div>
 
         <div>
-          <h1 className="text-lg pt-4 pb-2">All Users</h1>
+          <h1 className="text-lg pt-4 pb-2">All Users ({users?.length})</h1>
 
           {/** search */}
           <div className="mb-4">
