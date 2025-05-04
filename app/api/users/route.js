@@ -7,7 +7,11 @@ export async function GET() {
     const db = client.db("mini_app");
     const usersCollection = db.collection("users");
 
-    const allUsers = await usersCollection.find({}).toArray();
+    // get the latest users first
+    const allUsers = await usersCollection
+      .find({})
+      .sort({ createdAt: -1 })
+      .toArray();
 
     // remove sensitive info from all users
     const users = allUsers.map(({ password, ...userData }) => userData);
