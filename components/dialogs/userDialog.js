@@ -268,7 +268,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             </span>
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 pt-7">
             {user && (
               <button
                 type="button"
