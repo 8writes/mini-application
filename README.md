@@ -56,7 +56,7 @@ npm run dev
 .
 ```
 
-## ⚙️ Configure .env
+## ⚙️ Configure .env & install dependencies
 
 MONGODB_URI=your_mongodb_atlas_connection_string
 
@@ -67,8 +67,6 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
 JWT_SECRET=your_jwt_secret
-
----
 
   "dependencies": {
     "bcryptjs": "^3.0.2",
