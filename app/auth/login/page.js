@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const router = useRouter();
-
+  
   useEffect(() => {
     // check for token
     const token = localStorage.getItem("token_mini_app");

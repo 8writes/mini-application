@@ -112,6 +112,8 @@ export default function UserDialog({ user, onClose }) {
           return;
         }
       }
+
+      toast.success("Changes saved");
     } catch (err) {
       toast.error("Something went wrong.");
       console.error("Error saving user:", err);
