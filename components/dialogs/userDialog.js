@@ -196,7 +196,7 @@ export default function UserDialog({ user, onClose }) {
           )}
 
           {/** default password set */}
-          <h2 className="text-sm text-gray-500">
+          <h2 className="text-base text-gray-500">
             Default Password: Password12
           </h2>
 
@@ -213,7 +213,7 @@ export default function UserDialog({ user, onClose }) {
 
           {/** status set */}
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700">Status:</span>
+            <span className="text-base font-medium text-gray-700">Status:</span>
             <button
               type="button"
               onClick={() =>
@@ -229,7 +229,7 @@ export default function UserDialog({ user, onClose }) {
                 }`}
               />
             </button>
-            <span className="text-sm">
+            <span className="text-base">
               {formData.status ? "Active" : "Suspended"}
             </span>
           </div>
