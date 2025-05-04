@@ -48,16 +48,17 @@ npm install
 # or
 yarn install
 
+npm run dev
+.
+```
+
+## ⚙️ Configure .env
+
 MONGODB_URI=your_mongodb_atlas_connection_string
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 JWT_SECRET=your_jwt_secret
-
-npm run dev
-
-.
-```
 
 ## 🚀 Deployment
 Deploy easily with Vercel or Brimble
