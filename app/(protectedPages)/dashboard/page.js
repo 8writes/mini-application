@@ -146,7 +146,11 @@ export default function Page() {
                   </thead>
                   <tbody>
                     {currentUsers.map((u) => (
-                      <tr key={u._id} className="hover:bg-gray-50">
+                      <tr
+                        key={u._id}
+                        onClick={() => openDialog(u)}
+                        className="hover:bg-gray-50 cursor-pointer"
+                      >
                         <td className="p-3 border w-fit">
                           <Image
                             src={
@@ -169,13 +173,19 @@ export default function Page() {
                         </td>
                         <td className="p-3 border text-center whitespace-nowrap">
                           <button
-                            onClick={() => openDialog(u)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDialog(u);
+                            }}
                             className="text-blue-600 hover:underline pr-4 cursor-pointer"
                           >
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(u._id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(u._id);
+                            }}
                             className="text-red-600 hover:underline pl-4 cursor-pointer"
                           >
                             Delete
