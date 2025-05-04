@@ -112,11 +112,13 @@ export default function UserDialog({ user, onClose }) {
           return;
         }
       }
-     // only close when adding new user
+      // only close when adding new user
       if (!user) {
         onClose();
+        toast.success("User added");
+      } else {
+        toast.success("Changes saved");
       }
-      toast.success("Changes saved");
     } catch (err) {
       toast.error("Something went wrong.");
       console.error("Error saving user:", err);
