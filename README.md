@@ -23,6 +23,10 @@ _A fullstack web application built with **Next.js**, **MongoDB Atlas**, and **Cl
 - 📱 Responsive Design
 - 🔔 Toast Notifications
 - 🛡️ Protected Routes
+- ✅ Role-based access control (super_admin, admin, user)
+- 🔍 Search & filter users
+- 📄 Pagination
+
 
 ---
 
