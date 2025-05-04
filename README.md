@@ -6,7 +6,8 @@ _A fullstack web application built with **Next.js**, **MongoDB Atlas**, and **Cl
 
 ## 🚀 Tech Stack
 
-- **Frontend:** Next.js (App Router or Pages Router)
+- **Frontend:** Next.js (App Router)
+- **Styling:** TailwindCSS
 - **Backend:** Next.js API Routes
 - **Database:** MongoDB Atlas
 - **Storage:** Cloudinary (for image uploads)
