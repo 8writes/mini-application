@@ -192,27 +192,6 @@ export default function Page() {
                     )}
                   </tbody>
                 </table>
-
-                {/** pagination */}
-                {filteredUsers.length > usersPerPage && (
-                  <div className="flex justify-center gap-2 mt-4">
-                    <button
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage((prev) => prev - 1)}
-                      className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      Previous
-                    </button>
-                    <span className="px-4 py-2">{currentPage}</span>
-                    <button
-                      disabled={indexOfLastUser >= filteredUsers.length}
-                      onClick={() => setCurrentPage((prev) => prev + 1)}
-                      className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
               </>
             )}
           </div>
@@ -220,6 +199,26 @@ export default function Page() {
           <div>
             {/** role base render if logged in as user */}
             <h1>You are logged in as a USER on this cool app :) </h1>
+          </div>
+        )}
+        {/** pagination */}
+        {filteredUsers.length > usersPerPage && (
+          <div className="flex justify-center gap-2 mt-4">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2">{currentPage}</span>
+            <button
+              disabled={indexOfLastUser >= filteredUsers.length}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
           </div>
         )}
       </section>
