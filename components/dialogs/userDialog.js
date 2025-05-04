@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { HiOutlineX } from "react-icons/hi";
+import { HiOutlineUpload, HiOutlineX } from "react-icons/hi";
 
 export default function UserDialog({ user, onClose, onCloseFetch }) {
   const [formData, setFormData] = useState({
@@ -48,8 +48,6 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
         console.log(errMsg || "Failed to remove image.");
         return;
       }
-
-      toast.success("Image removed");
       setFormData((prev) => ({ ...prev, profile_photo: null }));
     } catch (err) {
       console.error("Error deleting image:", err);
@@ -169,20 +167,39 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
           {/** we do not allow image process when Adding user in this app */}
           {user && (
             <div className="flex items-center gap-2">
-              <Image
-                src={formData.profile_photo || "/default-avatar.png"}
-                alt="User profile photo"
-                width={40}
-                height={40}
-                className="rounded-full h-14 w-14 object-cover border border-gray-200"
-              />
-              <button
-                onClick={handleDeleteImage}
-                disabled={!formData.profile_photo}
-                className="cursor-pointer text-red-500"
-              >
-                <HiOutlineX className="text-3xl hover:bg-gray-100 rounded-full" />
-              </button>
+              <label className="flex items-center text-sm mb-1">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleChange}
+                  className="w-full cursor-pointer hidden"
+                />
+                <Image
+                  src={
+                    preview
+                      ? preview
+                      : formData.profile_photo || "/default-avatar.png"
+                  }
+                  alt="User profile photo"
+                  width={40}
+                  height={40}
+                  className="rounded-full h-14 w-14 object-cover border border-gray-200 cursor-pointer"
+                />
+                {(preview || !formData.profile_photo) && (
+                  <div className="px-2 cursor-pointer">
+                    <HiOutlineUpload className="text-2xl text-gray-600" />
+                  </div>
+                )}
+              </label>
+              {formData.profile_photo && !preview && (
+                <button
+                  onClick={handleDeleteImage}
+                  disabled={!formData.profile_photo}
+                  className="cursor-pointer text-red-500"
+                >
+                  <HiOutlineX className="text-3xl hover:bg-gray-100 rounded-full" />
+                </button>
+              )}
             </div>
           )}
 
@@ -211,26 +228,6 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             className="w-full p-2 border rounded"
             required
           />
-
-          {/** we do not allow image process when Adding user in this app */}
-          {user && (
-            <div>
-              <label className="block text-sm mb-1">Profile Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-                className="w-full cursor-pointer"
-              />
-              {preview && (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="h-14 w-14 mt-2 rounded-full object-cover"
-                />
-              )}
-            </div>
-          )}
 
           {/** default password set */}
           <h2 className="text-base text-gray-500">
@@ -272,14 +269,16 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
           </div>
 
           <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => handleDelete(user._id)}
-              className="px-4 py-2 rounded bg-red-300 hover:bg-red-400 cursor-pointer text-red-900"
-              disabled={submitting}
-            >
-              Delete User
-            </button>
+            {user && (
+              <button
+                type="button"
+                onClick={() => handleDelete(user._id)}
+                className="px-4 py-2 rounded bg-red-300 hover:bg-red-400 cursor-pointer text-red-900"
+                disabled={submitting}
+              >
+                Delete User
+              </button>
+            )}
             <button
               type="submit"
               className="px-7 py-2 rounded bg-green-600 text-white hover:bg-green-700 cursor-pointer disabled:opacity-50"
