@@ -208,7 +208,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             placeholder="First Name"
             value={formData.first_name}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded outline-none"
             required
           />
           <input
@@ -216,7 +216,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             placeholder="Last Name"
             value={formData.last_name}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded outline-none"
             required
           />
           <input
@@ -225,7 +225,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             value={formData.email}
             onChange={handleChange}
             type="email"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded outline-none"
             required
           />
 
@@ -239,7 +239,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded outline-none"
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>
