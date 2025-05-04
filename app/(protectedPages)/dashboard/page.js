@@ -143,7 +143,7 @@ export default function Page() {
                   <tbody>
                     {currentUsers.map((u) => (
                       <tr key={u._id} className="hover:bg-gray-50">
-                        <td className="p-3 border">
+                        <td className="p-3 border w-fit">
                           <Image
                             src={
                               u.profile_photo
@@ -153,7 +153,7 @@ export default function Page() {
                             alt={`${u.first_name} ${u.last_name}'s profile`}
                             width={40}
                             height={40}
-                            className="rounded-full h-14 w-14 object-cover border border-gray-200"
+                            className="rounded-full h-10 w-10 object-cover border border-gray-200"
                           />
                         </td>
                         <td className="p-3 border">{u.first_name}</td>
