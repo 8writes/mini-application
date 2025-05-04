@@ -65,8 +65,6 @@ export default function LoginPage() {
       >
         <h2 className="text-xl font-semibold mb-4">Welcome Back</h2>
 
-        {error && <p className="text-red-500 mb-2 text-sm">{error}</p>}
-
         <input
           type="email"
           name="email"
