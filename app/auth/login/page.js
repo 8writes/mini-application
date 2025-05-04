@@ -96,7 +96,10 @@ export default function LoginPage() {
             {showPassword ? "🙈" : "👁️"}
           </span>
         </div>
-
+        <div className="text-base pb-1">
+          <p>admin@example.com</p>
+          <p>Password12</p>
+        </div>
         <button
           type="submit"
           disabled={isLoadingSubmit}
