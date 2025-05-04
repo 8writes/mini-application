@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 // context for global data
 const GlobalContext = createContext();
@@ -23,6 +24,18 @@ export const GlobalProvider = ({ children }) => {
         const authResponse = await fetch("/api/auth/authCheck");
         const authData = await authResponse.json();
 
+        // validate the token in localstorage
+        const tokenValidate = localStorage.getItem("token_mini_app");
+
+        if (tokenValidate) {
+          const item = JSON.parse(tokenValidate);
+          if (Date.now() > item.expiry) {
+            localStorage.removeItem("token_mini_app");
+            router.push("/auth/login");
+            return;
+          }
+        }
+
         // check for token
         const token = localStorage.getItem("token_mini_app");
 
@@ -37,17 +50,8 @@ export const GlobalProvider = ({ children }) => {
           // set the user data in the context
           setUser(userData.user);
         } else {
+          toast.error("User not authenticated");
           router.push("/auth/login");
-        }
-
-        // validate the token in localstorage
-        const itemStr = localStorage.getItem("token_mini_app");
-
-        if (itemStr) {
-          const item = JSON.parse(itemStr);
-          if (Date.now() > item.expiry) {
-            localStorage.removeItem("token_mini_app");
-          }
         }
 
         setIsLoading(false);

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/context/GlobalContext";
+import { toast } from "react-toastify";
 
 export default function NavBar() {
   const { user } = useGlobalContext();
@@ -27,7 +28,9 @@ export default function NavBar() {
         localStorage.removeItem("token_mini_app");
 
         router.push("/auth/login");
+        toast.success("Logged out");
       } else {
+        toast.error("Failed to logout");
         console.error("Failed to logout");
       }
     } catch (err) {
@@ -35,7 +38,7 @@ export default function NavBar() {
     }
   };
 
-  console.log(user)
+  console.log(user);
   return (
     <div className="bg-gray-900 text-white">
       <section className="flex justify-between items-center p-4 md:px-10 w-full md:max-w-7xl mx-auto">

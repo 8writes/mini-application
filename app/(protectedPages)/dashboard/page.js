@@ -4,6 +4,7 @@ import UserDialog from "@/components/dialogs/userDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Page() {
   const { user } = useGlobalContext();
@@ -24,6 +25,7 @@ export default function Page() {
       const filteredUsers = data.filter((user) => user.role !== "super_admin");
       setUsers(filteredUsers);
     } catch (error) {
+      toast.error("Error fetching users");
       console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
@@ -43,7 +45,9 @@ export default function Page() {
     try {
       await fetch(`/api/users/${id}`, { method: "DELETE" });
       fetchUsers();
+      toast.success("User deleted successfully!");
     } catch (err) {
+      toast.error("Error deleting user");
       console.error("Error deleting user:", err);
     }
   };

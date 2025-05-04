@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function UserDialog({ user, onClose }) {
   const [formData, setFormData] = useState({
@@ -14,7 +15,6 @@ export default function UserDialog({ user, onClose }) {
   });
   const [preview, setPreview] = useState(user?.profile || null);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
 
   // handle image select and preview. also handle the checkbox
   const handleChange = (e) => {
@@ -42,14 +42,15 @@ export default function UserDialog({ user, onClose }) {
 
       if (!res.ok) {
         const errMsg = await res.text();
-        setError(errMsg || "Failed to remove image.");
+        toast.error("Failed to remove image");
+        console.log(errMsg || "Failed to remove image.");
         return;
       }
 
+      toast.success("Image removed");
       setFormData((prev) => ({ ...prev, profile_photo: null }));
     } catch (err) {
       console.error("Error deleting image:", err);
-      setError("Something went wrong while deleting the image.");
     }
   };
 
@@ -81,7 +82,8 @@ export default function UserDialog({ user, onClose }) {
 
       if (!res.ok) {
         const errMsg = await res.text();
-        setError(errMsg || "Failed to save.");
+        toast.error("Failed to save");
+        console.log(errMsg || "Failed to save.");
         return;
       }
 
@@ -105,13 +107,14 @@ export default function UserDialog({ user, onClose }) {
 
         if (!imageRes.ok) {
           const errMsg = await imageRes.text();
-          setError(errMsg || "Failed to upload image.");
+          toast.error("Failed to upload image.");
+          console.log(errMsg || "Failed to upload image.");
           return;
         }
       }
     } catch (err) {
+      toast.error("Something went wrong.");
       console.error("Error saving user:", err);
-      setError("Something went wrong.");
     } finally {
       setSubmitting(false);
     }
@@ -124,8 +127,7 @@ export default function UserDialog({ user, onClose }) {
           {user ? "Edit User" : "Add User"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <div className="text-red-500">{error}</div>}
-
+          {/** we do not allow image process when Adding user in this app */}
           {user && (
             <div className="flex items-center gap-2">
               <Image
@@ -170,6 +172,8 @@ export default function UserDialog({ user, onClose }) {
             className="w-full p-2 border rounded"
             required
           />
+
+          {/** we do not allow image process when Adding user in this app */}
           {user && (
             <div>
               <label className="block text-sm mb-1">Profile Image</label>
@@ -189,9 +193,12 @@ export default function UserDialog({ user, onClose }) {
             </div>
           )}
 
+          {/** default password set */}
           <h2 className="text-sm text-gray-500">
             Default Password: Password12
           </h2>
+
+          {/** role select */}
           <select
             name="role"
             value={formData.role}
@@ -202,6 +209,7 @@ export default function UserDialog({ user, onClose }) {
             <option value="admin">Admin</option>
           </select>
 
+          {/** status set */}
           <div className="flex items-center gap-4">
             <span className="text-sm font-medium text-gray-700">Status:</span>
             <button

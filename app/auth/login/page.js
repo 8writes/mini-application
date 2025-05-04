@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -11,13 +11,13 @@ export default function LoginPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-  const [error, setError] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     // check for token
     const token = localStorage.getItem("token_mini_app");
 
+    // if token then push to dashboard
     if (token) {
       router.push("/dashboard");
     }
@@ -26,7 +26,6 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoadingSubmit(true);
-    setError(null);
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -35,25 +34,24 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
 
-      console.log(res)
-
+      // set the token to local storage with 1 hr life span, same as cookie
       if (res.ok) {
         const tokenData = {
-
           value: "true",
-          expiry: Date.now() + 3600000, // 1 hour in milliseconds
+          expiry: Date.now() + 3600000, // 1 hour
         };
         localStorage.setItem("token_mini_app", JSON.stringify(tokenData));
 
-
         router.push("/dashboard");
+        toast.success("Logged in successfully");
       } else {
         const data = await res.json();
-        setError(data.message || "Login failed");
+        toast.success(data.message || "Login failed");
+        console.log(data.message || "Login failed");
       }
     } catch (err) {
-      console.log(err);
-      setError("Something went wrong");
+      toast.error("Something went wrong");
+      console.log(err || "Something went wrong");
     } finally {
       setIsLoadingSubmit(false);
     }
