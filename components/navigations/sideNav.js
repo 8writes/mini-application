@@ -107,6 +107,7 @@ export default function SideNav() {
 }
 
 function NavItem({ href, icon, children }) {
+  const { setIsSidebarOpen } = useGlobalContext();
   return (
     <Link
       href={href}
