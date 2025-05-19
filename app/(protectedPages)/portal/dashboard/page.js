@@ -8,7 +8,7 @@ import { HiOutlineSearch } from "react-icons/hi";
 import { toast } from "react-toastify";
 
 export default function Page() {
-  const { user } = useGlobalContext();
+  const { user, isLoading } = useGlobalContext();
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
   const [users, setUsers] = useState([]);

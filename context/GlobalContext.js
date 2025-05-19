@@ -49,7 +49,7 @@ export const GlobalProvider = ({ children }) => {
           const userData = await userResponse.json();
 
           // set the user data in the context
-          setUser(userData.user);
+          setUser(userData?.user);
         } else {
           toast.error("User not authenticated");
           router.push("/auth/login");
