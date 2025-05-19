@@ -32,6 +32,8 @@ export default function RootLayout({ children }) {
           draggable
           transition={Zoom}
           closeOnClick={true}
+          theme="dark"
+          className="mt-20"
         />
         {children}
       </body>

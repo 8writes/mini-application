@@ -14,6 +14,7 @@ export const useGlobalContext = () => {
 export const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
   // Fetch data
@@ -69,6 +70,8 @@ export const GlobalProvider = ({ children }) => {
       value={{
         user,
         isLoading,
+        isSidebarOpen,
+        setIsSidebarOpen,
       }}
     >
       {children}

@@ -1,0 +1,119 @@
+"use client";
+import Link from "next/link";
+import {
+  HiOutlineHome,
+  HiOutlineCreditCard,
+  HiOutlinePhone,
+  HiChartBar,
+  HiOutlineDesktopComputer,
+  HiOutlineCash,
+  HiOutlineClipboardCheck,
+  HiOutlineUserCircle,
+  HiOutlineUsers,
+  HiOutlineSupport,
+} from "react-icons/hi";
+import { FaGamepad } from "react-icons/fa";
+import { useGlobalContext } from "@/context/GlobalContext";
+import { useEffect, useRef } from "react";
+
+export default function SideNav() {
+  const { isSidebarOpen, setIsSidebarOpen } = useGlobalContext();
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Close sidebar if clicked outside and it's open on mobile
+      if (
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !event.target.closest("[data-nav-toggle]")
+      ) {
+        // Exclude nav toggle button
+        setIsSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSidebarOpen, setIsSidebarOpen]);
+
+  return (
+    <div
+      ref={sidebarRef}
+      className={`
+        fixed md:relative
+        flex flex-col h-[100dvh] overflow-y-auto pt-20 bg-gray-800 text-white w-64 shadow-lg
+        transform transition-transform duration-300 ease-in-out
+        z-40
+        ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }
+      `}
+    >
+      <nav className="flex flex-col mt-4 space-y-1">
+        {/* MAIN */}
+        <div className="px-6 text-xs text-gray-400 uppercase mt-4 mb-1">
+          Main
+        </div>
+        <NavItem href="/dashboard" icon={<HiOutlineHome />}>
+          Dashboard
+        </NavItem>
+        <NavItem href="/wallet" icon={<HiOutlineCreditCard />}>
+          Wallet
+        </NavItem>
+
+        {/* SERVICES */}
+        <div className="px-6 text-xs text-gray-400 uppercase mt-6 mb-1">
+          Services
+        </div>
+        <NavItem href="/airtime" icon={<HiOutlinePhone />}>
+          Airtime
+        </NavItem>
+        <NavItem href="/data" icon={<HiChartBar />}>
+          Data
+        </NavItem>
+        <NavItem href="/tv" icon={<HiOutlineDesktopComputer />}>
+          TV
+        </NavItem>
+        <NavItem href="/betting" icon={<FaGamepad />}>
+          Gaming
+        </NavItem>
+        <NavItem href="/betting" icon={<HiOutlineCash />}>
+          Betting
+        </NavItem>
+        <NavItem href="/bills" icon={<HiOutlineClipboardCheck />}>
+          Bills Payment
+        </NavItem>
+
+        {/* ACCOUNT */}
+        <div className="px-6 text-xs text-gray-400 uppercase mt-6 mb-1">
+          Account
+        </div>
+        <NavItem href="/profile" icon={<HiOutlineUserCircle />}>
+          Profile
+        </NavItem>
+        <NavItem href="/referrals" icon={<HiOutlineUsers />}>
+          Referrals
+        </NavItem>
+        <NavItem href="/support" icon={<HiOutlineSupport />}>
+          Support
+        </NavItem>
+      </nav>
+    </div>
+  );
+}
+
+function NavItem({ href, icon, children }) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out"
+    >
+      <span className="text-lg">{icon}</span>
+      <span>{children}</span>
+    </Link>
+  );
+}

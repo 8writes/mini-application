@@ -3,21 +3,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // check for token
     const token = localStorage.getItem("token_mini_app");
-
-    // if token then push to dashboard
     if (token) {
       router.push("/dashboard");
     }
@@ -34,80 +29,94 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
 
-      // set the token to local storage with 1 hr life span, same as cookie
       if (res.ok) {
         const tokenData = {
           value: "true",
-          expiry: Date.now() + 3600000, // 1 hour
+          expiry: Date.now() + 3600000,
         };
         localStorage.setItem("token_mini_app", JSON.stringify(tokenData));
-
         router.push("/dashboard");
         toast.success("Logged in successfully");
       } else {
         const data = await res.json();
         toast.error(data.message || "Login failed");
-        console.log(data.message || "Login failed");
       }
     } catch (err) {
       toast.error("Something went wrong");
-      console.log(err || "Something went wrong");
     } finally {
       setIsLoadingSubmit(false);
     }
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen">
-      <form
-        onSubmit={handleSubmit}
-        className="border p-6 rounded shadow-md w-[90dvw] md:max-w-sm"
-      >
-        <h2 className="text-xl font-semibold mb-4">Welcome Back</h2>
+    <main className="min-h-screen bg-gradient-to-r from-gray-300 to-gray-700 flex items-center justify-center px-4">
+      <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-lg">
+        <div className="text-center mb-6">
+          {/* Replace with your logo */}
+          <div className="text-2xl font-bold text-blue-900 mb-2">
+            BillzPaddi
+          </div>
+          <p className="text-gray-500">Welcome Back</p>
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-3 px-3 py-2 border rounded disabled:cursor-not-allowed"
-          disabled={isLoadingSubmit}
-          required
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-800">
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              disabled={isLoadingSubmit}
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="w-full px-4 py-2 border text-gray-800 border-gray-400 rounded-lg outline-none disabled:opacity-50"
+              placeholder="you@example.com"
+            />
+          </div>
 
-        <div className="relative mb-4">
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-            className="w-full px-3 py-2 border rounded pr-10 disabled:cursor-not-allowed"
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-800">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                disabled={isLoadingSubmit}
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="w-full px-4 py-2 border pr-10 text-gray-800 border-gray-400 rounded-lg outline-none disabled:opacity-50"
+                placeholder="******"
+              />
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Link href="/forgot-password" className="text-gray-800 text-sm hover:text-gray-700">
+              Forgot Password<span className="rotate-20 inline-block">?</span>
+            </Link>
+          </div>
+
+          <button
+            type="submit"
             disabled={isLoadingSubmit}
-            required
-          />
-          <span
-            className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer select-none text-sm"
-            onClick={() => setShowPassword(!showPassword)}
+            className="w-full py-2 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50"
           >
-            {showPassword ? "🙈" : "👁️"}
-          </span>
-        </div>
-        <div className="text-base pb-1">
-          <p>admin@example.com</p>
-          <p>Password12</p>
-        </div>
-        <button
-          type="submit"
-          disabled={isLoadingSubmit}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
-        >
-          {isLoadingSubmit ? "Logging in..." : "Login"}
-        </button>
-      </form>
+            {isLoadingSubmit ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
     </main>
   );
 }

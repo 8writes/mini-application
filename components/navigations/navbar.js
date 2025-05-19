@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { toast } from "react-toastify";
-import { HiOutlineLogout } from "react-icons/hi";
+import { HiOutlineLogout, HiMenu, HiX } from "react-icons/hi";
 
 export default function NavBar() {
-  const { user } = useGlobalContext();
+  const { user, isSidebarOpen, setIsSidebarOpen } = useGlobalContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
@@ -60,13 +60,25 @@ export default function NavBar() {
   }, []);
 
   return (
-    <div className="bg-gray-900 text-white">
-      <section className="flex justify-between items-center p-4 md:px-10 w-full md:max-w-7xl mx-auto">
-        <div className="text-xl uppercase">Mini App</div>
+    <div className="fixed w-full bg-gray-900 text-white z-50">
+      <section className="flex justify-between items-center px-3 py-4 md:py-5 md:px-10 w-full md:max-w-9xl mx-auto">
+        <div className="flex items-center gap-4 md:gap-7 text-xl">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="text-2xl p-2 md:hidden focus:outline-none cursor-pointer hover:bg-gray-800 rounded-md transition-colors duration-200"
+          >
+            {isSidebarOpen ? <HiX size={30} /> : <HiMenu size={30} />}
+          </button>
+          <h1 className="text-2xl">BillzPaddi</h1>
+        </div>
         <div className="relative flex items-center">
           {/* User Avatar */}
           <Image
-            src={user?.profile_photo?.url || "/default-profile.png"}
+            src={
+              user?.profile_photo?.url
+                ? user?.profile_photo?.url
+                : "/icons/user.png"
+            }
             alt="User avatar"
             width={40}
             height={40}
@@ -75,25 +87,31 @@ export default function NavBar() {
           />
 
           {/* Dropdown Menu */}
-          {isDropdownOpen && (
-            <div
-              ref={dropdownRef}
-              className="absolute right-0 top-14 mt-2 w-44 bg-white shadow-lg rounded-md border border-gray-200"
-            >
-              <ul className="py-2 text-sm text-gray-700">
-                <li className="text-base px-4 py-2 text-gray-800 border-b border-gray-200">
-                  {user?.last_name} {user?.first_name?.charAt(0)}.
-                </li>
-                <li
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
-                >
-                  <HiOutlineLogout className="text-xl" />
-                  {isLoggingOut ? "Logging out..." : "Logout"}
-                </li>
-              </ul>
-            </div>
-          )}
+          <div
+            ref={dropdownRef}
+            className={`
+    absolute right-0 top-14 mt-2 w-60 bg-gray-800 shadow-lg rounded-md
+    transition-all duration-200 ease-out
+    ${
+      isDropdownOpen
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 translate-y-2 pointer-events-none"
+    }
+  `}
+          >
+            <ul className="py-2 text-sm text-gray-700">
+              <li className="text-base px-4 py-2 text-white border-b border-gray-700">
+                {user?.last_name} {user?.first_name?.charAt(0)}.
+              </li>
+              <li
+                onClick={handleLogout}
+                className="flex items-center gap-2 mt-2 px-4 py-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+              >
+                <HiOutlineLogout className="text-xl" />
+                {isLoggingOut ? "Logging out..." : "Logout"}
+              </li>
+            </ul>
+          </div>
         </div>
       </section>
     </div>
