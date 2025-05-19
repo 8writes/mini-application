@@ -23,7 +23,7 @@ export default function Page() {
     try {
       const res = await fetch("/api/users");
       const data = await res.json();
-      const filteredUsers = data.filter((user) => user.role !== "super_admin");
+      const filteredUsers = data.filter((user) => user?.role !== "super_admin");
       setUsers(filteredUsers);
     } catch (error) {
       toast.error("Error fetching users");
@@ -73,7 +73,7 @@ export default function Page() {
   };
 
   // filter users for search
-  const filteredUsers = users.filter((u) => {
+  const filteredUsers = users?.filter((u) => {
     const fullName = `${u.first_name} ${u.last_name}`.toLowerCase();
     return (
       fullName.includes(searchTerm.toLowerCase()) ||
