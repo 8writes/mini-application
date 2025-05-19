@@ -11,9 +11,7 @@ export default function Page() {
     <div>
       <section className="">
         <div className="flex flex-wrap justify-between gap-2 items-center mb-6">
-          <h1 className="text-2xl md:text-3xl">
-            Gaming Services Coming Soon
-          </h1>
+          <h1 className="text-2xl md:text-3xl uppercase">Gaming Services</h1>
         </div>
       </section>
     </div>

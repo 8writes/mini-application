@@ -15,6 +15,7 @@ import {
 import { FaGamepad } from "react-icons/fa";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 export default function SideNav() {
   const { isSidebarOpen, setIsSidebarOpen } = useGlobalContext();

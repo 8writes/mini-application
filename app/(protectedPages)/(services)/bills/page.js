@@ -11,8 +11,8 @@ export default function Page() {
     <div>
       <section className="">
         <div className="flex flex-wrap justify-between gap-2 items-center mb-6">
-          <h1 className="text-2xl md:text-3xl">
-            Bills Payment Coming Soon
+          <h1 className="text-2xl md:text-3xl uppercase">
+            Bills Payment
           </h1>
         </div>
       </section>
