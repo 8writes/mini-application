@@ -112,7 +112,7 @@ export default function NavBar() {
               </li>
               <li
                 onClick={() => setIsDropdownOpen(false)}
-                className="flex items-center gap-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                className="flex items-center gap-2 text-white w-full hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
               >
                 <Link
                   href="/profile"
@@ -128,7 +128,7 @@ export default function NavBar() {
               </li>
               <li
                 onClick={() => setIsDropdownOpen(false)}
-                className="flex items-center gap-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                className="flex items-center gap-2 text-white w-full hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
               >
                 <Link
                   href="/support"
