@@ -110,6 +110,7 @@ function NavItem({ href, icon, children }) {
   return (
     <Link
       href={href}
+      onClick={() => setIsSidebarOpen(false)}
       className="flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out"
     >
       <span className="text-lg">{icon}</span>
