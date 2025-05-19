@@ -108,15 +108,21 @@ export default function SideNav() {
 }
 
 function NavItem({ href, icon, children }) {
+  const pathname = usePathname();
   const { setIsSidebarOpen } = useGlobalContext();
+  const isActive = pathname === href;
   return (
     <Link
       href={href}
       onClick={() => setIsSidebarOpen(false)}
-      className="flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out"
+      className={`flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out ${
+        isActive ? "bg-gray-700 border-l-4 border-blue-500" : ""
+      }`}
     >
-      <span className="text-lg">{icon}</span>
-      <span>{children}</span>
+      <span className={`text-lg ${isActive ? "text-blue-400" : ""}`}>
+        {icon}
+      </span>
+      <span className={isActive ? "font-medium" : ""}>{children}</span>
     </Link>
   );
 }
