@@ -12,7 +12,7 @@ export const useGlobalContext = () => {
 };
 
 export const GlobalProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
@@ -45,7 +45,7 @@ export const GlobalProvider = ({ children }) => {
           const { user } = authData;
 
           // fetch user data using userId
-          const userResponse = await fetch(`/api/users/${user.userId}`);
+          const userResponse = await fetch(`/api/users/${user?.userId}`);
           const userData = await userResponse.json();
 
           // set the user data in the context
