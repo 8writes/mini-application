@@ -1,12 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { toast } from "react-toastify";
-import { HiOutlineLogout, HiMenu, HiX } from "react-icons/hi";
+import {
+  HiOutlineLogout,
+  HiMenu,
+  HiX,
+  HiOutlineSupport,
+  HiOutlineUserCircle,
+} from "react-icons/hi";
+import Link from "next/link";
 
 export default function NavBar() {
+  const pathname = usePathname();
   const { user, isSidebarOpen, setIsSidebarOpen } = useGlobalContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -99,12 +107,44 @@ export default function NavBar() {
   `}
           >
             <ul className="py-2 text-sm text-gray-700">
-              <li className="text-base px-4 py-2 text-white border-b border-gray-700">
+              <li className="text-base px-4 py-2 text-white border-b mb-2 border-gray-700">
                 {user?.last_name ?? "User"} {user?.first_name?.charAt(0)}.
               </li>
               <li
+                onClick={() => setIsDropdownOpen(false)}
+                className="flex items-center gap-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+              >
+                <Link
+                  href="/profile"
+                  className={`flex px-4 py-2 items-center gap-2  ${
+                    pathname === "/profile"
+                      ? "bg-gray-700 border-l-4 border-blue-500 w-full"
+                      : ""
+                  }`}
+                >
+                  <HiOutlineUserCircle className="text-xl" />
+                  Profile
+                </Link>
+              </li>
+              <li
+                onClick={() => setIsDropdownOpen(false)}
+                className="flex items-center gap-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+              >
+                <Link
+                  href="/support"
+                  className={`flex px-4 py-2 items-center gap-2  ${
+                    pathname === "/support"
+                      ? "bg-gray-700 border-l-4 border-blue-500 w-full"
+                      : ""
+                  }`}
+                >
+                  <HiOutlineSupport className="text-xl" />
+                  Support
+                </Link>
+              </li>
+              <li
                 onClick={handleLogout}
-                className="flex items-center gap-2 mt-2 px-4 py-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
               >
                 <HiOutlineLogout className="text-xl" />
                 {isLoggingOut ? "Logging out..." : "Logout"}
