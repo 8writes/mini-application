@@ -1,19 +1,12 @@
 "use client";
-
-import UserDialog from "@/components/dialogs/userDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { HiOutlineSearch } from "react-icons/hi";
-import { toast } from "react-toastify";
-
 export default function Page() {
   const { user } = useGlobalContext();
 
   if (!user) {
     return;
   }
-  
+
   return (
     <div>
       <section className="">

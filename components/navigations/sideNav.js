@@ -95,8 +95,8 @@ export default function SideNav() {
         <NavItem href="/profile" icon={<HiOutlineUserCircle />}>
           Profile
         </NavItem>
-        <NavItem href="/referrals" icon={<HiOutlineUsers />}>
-          Referrals
+        <NavItem href="/referral" icon={<HiOutlineUsers />}>
+          Referral
         </NavItem>
         <NavItem href="/support" icon={<HiOutlineSupport />}>
           Support

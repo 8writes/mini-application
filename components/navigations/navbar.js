@@ -32,7 +32,6 @@ export default function NavBar() {
         localStorage.removeItem("token_mini_app");
 
         router.push("/auth/login");
-        toast.success("Logged out");
       } else {
         toast.error("Failed to logout");
         console.error("Failed to logout");

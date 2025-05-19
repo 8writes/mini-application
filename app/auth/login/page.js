@@ -36,7 +36,6 @@ export default function LoginPage() {
         };
         localStorage.setItem("token_mini_app", JSON.stringify(tokenData));
         router.push("/dashboard");
-        toast.success("Logged in successfully");
       } else {
         const data = await res.json();
         toast.error(data.message || "Login failed");
