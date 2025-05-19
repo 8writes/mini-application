@@ -78,7 +78,7 @@ export default function SideNav() {
         <NavItem href="/tv" icon={<HiOutlineDesktopComputer />}>
           TV
         </NavItem>
-        <NavItem href="/betting" icon={<FaGamepad />}>
+        <NavItem href="/gaming" icon={<FaGamepad />}>
           Gaming
         </NavItem>
         <NavItem href="/betting" icon={<HiOutlineCash />}>
