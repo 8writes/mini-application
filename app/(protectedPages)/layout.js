@@ -1,0 +1,18 @@
+"use client";
+import NavBar from "@/components/navigations/navbar";
+import SideNav from "@/components/navigations/sideNav";
+import { GlobalProvider } from "@/context/GlobalContext";
+
+export default function PagesLayout({ children }) {
+  return (
+    <GlobalProvider>
+      <section>
+        <NavBar />
+        <div className="flex">
+          <SideNav />
+          <main className="flex-1 px-7 py-28 md:px-10 md:py-28 overflow-auto">{children}</main>
+        </div>
+      </section>
+    </GlobalProvider>
+  );
+}
