@@ -112,7 +112,8 @@ function NavItem({ href, icon, children }) {
   const { setIsSidebarOpen } = useGlobalContext();
   const isActive = pathname === href;
   return (
-    <Link
+    <>
+     <Link
       href={href}
       onClick={() => setIsSidebarOpen(false)}
       className={`flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out ${
@@ -124,5 +125,6 @@ function NavItem({ href, icon, children }) {
       </span>
       <span className={isActive ? "font-medium" : ""}>{children}</span>
     </Link>
+    </>
   );
 }

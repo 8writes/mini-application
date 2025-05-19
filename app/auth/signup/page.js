@@ -1,50 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
-export default function LoginPage() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+export default function SignupPage() {
   const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token_mini_app");
-    if (token) {
-      router.push("/dashboard");
-    }
-  }, [router]);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    role: "user",
+    status: "active",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoadingSubmit(true);
+    setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
 
-      if (res.ok) {
-        const tokenData = {
-          value: "true",
-          expiry: Date.now() + 3600000,
-        };
-        localStorage.setItem("token_mini_app", JSON.stringify(tokenData));
-        router.push("/dashboard");
-      } else {
-        const data = await res.json();
-        toast.error(data.message || "Login failed");
+      if (!res.ok) {
+        const err = await res.json();
+        toast.error(err.message || "Signup failed");
+        return;
       }
+
+      toast.success("Signup successful!");
+      router.push("/auth/login");
     } catch (err) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong.");
+      console.error(err);
     } finally {
-      setIsLoadingSubmit(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -56,10 +56,43 @@ export default function LoginPage() {
           <div className="text-3xl font-bold text-blue-900 mb-2">
             𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
           </div>
-          <p className="text-blue-800">Welcome Back</p>
+          <p className="text-blue-800">Create An Account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 text-gray-800">
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-800">
+              First Name
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="First Name"
+              disabled={isSubmitting}
+              value={formData.first_name}
+              onChange={(e) =>
+                setFormData({ ...formData, first_name: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-800">
+              Last Name
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Last Name"
+              disabled={isSubmitting}
+              value={formData.last_name}
+              onChange={(e) =>
+                setFormData({ ...formData, last_name: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
+            />
+          </div>
+
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-800">
               Email Address
@@ -67,13 +100,13 @@ export default function LoginPage() {
             <input
               type="email"
               required
-              disabled={isLoadingSubmit}
+              placeholder="Email"
+              disabled={isSubmitting}
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              className="w-full px-4 py-2 border text-gray-800 border-gray-400 rounded-lg outline-none disabled:opacity-50"
-              placeholder="you@example.com"
+              className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
             />
           </div>
 
@@ -85,7 +118,7 @@ export default function LoginPage() {
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                disabled={isLoadingSubmit}
+                disabled={isSubmitting}
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
@@ -102,31 +135,23 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <Link
-              href="/forgot-password"
-              className="text-gray-800 text-sm hover:text-gray-700"
-            >
-              Forgot Password<span className="rotate-20 inline-block">?</span>
-            </Link>
-          </div>
-
           <button
             type="submit"
-            disabled={isLoadingSubmit}
+            disabled={isSubmitting}
             className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50"
           >
-            {isLoadingSubmit ? "Logging in..." : "Login"}
+            {isSubmitting ? "Signing up..." : "Sign Up"}
           </button>
         </form>
+
         <p className="text-gray-800 text-sm text-center mt-4">
-          Don't have an account{" "}
+          Already have an account{" "}
           <span className="rotate-20 inline-block">?</span>{" "}
           <Link
-            href="/auth/signup"
+            href="/auth/login"
             className="text-gray-800 cursor-pointer hover:text-gray-700"
           >
-            Sign Up
+            Login
           </Link>
         </p>
       </div>

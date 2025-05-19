@@ -68,7 +68,7 @@ export default function NavBar() {
           >
             {isSidebarOpen ? <HiX size={30} /> : <HiMenu size={30} />}
           </button>
-          <h1 className="text-2xl">BillzPaddi</h1>
+          <div className="text-2xl">𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶</div>
         </div>
         <div className="relative flex items-center">
           {/* User Avatar */}
@@ -100,7 +100,7 @@ export default function NavBar() {
           >
             <ul className="py-2 text-sm text-gray-700">
               <li className="text-base px-4 py-2 text-white border-b border-gray-700">
-                {user?.last_name} {user?.first_name?.charAt(0)}.
+                {user?.last_name ?? "User"} {user?.first_name?.charAt(0)}.
               </li>
               <li
                 onClick={handleLogout}

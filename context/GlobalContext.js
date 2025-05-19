@@ -13,13 +13,14 @@ export const useGlobalContext = () => {
 
 export const GlobalProvider = ({ children }) => {
   const [user, setUser] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
   // Fetch data
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         // check if user is authenticated
         const authResponse = await fetch("/api/auth/authCheck");
@@ -33,6 +34,7 @@ export const GlobalProvider = ({ children }) => {
           if (Date.now() > item.expiry) {
             localStorage.removeItem("token_mini_app");
             router.push("/auth/login");
+            setIsLoading(false);
             return;
           }
         }
@@ -54,10 +56,9 @@ export const GlobalProvider = ({ children }) => {
           toast.error("User not authenticated");
           router.push("/auth/login");
         }
-
-        setIsLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
+      } finally {
         setIsLoading(false);
       }
     };

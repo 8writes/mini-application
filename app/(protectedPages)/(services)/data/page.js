@@ -1,10 +1,18 @@
 "use client";
 import { useGlobalContext } from "@/context/GlobalContext";
 export default function Page() {
-  const { user } = useGlobalContext();
+  const { user, isLoading } = useGlobalContext();
 
-  if (!user) {
-    return;
+ if (!user || isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[30rem]">
+        <img
+          src="/icons/loader-white.svg"
+          alt="Loading..."
+          className="w-20 h-20"
+        />
+      </div>
+    );
   }
 
   return (
