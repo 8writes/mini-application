@@ -7,8 +7,7 @@ import Link from "next/link";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: "" });
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const router = useRouter();
 
@@ -31,15 +30,6 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
-        const tokenData = {
-          value: "true",
-          expiry: Date.now() + 3600000,
-        };
-        localStorage.setItem("token_mini_app", JSON.stringify(tokenData));
-        router.push("/dashboard");
-      } else {
-        const data = await res.json();
-        toast.error(data.message || "Login failed");
       }
     } catch (err) {
       toast.error("Something went wrong");
@@ -56,7 +46,9 @@ export default function LoginPage() {
           <div className="text-3xl font-bold text-blue-900 mb-2">
             𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
           </div>
-          <p className="text-blue-800">Welcome Back</p>
+          <p className="text-blue-800">
+            Forgot Password<span className="rotate-20 inline-block">?</span>
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -77,56 +69,22 @@ export default function LoginPage() {
             />
           </div>
 
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-800">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                disabled={isLoadingSubmit}
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="w-full px-4 py-2 border pr-10 text-gray-800 border-gray-400 rounded-lg outline-none disabled:opacity-50"
-                placeholder="******"
-              />
-              <span
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <Link
-              href="/auth/forgot-password"
-              className="text-gray-800 text-sm hover:text-gray-700"
-            >
-              Forgot Password<span className="rotate-20 inline-block">?</span>
-            </Link>
-          </div>
-
           <button
             type="submit"
-            disabled={isLoadingSubmit}
+            disabled={true}
             className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50"
           >
-            {isLoadingSubmit ? "Logging in..." : "Login"}
+            {isLoadingSubmit ? "Sending..." : "Send Reset Link"}
           </button>
         </form>
         <p className="text-gray-800 text-sm text-center mt-4">
-          Don't have an account{" "}
+          Remembered Password{" "}
           <span className="rotate-20 inline-block">?</span>{" "}
           <Link
-            href="/auth/signup"
+            href="/auth/login"
             className="text-gray-800 cursor-pointer hover:text-gray-700"
           >
-            Sign Up
+            Login
           </Link>
         </p>
       </div>
