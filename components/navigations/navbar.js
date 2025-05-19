@@ -110,13 +110,9 @@ export default function NavBar() {
               <li className="text-base px-4 py-2 text-white border-b mb-2 border-gray-700">
                 {user?.last_name ?? "User"} {user?.first_name?.charAt(0)}.
               </li>
-              <li
-                onClick={() => setIsDropdownOpen(false)}
-                className="flex items-center gap-2 text-white w-full hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
-              >
-                <Link
-                  href="/profile"
-                  className={`flex px-4 py-2 items-center gap-2  ${
+              <Link href="/profile" onClick={() => setIsDropdownOpen(false)}>
+                <li
+                  className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
                     pathname === "/profile"
                       ? "bg-gray-700 border-l-4 border-blue-500 w-full"
                       : ""
@@ -124,15 +120,12 @@ export default function NavBar() {
                 >
                   <HiOutlineUserCircle className="text-xl" />
                   Profile
-                </Link>
-              </li>
-              <li
-                onClick={() => setIsDropdownOpen(false)}
-                className="flex items-center gap-2 text-white w-full hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
-              >
-                <Link
-                  href="/support"
-                  className={`flex px-4 py-2 items-center gap-2  ${
+                </li>
+              </Link>
+
+              <Link href="/support" onClick={() => setIsDropdownOpen(false)}>
+                <li
+                  className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
                     pathname === "/support"
                       ? "bg-gray-700 border-l-4 border-blue-500 w-full"
                       : ""
@@ -140,8 +133,9 @@ export default function NavBar() {
                 >
                   <HiOutlineSupport className="text-xl" />
                   Support
-                </Link>
-              </li>
+                </li>
+              </Link>
+
               <li
                 onClick={handleLogout}
                 className="flex items-center gap-2 px-4 py-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
