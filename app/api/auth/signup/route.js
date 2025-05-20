@@ -7,6 +7,7 @@ const registerSchema = z.object({
   first_name: z.string().min(3, "Name must be at least 3 characters long"),
   last_name: z.string().min(3, "Name must be at least 3 characters long"),
   email: z.string().email(),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
   profile_photo: z.string().optional(),
   role: z.string(),
   status: z.boolean(),
@@ -29,11 +30,11 @@ export async function POST(req) {
     }
 
     // destructure data
-    const { first_name, last_name, email, profile_photo, role, status } =
+    const { first_name, last_name, email, profile_photo, role, status, password } =
       parsed.data;
 
     // hash password
-    const hashedPassword = await hash("Password12", 12);
+    const hashedPassword = await hash(password, 12);
 
     const client = await clientPromise;
     const db = client.db("mini_app");

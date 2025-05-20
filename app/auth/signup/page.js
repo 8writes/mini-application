@@ -14,7 +14,7 @@ export default function SignupPage() {
     email: "",
     password: "",
     role: "user",
-    status: "active",
+    status: true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

@@ -38,6 +38,7 @@ export async function POST(req) {
     }
 
     const isValid = await compare(password, user.password);
+    
     if (!isValid) {
       return new Response(JSON.stringify({ message: "Invalid credentials" }), {
         status: 401,

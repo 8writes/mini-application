@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
           transition={Zoom}
           closeOnClick={true}
           theme="dark"
-          className="mt-20"
+          className=" md:mt-20"
         />
         {children}
       </body>
