@@ -19,7 +19,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (!hasAccessToken) {
       // Redirect to login if no token found
-      router.push("/auth/login");
+    //  router.push("/auth/login");
     }
   }, [router]);
 
