@@ -20,7 +20,8 @@ export default function DashboardPage() {
   const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
 
   // Convert Naira to BLZ
-  const nairaToBlz = (naira) => (naira / conversionRate).toFixed(2);
+  const nairaToBlz = (naira) => naira / conversionRate;
+  const blzToNaira = (blz) => blz * conversionRate;
 
   // Fetch user wallet
   const fetchWallet = async () => {
@@ -98,9 +99,14 @@ export default function DashboardPage() {
           <div className="flex justify-between items-start mb-4">
             <div>
               <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
-              <p className="text-xl md:text-3xl font-bold">
-                {wallet?.currency ?? "BLZ"} {wallet?.balance?.toLocaleString() ?? 0}
-              </p>
+              <div className="flex flex-wrap items-end gap-2">
+                <p className="text-xl md:text-3xl font-bold">
+                  {wallet?.currency} {wallet?.balance?.toFixed(2)}
+                </p>
+                <p className="text-gray-400 text-sm mb-1">
+                  (₦{blzToNaira(wallet?.balance).toLocaleString()})
+                </p>
+              </div>
             </div>
             <div className="flex gap-3">
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-sm cursor-pointer flex items-center gap-2 text-sm transition-colors">

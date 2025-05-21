@@ -13,7 +13,7 @@ import Link from "next/link";
 export default function WalletPage() {
   const { user, isLoading } = useGlobalContext();
   const [wallet, setWallet] = useState({
-    balance: 12500.75, // In Naira
+    balance: 0, //
     currency: "BLZ",
     transactions: [],
   });
@@ -22,8 +22,8 @@ export default function WalletPage() {
   const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
 
   // Convert Naira to BLZ
-  const nairaToBlz = (naira) => (naira / conversionRate).toFixed(2);
-  const blzToNaira = (blz) => (blz * conversionRate);
+  const nairaToBlz = (naira) => naira / conversionRate;
+  const blzToNaira = (blz) => blz * conversionRate;
 
   const presetAmounts = [1000, 2000, 5000, 10000];
 
@@ -45,13 +45,13 @@ export default function WalletPage() {
       // Simulate API call
       setTimeout(() => {
         setWallet({
-          balance: 0,
+          balance: 1, // 250 BLZ = 12500 Naira
           currency: "BLZ",
           transactions: [
             {
               id: 1,
               type: "credit",
-              amount: 5000,
+              amount: 100, // 100 BLZ = 5000 Naira
               description: "Wallet Funding",
               date: "2023-06-15T10:30:00",
               status: "completed",
@@ -60,7 +60,7 @@ export default function WalletPage() {
             {
               id: 2,
               type: "debit",
-              amount: 1500,
+              amount: 30, // 30 BLZ = 1500 Naira
               description: "Airtime Purchase - MTN",
               date: "2023-06-14T14:45:00",
               status: "completed",
@@ -69,7 +69,7 @@ export default function WalletPage() {
             {
               id: 3,
               type: "credit",
-              amount: 10000,
+              amount: 200, // 200 BLZ = 10000 Naira
               description: "Referral Bonus",
               date: "2023-06-10T08:15:00",
               status: "completed",
@@ -78,7 +78,7 @@ export default function WalletPage() {
             {
               id: 4,
               type: "debit",
-              amount: 2500,
+              amount: 50, // 50 BLZ = 2500 Naira
               description: "DSTV Subscription",
               date: "2023-06-08T16:20:00",
               status: "completed",
@@ -87,7 +87,7 @@ export default function WalletPage() {
             {
               id: 5,
               type: "debit",
-              amount: 500,
+              amount: 10, // 10 BLZ = 500 Naira
               description: "Data Purchase - Airtel",
               date: "2023-06-05T11:10:00",
               status: "failed",
@@ -124,10 +124,10 @@ export default function WalletPage() {
               <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
               <div className="flex flex-wrap items-end gap-2">
                 <p className="text-xl md:text-3xl font-bold">
-                  {wallet.currency?? "BLZ"} {nairaToBlz(wallet.balance)}
+                  {wallet.currency} {wallet.balance.toFixed(2)}
                 </p>
                 <p className="text-gray-400 text-sm mb-1">
-                  (₦{wallet.balance.toLocaleString()})
+                  (₦{blzToNaira(wallet.balance).toLocaleString()})
                 </p>
               </div>
             </div>
@@ -206,7 +206,7 @@ export default function WalletPage() {
               </div>
               {amount && (
                 <p className="text-sm text-gray-400 mt-1">
-                  ₦{blzToNaira(amount)} NGN
+                  ₦{blzToNaira(amount).toLocaleString()} NGN
                 </p>
               )}
             </div>
@@ -267,7 +267,7 @@ export default function WalletPage() {
                       </div>
                     </div>
 
-                    {/* Amount and Status (Right Side) ////
+                    {/* Amount and Status (Right Side) /////
                     <div className="text-right ml-4">
                       <p
                         className={`font-semibold ${
@@ -277,10 +277,10 @@ export default function WalletPage() {
                         }`}
                       >
                         {txn.type === "credit" ? "+" : "-"}
-                        {nairaToBlz(txn.amount)} BLZ
+                        {txn.amount.toFixed(2)} BLZ
                       </p>
                       <p className="text-xs text-gray-400">
-                        ₦{txn.amount.toLocaleString()}
+                        ₦{blzToNaira(txn.amount).toLocaleString()}
                       </p>
                       <span
                         className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
