@@ -135,7 +135,7 @@ export default function DashboardPage() {
                 <div className="bg-blue-500/20 p-3 rounded-full mb-2">
                   <HiOutlineCash className="text-blue-400 text-xl" />
                 </div>
-                <span>Convert Bet Code</span>
+                <span>Betting</span>
               </button>
             </Link>
 
