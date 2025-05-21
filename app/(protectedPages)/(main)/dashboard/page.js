@@ -119,41 +119,45 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <button className="bg-gray-700 hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-              <div className="bg-green-500/20 p-3 rounded-full mb-2">
-                <HiArrowDown className="text-green-400 text-xl" />
-              </div>
-              <span>Fund Wallet</span>
-            </button>
+            {/* Fund Wallet Button */}
+            <Link href="/wallet/fund" passHref>
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-green-500/20 p-3 rounded-full mb-2">
+                  <HiArrowDown className="text-green-400 text-xl" />
+                </div>
+                <span>Fund Wallet</span>
+              </button>
+            </Link>
 
-            {/** 
-            <button className="bg-gray-700 hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-              <div className="bg-blue-500/20 p-3 rounded-full mb-2">
-                <HiArrowUp className="text-blue-400 text-xl" />
-              </div>
-              <span>Withdraw</span>
-            </button>*/}
+            {/* Convert Bet Code Button */}
+            <Link href="/betting" passHref>
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-blue-500/20 p-3 rounded-full mb-2">
+                  <HiOutlineCash className="text-blue-400 text-xl" />
+                </div>
+                <span>Convert Bet Code</span>
+              </button>
+            </Link>
 
-            <button className="bg-gray-700 hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-              <div className="bg-blue-500/20 p-3 rounded-full mb-2">
-                <HiOutlineCash className="text-blue-400 text-xl" />
-              </div>
-              <span>Convert Bet Code</span>
-            </button>
+            {/* Buy Data Button */}
+            <Link href="/data" passHref>
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-purple-500/20 p-3 rounded-full mb-2">
+                  <HiCreditCard className="text-purple-400 text-xl" />
+                </div>
+                <span>Buy Data</span>
+              </button>
+            </Link>
 
-            <button className="bg-gray-700 hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-              <div className="bg-purple-500/20 p-3 rounded-full mb-2">
-                <HiCreditCard className="text-purple-400 text-xl" />
-              </div>
-              <span>Buy Data</span>
-            </button>
-
-            <button className="bg-gray-700 hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-              <div className="bg-yellow-500/20 p-3 rounded-full mb-2">
-                <FaMoneyBillWave className="text-yellow-400 text-xl" />
-              </div>
-              <span>Pay Bills</span>
-            </button>
+            {/* Pay Bills Button */}
+            <Link href="/bills" passHref>
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-yellow-500/20 p-3 rounded-full mb-2">
+                  <FaMoneyBillWave className="text-yellow-400 text-xl" />
+                </div>
+                <span>Pay Bills</span>
+              </button>
+            </Link>
           </div>
         </div>
       </section>
