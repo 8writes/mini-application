@@ -1,24 +1,9 @@
-"use client";
 import Link from "next/link";
-import { useGlobalContext } from "@/context/GlobalContext";
 import { FaWhatsapp, FaEnvelope, FaHeadset, FaClock } from "react-icons/fa";
 
-export default function Page() {
-  const { user, isLoading } = useGlobalContext();
-
-  if (!user || isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[30rem]">
-        <img
-          src="/icons/loader-white.svg"
-          alt="Loading..."
-          className="w-20 h-20"
-        />
-      </div>
-    );
-  }
+export default function SupportPage() {
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-700 text-white">
+    <div className="flex flex-col items-center justify-center min-h-[100dvh] bg-gray-800 text-white p-6">
       <section className="max-w-4xl w-full space-y-8 pt-4">
         {/* Header with icon */}
         <div className="text-center space-y-2">
@@ -89,6 +74,16 @@ export default function Page() {
               Typically respond within minutes
             </p>
           </div>
+        </div>
+
+        {/* Back to Home */}
+        <div className="text-center pt-4">
+          <Link
+            href="/home"
+            className="text-gray-400 hover:text-white transition-colors text-sm"
+          >
+            ← Return to homepage
+          </Link>
         </div>
       </section>
     </div>

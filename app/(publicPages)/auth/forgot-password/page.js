@@ -39,7 +39,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-[100dvh] bg-gradient-to-r from-gray-300 to-gray-700 flex items-center justify-center px-4">
+    <main className="min-h-[100dvh] bg-gradient-to-r from-gray-700 to-gray-800 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
         <div className="text-center mb-6">
           {/* Replace with your logo */}
@@ -78,8 +78,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="text-gray-800 text-sm text-center mt-4">
-          Remembered Password{" "}
-          <span className="rotate-20 inline-block">?</span>{" "}
+          Remembered Password <span className="rotate-20 inline-block">?</span>{" "}
           <Link
             href="/auth/login"
             className="text-gray-800 cursor-pointer hover:text-gray-700"

@@ -72,11 +72,16 @@ export default function NavBar() {
         <div className="flex items-center gap-4 md:gap-7 text-xl">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-2xl p-2 md:hidden focus:outline-none cursor-pointer hover:bg-gray-800 rounded-md transition-colors duration-200"
+            aria-label="Toggle menu"
+            className="text-2xl p-1 md:hidden focus:outline-none cursor-pointer z-50 bg-gray-800 rounded-md transition-colors duration-200"
           >
             {isSidebarOpen ? <HiX size={30} /> : <HiMenu size={30} />}
           </button>
-          <div className="text-2xl">𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶</div>
+          <div className="header__logo">
+            <Link href="/home" className="text-2xl font-bold">
+              𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
+            </Link>
+          </div>
         </div>
         <div className="relative flex items-center">
           {/* User Avatar */}

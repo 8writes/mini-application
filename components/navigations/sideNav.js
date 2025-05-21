@@ -45,12 +45,12 @@ export default function SideNav() {
     <div
       ref={sidebarRef}
       className={`
-        fixed md:relative
-        flex flex-col h-[100dvh] overflow-y-auto pt-20 bg-gray-800 text-white w-64 shadow-lg
+        fixed lg:relative
+        flex flex-col h-[100dvh] overflow-y-auto pt-20 bg-gray-800 pb-10 text-white w-64 shadow-lg
         transform transition-transform duration-300 ease-in-out
         z-40
         ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }
       `}
     >
@@ -96,9 +96,12 @@ export default function SideNav() {
         <NavItem href="/profile" icon={<HiOutlineUserCircle />}>
           Profile
         </NavItem>
-        <NavItem href="/referral" icon={<HiOutlineUsers />}>
-          Referral
+        <NavItem href="/transactions" icon={<HiOutlineCreditCard />}>
+          Transactions
         </NavItem>
+        {/**  <NavItem href="/referral" icon={<HiOutlineUsers />}>
+          Referral
+        </NavItem>*/}
         <NavItem href="/support" icon={<HiOutlineSupport />}>
           Support
         </NavItem>
@@ -113,18 +116,18 @@ function NavItem({ href, icon, children }) {
   const isActive = pathname === href;
   return (
     <>
-     <Link
-      href={href}
-      onClick={() => setIsSidebarOpen(false)}
-      className={`flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out ${
-        isActive ? "bg-gray-700 border-l-4 border-blue-500" : ""
-      }`}
-    >
-      <span className={`text-lg ${isActive ? "text-blue-400" : ""}`}>
-        {icon}
-      </span>
-      <span className={isActive ? "font-medium" : ""}>{children}</span>
-    </Link>
+      <Link
+        href={href}
+        onClick={() => setIsSidebarOpen(false)}
+        className={`flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out ${
+          isActive ? "bg-gray-700 border-l-4 border-blue-500" : ""
+        }`}
+      >
+        <span className={`text-lg ${isActive ? "text-blue-400" : ""}`}>
+          {icon}
+        </span>
+        <span className={isActive ? "font-medium" : ""}>{children}</span>
+      </Link>
     </>
   );
 }

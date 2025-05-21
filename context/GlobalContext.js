@@ -12,7 +12,7 @@ export const useGlobalContext = () => {
 };
 
 export const GlobalProvider = ({ children }) => {
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
@@ -53,7 +53,9 @@ export const GlobalProvider = ({ children }) => {
           // set the user data in the context
           setUser(userData?.user);
         } else {
-          toast.error("User not authenticated");
+          toast.error("User not authenticated", {
+            toastId: "auth",
+          });
           router.push("/auth/login");
         }
       } catch (err) {
