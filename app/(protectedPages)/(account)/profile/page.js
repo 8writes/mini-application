@@ -8,21 +8,29 @@ import {
   HiLockClosed,
   HiLogout,
   HiPencilAlt,
+  HiEyeOff,
+  HiEye,
 } from "react-icons/hi";
 import { FaUserShield, FaHistory } from "react-icons/fa";
 import Image from "next/image";
 import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
   const { user, fetchData, isLoading, handleLogout } = useGlobalContext();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
   const [formData, setFormData] = useState({
     first_name: user?.first_name || "",
     last_name: user?.last_name || "",
     email: user?.email || "",
     phone: user?.phone || "",
+    old_password: "",
+    password: "",
   });
 
   useEffect(() => {
@@ -65,6 +73,51 @@ export default function ProfilePage() {
     }
   };
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setIsSavingPassword(true);
+
+    if (!formData.old_password && !formData.password) {
+      toast.info("Fill the required field");
+      setIsSavingPassword(false);
+      return;
+    }
+
+    try {
+      const { data: passwordConfirmData, error: passwordConfirmError } =
+        await billzpaddi.auth.signInWithPassword({
+          email: formData?.email,
+          password: formData?.old_password,
+        });
+
+      if (passwordConfirmError) {
+        toast.error("Incorrect old password");
+        return;
+      }
+
+      const { data, error } = await billzpaddi.auth.updateUser({
+        password: formData?.password,
+      });
+
+      if (error) {
+        toast.error(error.message || "Something went wrong");
+        return;
+      }
+
+      setFormData((prev) => ({ ...prev, password: "", old_password: "" }));
+
+      toast.success("Password updated");
+
+      await billzpaddi.auth.signOut();
+
+      router.push("/auth/login");
+    } catch (err) {
+      toast.error(err);
+    } finally {
+      setIsSavingPassword(false);
+    }
+  };
+
   if (!user || isLoading) {
     return (
       <div className="flex items-center justify-center h-[30rem]">
@@ -100,9 +153,9 @@ export default function ProfilePage() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">
-                {user.last_name} {user.first_name?.[0]}.
+                {user?.last_name} {user?.first_name?.[0]}.
               </h1>
-              <p className="text-gray-400">@{user.email || "user"}</p>
+              <p className="text-gray-400">@{user?.email || "user"}</p>
             </div>
           </div>
           <button
@@ -248,10 +301,69 @@ export default function ProfilePage() {
               Security
             </h2>
             <div className="space-y-4">
-              <button className="w-full flex justify-between items-center p-3 hover:bg-gray-700 rounded-lg transition-colors">
+              <div>
+                <label className="block mb-1 text-sm font-medium text-white">
+                  Old Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    disabled={isSavingPassword}
+                    value={formData.old_password || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, old_password: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border pr-10 text-white border-gray-400 rounded-lg outline-none disabled:opacity-50"
+                    placeholder="******"
+                  />
+                  <span
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <HiEyeOff size={20} />
+                    ) : (
+                      <HiEye size={20} />
+                    )}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <label className="block mb-1 text-sm font-medium text-white">
+                  New Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    disabled={isSavingPassword}
+                    value={formData.password || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border pr-10 text-white border-gray-400 rounded-lg outline-none disabled:opacity-50"
+                    placeholder="******"
+                  />
+                  <span
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <HiEyeOff size={20} />
+                    ) : (
+                      <HiEye size={20} />
+                    )}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={handleChangePassword}
+                className="w-full flex justify-center items-center p-3 cursor-pointer hover:bg-gray-700 bg-gray-900 rounded-lg transition-colors"
+              >
                 <span className="flex items-center gap-3">
                   <FaUserShield className="text-blue-400" />
-                  Change Password
+                  {isSavingPassword ? "Updating..." : "Change Password"}
                 </span>
               </button>
             </div>
