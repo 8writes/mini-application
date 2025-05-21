@@ -9,67 +9,60 @@ import {
 } from "react-icons/hi";
 import { FaMoneyBillWave, FaHistory } from "react-icons/fa";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { billzpaddi } from "@/lib/client";
 
 export default function DashboardPage() {
   const { user, isLoading } = useGlobalContext();
+  const [wallet, setWallet] = useState("");
+  const [transactions, setTransactions] = useState("");
   const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
 
   // Convert Naira to BLZ
   const nairaToBlz = (naira) => (naira / conversionRate).toFixed(2);
 
-  // Sample wallet data - replace with your actual data
-  const wallet = {
-    balance: 12500.75,
-    currency: "BLZ",
-    transactions: [
-      {
-        id: 1,
-        type: "credit",
-        amount: 5000,
-        description: "Wallet Funding",
-        date: "2023-06-15T10:30:00",
-        status: "completed",
-        reference: "REF-123456",
-      },
-      {
-        id: 2,
-        type: "debit",
-        amount: 1500,
-        description: "Airtime Purchase - MTN",
-        date: "2023-06-14T14:45:00",
-        status: "completed",
-        reference: "REF-789012",
-      },
-      {
-        id: 3,
-        type: "credit",
-        amount: 10000,
-        description: "Referral Bonus",
-        date: "2023-06-10T08:15:00",
-        status: "completed",
-        reference: "REF-345678",
-      },
-      {
-        id: 4,
-        type: "debit",
-        amount: 2500,
-        description: "DSTV Subscription",
-        date: "2023-06-08T16:20:00",
-        status: "completed",
-        reference: "REF-901234",
-      },
-      {
-        id: 5,
-        type: "debit",
-        amount: 500,
-        description: "Data Purchase - Airtel",
-        date: "2023-06-05T11:10:00",
-        status: "failed",
-        reference: "REF-567890",
-      },
-    ],
+  // Fetch user wallet
+  const fetchWallet = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await billzpaddi
+        .from("wallets")
+        .select()
+        .eq("user_id", user?.user_id);
+
+      // set the user data in the context
+      setWallet(data[0]);
+    } catch (err) {
+      toast.error(err);
+    } finally {
+    }
   };
+
+  useEffect(() => {
+    fetchWallet();
+  }, [user]);
+
+  // Fetch user wallet
+  const fetchTransactions = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await billzpaddi
+        .from("transactions")
+        .select()
+        .eq("user_id", user?.user_id);
+
+      // set the user data in the context
+      setTransactions(data);
+    } catch (err) {
+      toast.error(err);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [user]);
 
   if (!user || isLoading) {
     return (
@@ -106,7 +99,7 @@ export default function DashboardPage() {
             <div>
               <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
               <p className="text-xl md:text-3xl font-bold">
-                {wallet.currency} {wallet.balance.toLocaleString()}
+                {wallet?.currency ?? "BLZ"} {wallet?.balance?.toLocaleString() ?? 0}
               </p>
             </div>
             <div className="flex gap-3">
@@ -120,7 +113,7 @@ export default function DashboardPage() {
           {/* Quick Actions */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {/* Fund Wallet Button */}
-            <Link href="/wallet/fund" passHref>
+            <Link href="/wallet" passHref>
               <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
                 <div className="bg-green-500/20 p-3 rounded-full mb-2">
                   <HiArrowDown className="text-green-400 text-xl" />
@@ -178,9 +171,9 @@ export default function DashboardPage() {
         </div>
 
         <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-          {wallet.transactions.length > 0 ? (
+          {transactions.length > 0 ? (
             <ul className="divide-y divide-gray-700">
-              {wallet.transactions.map((txn) => (
+              {transactions.map((txn) => (
                 <li
                   key={txn.id}
                   className="p-4 hover:bg-gray-700/50 transition-colors"

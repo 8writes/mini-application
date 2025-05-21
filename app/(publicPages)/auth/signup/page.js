@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import { billzpaddi } from "@/lib/client";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -13,37 +14,45 @@ export default function SignupPage() {
     last_name: "",
     email: "",
     password: "",
-    role: "user",
-    status: true,
+    role: "customer",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-      const token = localStorage.getItem("token_mini_app");
-      if (token) {
-        router.push("/dashboard");
-      }
-    }, [router]);
+    const token = localStorage.getItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      const { data, error: signUpError } = await billzpaddi.auth.signUp({
+        email: formData?.email,
+        password: formData?.password,
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        toast.error(err.message || "Signup failed");
+      if (signUpError) {
+        toast.error(signUpError.message || "Signup failed");
         return;
       }
+
+      const { password, ...dataToSave } = formData;
+
+      const { error } = await billzpaddi.from("users").insert(dataToSave);
+
+      if (error) {
+        toast.error(error.message || "Signup failed");
+        return;
+      }
+
+      const { error: errorWallet } = await billzpaddi.from("wallets").insert({
+        balance: 0,
+      });
 
       toast.success("Signup successful!");
       router.push("/auth/login");

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.7",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.0",
     "cookie": "^1.0.2",

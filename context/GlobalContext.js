@@ -1,4 +1,5 @@
 "use client";
+import { billzpaddi } from "@/lib/client";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -18,53 +19,38 @@ export const GlobalProvider = ({ children }) => {
   const router = useRouter();
 
   // Fetch data
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        // check if user is authenticated
-        const authResponse = await fetch("/api/auth/authCheck");
-        const authData = await authResponse.json();
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      // check for token
 
-        // validate the token in localstorage
-        const tokenValidate = localStorage.getItem("token_mini_app");
+      const tokenString = localStorage.getItem(
+        "sb-xwgqadrwygwhwvqcwsde-auth-token"
+      );
+      const token = tokenString ? JSON.parse(tokenString) : null;
 
-        if (tokenValidate) {
-          const item = JSON.parse(tokenValidate);
-          if (Date.now() > item.expiry) {
-            localStorage.removeItem("token_mini_app");
-            router.push("/auth/login");
-            setIsLoading(false);
-            return;
-          }
-        }
+      if (token) {
+        const { data, error } = await billzpaddi
+          .from("users")
+          .select()
+          .eq("user_id", token?.user?.id);
 
-        // check for token
-        const token = localStorage.getItem("token_mini_app");
-
-        if (authData.authenticated && token) {
-          // if user is logged in
-          const { user } = authData;
-
-          // fetch user data using userId
-          const userResponse = await fetch(`/api/users/${user?.userId}`);
-          const userData = await userResponse.json();
-
-          // set the user data in the context
-          setUser(userData?.user);
-        } else {
-          toast.error("User not authenticated", {
-            toastId: "auth",
-          });
-          router.push("/auth/login");
-        }
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      } finally {
-        setIsLoading(false);
+        // set the user data in the context
+        setUser(data[0]);
+      } else {
+        toast.error("User not authenticated", {
+          toastId: "auth",
+        });
+        router.push("/auth/login");
       }
-    };
-
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  // Fetch data
+  useEffect(() => {
     fetchData();
   }, [router]);
 
@@ -75,6 +61,7 @@ export const GlobalProvider = ({ children }) => {
         isLoading,
         isSidebarOpen,
         setIsSidebarOpen,
+        fetchData,
       }}
     >
       {children}

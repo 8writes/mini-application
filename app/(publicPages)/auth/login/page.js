@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import { billzpaddi } from "@/lib/client";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -13,7 +14,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token_mini_app");
+    const token = localStorage.getItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
     if (token) {
       router.push("/dashboard");
     }
@@ -24,22 +25,15 @@ export default function LoginPage() {
     setIsLoadingSubmit(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const { data, error } = await billzpaddi.auth.signInWithPassword({
+        email: formData?.email,
+        password: formData?.password,
       });
 
-      if (res.ok) {
-        const tokenData = {
-          value: "true",
-          expiry: Date.now() + 3600000,
-        };
-        localStorage.setItem("token_mini_app", JSON.stringify(tokenData));
+      if (!error) {
         router.push("/dashboard");
       } else {
-        const data = await res.json();
-        toast.error(data.message || "Login failed");
+        toast.error(error.message || "Login failed");
       }
     } catch (err) {
       toast.error("Something went wrong");

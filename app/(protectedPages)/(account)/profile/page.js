@@ -1,6 +1,6 @@
 "use client";
 import { useGlobalContext } from "@/context/GlobalContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   HiUser,
   HiMail,
@@ -11,16 +11,59 @@ import {
 } from "react-icons/hi";
 import { FaUserShield, FaHistory } from "react-icons/fa";
 import Image from "next/image";
+import { billzpaddi } from "@/lib/client";
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
-  const { user, isLoading, logout } = useGlobalContext();
+  const { user, fetchData, isLoading, logout } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: user?.first_name || "",
-    lastName: user?.last_name || "",
+    first_name: user?.first_name || "",
+    last_name: user?.last_name || "",
     email: user?.email || "",
     phone: user?.phone || "",
   });
+
+  useEffect(() => {
+    setFormData({
+      first_name: user?.first_name || "",
+      last_name: user?.last_name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+    });
+  }, [user]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      const { data, error } = await billzpaddi
+        .from("users")
+        .update({ phone: formData?.phone })
+        .eq("user_id", user?.user_id)
+        .select();
+
+      if (error) {
+        console.log(error.message || "Something went wrong");
+        return;
+      }
+      
+      fetchData();
+
+      toast.success("Profile updated");
+    } catch (err) {
+      toast.error(err);
+    } finally {
+      setIsEditing(false);
+      setIsSaving(false);
+    }
+  };
 
   if (!user || isLoading) {
     return (
@@ -33,17 +76,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your update profile logic here
-    setIsEditing(false);
-  };
 
   return (
     <div className="p-4 md:p-6">
@@ -102,7 +134,7 @@ export default function ProfilePage() {
                     <input
                       type="text"
                       name="firstName"
-                      value={formData.firstName}
+                      value={formData.first_name || ""}
                       onChange={handleInputChange}
                       className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                       required
@@ -116,7 +148,7 @@ export default function ProfilePage() {
                     <input
                       type="text"
                       name="lastName"
-                      value={formData.lastName}
+                      value={formData.last_name || ""}
                       onChange={handleInputChange}
                       className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                       required
@@ -130,7 +162,7 @@ export default function ProfilePage() {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
+                    value={formData.email || ""}
                     onChange={handleInputChange}
                     className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                     required
@@ -145,19 +177,21 @@ export default function ProfilePage() {
                   <input
                     type="tel"
                     name="phone"
-                    value={formData.phone}
+                    value={formData.phone || ""}
                     onChange={handleInputChange}
                     className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                     required
+                    disabled={isSaving}
                   />
                 </div>
 
                 <div className="pt-4">
                   <button
                     type="submit"
+                    disabled={isSaving}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md cursor-pointer transition-colors"
                   >
-                    Save Changes
+                    {isSaving ? "Saving..." : "Save Changes"}
                   </button>
                 </div>
               </form>
@@ -168,7 +202,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-gray-400">Full Name</p>
                     <p className="font-medium">
-                      {user.last_name} {user.first_name}
+                      {formData?.last_name} {formData?.first_name}
                     </p>
                   </div>
                 </div>
@@ -177,7 +211,7 @@ export default function ProfilePage() {
                   <HiMail className="text-gray-400 text-xl" />
                   <div>
                     <p className="text-gray-400">Email</p>
-                    <p className="font-medium">{user.email}</p>
+                    <p className="font-medium">{formData?.email}</p>
                   </div>
                 </div>
 
@@ -186,7 +220,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-gray-400">Phone</p>
                     <p className="font-medium">
-                      {user.phone || "Not provided"}
+                      {formData?.phone || "Not provided"}
                     </p>
                   </div>
                 </div>
@@ -196,7 +230,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-gray-400">Member Since</p>
                     <p className="font-medium">
-                      {new Date(user.createdAt).toLocaleDateString()}
+                      {new Date(user?.created_at).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
