@@ -242,7 +242,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md cursor-pointer transition-colors"
+                    className="w-full flex justify-center items-center p-3 cursor-pointer hover:bg-gray-700 bg-gray-900 rounded-lg transition-colors"
                   >
                     {isSaving ? "Saving..." : "Save Changes"}
                   </button>
