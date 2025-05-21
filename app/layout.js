@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "MINI APP",
-  description: "Something cool",
+  title: "BillzPaddi",
+  description: "Fast, secure, and reliable solutions for your everyday digital needs.",
 };
 
 export default function RootLayout({ children }) {
