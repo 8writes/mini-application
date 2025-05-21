@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { HiEye, HiEyeOff } from "react-icons/hi";
+import { billzpaddi } from "@/lib/client";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "" });
@@ -12,7 +12,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token_mini_app");
+    const token = localStorage.getItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
     if (token) {
       router.push("/dashboard");
     }
@@ -23,14 +23,17 @@ export default function LoginPage() {
     setIsLoadingSubmit(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const { data, error } = await billzpaddi.auth.resetPasswordForEmail(
+        formData.email,
+        {
+          redirectTo: "https://billzpaddi.com.ng/update-password",
+        }
+      );
 
-      if (res.ok) {
+      if (error) {
+        toast.error(error.message);
       }
+      toast.success("Reset link sent");
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
@@ -71,7 +74,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={true}
+            disabled={isLoadingSubmit}
             className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50"
           >
             {isLoadingSubmit ? "Sending..." : "Send Reset Link"}
