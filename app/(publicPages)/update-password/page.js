@@ -14,11 +14,12 @@ export default function LoginPage() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const token = pathname.split("/").pop();
+  const hasAccessToken = pathname.includes("access_token=");
 
   useEffect(() => {
-    if (!token) {
-      router.push("/dashboard");
+    if (!hasAccessToken) {
+      // Redirect to login if no token found
+      router.push("/auth/login");
     }
   }, [router]);
 
