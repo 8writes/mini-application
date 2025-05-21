@@ -152,7 +152,7 @@ export default function TransactionsPage() {
                     <div>
                       <p className="font-medium">{txn.description}</p>
                       <p className="text-xs text-gray-400 md:hidden">
-                        {new Date(txn.date).toLocaleDateString()}
+                        {new Date(txn.created_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -201,6 +201,8 @@ export default function TransactionsPage() {
                       {txn.status.charAt(0).toUpperCase() + txn.status.slice(1)}
                     </span>
                   </div>
+
+                  <p className="text-sm pl-2">{txn.reference}</p>
                 </div>
               </li>
             ))}

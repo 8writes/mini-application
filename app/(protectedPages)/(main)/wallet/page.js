@@ -14,6 +14,15 @@ import { toast } from "react-toastify";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 
 export default function WalletPage() {
+  const [PaystackPop, setPaystackPop] = useState(null);
+  // basically load paystack on client side only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      import("@paystack/inline-js").then((module) => {
+        setPaystackPop(() => module.default); // Fix instantiation issue
+      });
+    }
+  }, []);
   const { user, isLoading } = useGlobalContext();
   const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
   const [isFunding, setIsFunding] = useState(false);
@@ -27,45 +36,44 @@ export default function WalletPage() {
 
   const presetAmounts = [1000, 2000, 5000, 10000];
 
-  // Fund wallet
-  const handleFundWallet = async (e) => {
-    e.preventDefault();
+  // Function to handle Paystack payment
+  const initializePayment = async () => {
+    return new Promise((resolve, reject) => {
+      const handler = PaystackPop.setup({
+        key: "pk_test_ad8c15adff0dfa46cc159f7fc8b76526b18dc7a6",
+        email: user?.email.trim(),
+        amount: blzToNaira(parseFloat(amount || 0)) * 100, // Convert to kobo (multiply by 100)
+        currency: "NGN",
+        callback: async (response) => {
+          if (response.status === "success") {
+            await updateWalletBalance(response.reference);
+            resolve(response);
+          } else {
+            reject(toast.error("Payment failed."));
+          }
+        },
+        onClose: () => reject(toast.error("Transaction was canceled by user.")),
+      });
+      handler.openIframe();
+    });
+  };
 
-    if (!amount) {
-      toast.info("Enter an amount");
-      return;
-    }
-
-    setIsFunding(true);
-
+  const updateWalletBalance = async (reference) => {
+    setIsFunding(true)
     try {
-      // 1. First get the current wallet balance
-      const { data: currentWallet, error: fetchError } = await billzpaddi
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", user?.user_id)
-        .single();
-
-      if (fetchError) throw fetchError;
-      if (!currentWallet) throw new Error("Wallet not found");
-
-      // 2. Calculate new balance (current + new amount)
-      const currentBalance = parseFloat(currentWallet.balance);
       const fundingAmount = parseFloat(amount);
+      const currentBalance = parseFloat(wallet?.balance || 0);
       const newBalance = currentBalance + fundingAmount;
 
-      // 3. Update wallet with new balance
-      const { data: updatedWallet, error: updateError } = await billzpaddi
+      // Update wallet balance
+      const { error: walletError } = await billzpaddi
         .from("wallets")
         .update({ balance: newBalance })
-        .eq("user_id", user?.user_id)
-        .select();
+        .eq("user_id", user?.user_id);
 
-      if (updateError) throw updateError;
+      if (walletError) throw walletError;
 
-      const reference = `REF-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
-      // 4. Create a transaction record
+      // Create transaction record
       const { error: transactionError } = await billzpaddi
         .from("transactions")
         .insert({
@@ -79,17 +87,28 @@ export default function WalletPage() {
 
       if (transactionError) throw transactionError;
 
+      // Refresh data
       fetchWallet();
       fetchTransactions();
+
       setAmount("");
-      setActivePreset(null);
       toast.success(`Wallet funded with ${fundingAmount} BLZ`);
     } catch (error) {
-      console.error("Funding error:", error);
-      toast.error(error.message || "Failed to fund wallet");
+      console.error("Wallet update error:", error);
+      toast.error("Payment successful but wallet update failed");
     } finally {
       setIsFunding(false);
     }
+  };
+
+  const handleFundWallet = (e) => {
+    e.preventDefault();
+
+    if (!amount || parseFloat(amount) <= 0) {
+      toast.info("Please enter a valid amount");
+      return;
+    }
+    initializePayment();
   };
 
   if (!user || isLoading) {
