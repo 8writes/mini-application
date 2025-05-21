@@ -23,7 +23,7 @@ export default function WalletPage() {
 
   // Convert Naira to BLZ
   const nairaToBlz = (naira) => (naira / conversionRate).toFixed(2);
-  const blzToNaira = (blz) => (blz * conversionRate).toFixed(2);
+  const blzToNaira = (blz) => (blz * conversionRate);
 
   const presetAmounts = [1000, 2000, 5000, 10000];
 
@@ -45,7 +45,7 @@ export default function WalletPage() {
       // Simulate API call
       setTimeout(() => {
         setWallet({
-          balance: 12500.75,
+          balance: 0,
           currency: "BLZ",
           transactions: [
             {
@@ -124,7 +124,7 @@ export default function WalletPage() {
               <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
               <div className="flex flex-wrap items-end gap-2">
                 <p className="text-xl md:text-3xl font-bold">
-                  {wallet.currency} {nairaToBlz(wallet.balance)}
+                  {wallet.currency?? "BLZ"} {nairaToBlz(wallet.balance)}
                 </p>
                 <p className="text-gray-400 text-sm mb-1">
                   (₦{wallet.balance.toLocaleString()})
