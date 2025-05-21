@@ -129,13 +129,13 @@ export default function GlobalNavbar() {
                 Home
               </Link>
               <Link
-                href="/services"
+                href="/faq"
                 className={`hover:bg-gray-700 px-4 py-3 rounded-md transition-all duration-200 ${
-                  pathname === "/services" ? "bg-gray-700" : ""
+                  pathname === "/faq" ? "bg-gray-700" : ""
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Services
+                FAQs
               </Link>
               <Link
                 href="/about"
