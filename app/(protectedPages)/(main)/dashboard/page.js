@@ -12,58 +12,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { billzpaddi } from "@/lib/client";
+import { useGlobalContextData } from "@/context/GlobalContextData";
 
 export default function DashboardPage() {
   const { user, isLoading } = useGlobalContext();
-  const [wallet, setWallet] = useState("");
-  const [transactions, setTransactions] = useState("");
+  const { wallet, transactions } = useGlobalContextData();
   const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
 
   // Convert Naira to BLZ
   const nairaToBlz = (naira) => naira / conversionRate;
   const blzToNaira = (blz) => blz * conversionRate;
-
-  // Fetch user wallet
-  const fetchWallet = async () => {
-    if (!user) return;
-    try {
-      const { data, error } = await billzpaddi
-        .from("wallets")
-        .select()
-        .eq("user_id", user?.user_id);
-
-      // set the user data in the context
-      setWallet(data[0]);
-    } catch (err) {
-      toast.error(err);
-    } finally {
-    }
-  };
-
-  useEffect(() => {
-    fetchWallet();
-  }, [user]);
-
-  // Fetch user wallet
-  const fetchTransactions = async () => {
-    if (!user) return;
-    try {
-      const { data, error } = await billzpaddi
-        .from("transactions")
-        .select()
-        .eq("user_id", user?.user_id);
-
-      // set the user data in the context
-      setTransactions(data);
-    } catch (err) {
-      toast.error(err);
-    } finally {
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [user]);
 
   if (!user || isLoading) {
     return (
@@ -101,15 +59,19 @@ export default function DashboardPage() {
               <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
               <div className="flex flex-wrap items-end gap-2">
                 <p className="text-xl md:text-3xl font-bold">
-                  {wallet?.currency} {wallet?.balance?.toFixed(2)}
+                  {wallet?.currency ?? "BLZ"}{" "}
+                  {wallet?.balance?.toFixed(2) ?? "0.00"}
                 </p>
                 <p className="text-gray-400 text-sm mb-1">
-                  (₦{blzToNaira(wallet?.balance).toLocaleString()})
+                  (₦{blzToNaira(wallet?.balance).toLocaleString() ?? "0.00"})
                 </p>
               </div>
             </div>
             <div className="flex gap-3">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-sm cursor-pointer flex items-center gap-2 text-sm transition-colors">
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-sm cursor-pointer flex items-center gap-2 text-sm transition-colors"
+              >
                 <HiRefresh className="text-lg" />
                 Refresh
               </button>
@@ -177,14 +139,14 @@ export default function DashboardPage() {
         </div>
 
         <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-          {transactions.length > 0 ? (
+          {transactions?.length > 0 ? (
             <ul className="divide-y divide-gray-700">
-              {transactions.map((txn) => (
+              {transactions?.slice(0, 5).map((txn) => (
                 <li
                   key={txn.id}
-                  className="p-4 hover:bg-gray-700/50 transition-colors"
+                  className="px-4 py-2 hover:bg-gray-700/50 transition-colors"
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex items-center justify-between">
                     {/* Transaction Details (Left Side) */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-1">
@@ -204,7 +166,7 @@ export default function DashboardPage() {
                         <div>
                           <p className="font-medium">{txn.description}</p>
                           <p className="text-sm text-gray-400">
-                            {new Date(txn.date).toLocaleDateString()} •{" "}
+                            {new Date(txn.created_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
@@ -213,7 +175,7 @@ export default function DashboardPage() {
                     {/* Amount and Status (Right Side) */}
                     <div className="text-right ml-4">
                       <p
-                        className={`font-semibold ${
+                        className={`font-medium ${
                           txn.type === "credit"
                             ? "text-green-400"
                             : "text-red-400"

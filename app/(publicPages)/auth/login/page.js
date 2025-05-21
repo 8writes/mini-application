@@ -30,6 +30,8 @@ export default function LoginPage() {
         password: formData?.password,
       });
 
+      console.log(error)
+
       if (!error) {
         router.push("/dashboard");
       } else {

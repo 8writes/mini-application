@@ -23,7 +23,6 @@ export const GlobalProvider = ({ children }) => {
     setIsLoading(true);
     try {
       // check for token
-
       const tokenString = localStorage.getItem(
         "sb-xwgqadrwygwhwvqcwsde-auth-token"
       );
@@ -33,10 +32,11 @@ export const GlobalProvider = ({ children }) => {
         const { data, error } = await billzpaddi
           .from("users")
           .select()
-          .eq("user_id", token?.user?.id);
+          .eq("user_id", token?.user?.id)
+          .single();
 
         // set the user data in the context
-        setUser(data[0]);
+        setUser(data);
       } else {
         toast.error("User not authenticated", {
           toastId: "auth",

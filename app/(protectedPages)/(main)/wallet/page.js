@@ -9,14 +9,14 @@ import {
 } from "react-icons/hi";
 import { FaMoneyBillWave } from "react-icons/fa";
 import Link from "next/link";
+import { billzpaddi } from "@/lib/client";
+import { toast } from "react-toastify";
+import { useGlobalContextData } from "@/context/GlobalContextData";
 
 export default function WalletPage() {
   const { user, isLoading } = useGlobalContext();
-  const [wallet, setWallet] = useState({
-    balance: 0, //
-    currency: "BLZ",
-    transactions: [],
-  });
+  const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
+  const [isFunding, setIsFunding] = useState(false);
   const [amount, setAmount] = useState("");
   const [activePreset, setActivePreset] = useState(null);
   const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
@@ -27,79 +27,70 @@ export default function WalletPage() {
 
   const presetAmounts = [1000, 2000, 5000, 10000];
 
-  const handleFundWallet = (e) => {
+  // Fund wallet
+  const handleFundWallet = async (e) => {
     e.preventDefault();
-    // Add your wallet funding logic here
-    console.log(
-      `Funding wallet with ${amount} BLZ (${blzToNaira(amount)} NGN)`
-    );
-    // Reset form
-    setAmount("");
-    setActivePreset(null);
-  };
 
-  useEffect(() => {
-    // Fetch wallet data from API here
-    // This is just mock data
-    const fetchWalletData = async () => {
-      // Simulate API call
-      setTimeout(() => {
-        setWallet({
-          balance: 1, // 250 BLZ = 12500 Naira
-          currency: "BLZ",
-          transactions: [
-            {
-              id: 1,
-              type: "credit",
-              amount: 100, // 100 BLZ = 5000 Naira
-              description: "Wallet Funding",
-              date: "2023-06-15T10:30:00",
-              status: "completed",
-              reference: "REF-123456",
-            },
-            {
-              id: 2,
-              type: "debit",
-              amount: 30, // 30 BLZ = 1500 Naira
-              description: "Airtime Purchase - MTN",
-              date: "2023-06-14T14:45:00",
-              status: "completed",
-              reference: "REF-789012",
-            },
-            {
-              id: 3,
-              type: "credit",
-              amount: 200, // 200 BLZ = 10000 Naira
-              description: "Referral Bonus",
-              date: "2023-06-10T08:15:00",
-              status: "completed",
-              reference: "REF-345678",
-            },
-            {
-              id: 4,
-              type: "debit",
-              amount: 50, // 50 BLZ = 2500 Naira
-              description: "DSTV Subscription",
-              date: "2023-06-08T16:20:00",
-              status: "completed",
-              reference: "REF-901234",
-            },
-            {
-              id: 5,
-              type: "debit",
-              amount: 10, // 10 BLZ = 500 Naira
-              description: "Data Purchase - Airtel",
-              date: "2023-06-05T11:10:00",
-              status: "failed",
-              reference: "REF-567890",
-            },
-          ],
+    if (!amount) {
+      toast.info("Enter an amount");
+      return;
+    }
+
+    setIsFunding(true);
+
+    try {
+      // 1. First get the current wallet balance
+      const { data: currentWallet, error: fetchError } = await billzpaddi
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user?.user_id)
+        .single();
+
+      if (fetchError) throw fetchError;
+      if (!currentWallet) throw new Error("Wallet not found");
+
+      // 2. Calculate new balance (current + new amount)
+      const currentBalance = parseFloat(currentWallet.balance);
+      const fundingAmount = parseFloat(amount);
+      const newBalance = currentBalance + fundingAmount;
+
+      // 3. Update wallet with new balance
+      const { data: updatedWallet, error: updateError } = await billzpaddi
+        .from("wallets")
+        .update({ balance: newBalance })
+        .eq("user_id", user?.user_id)
+        .select();
+
+      if (updateError) throw updateError;
+
+      const reference = `REF-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+      // 4. Create a transaction record
+      const { error: transactionError } = await billzpaddi
+        .from("transactions")
+        .insert({
+          user_id: user.user_id,
+          amount: blzToNaira(fundingAmount),
+          type: "credit",
+          description: "Wallet Funding",
+          status: "completed",
+          reference,
         });
-      }, 1000);
-    };
 
-    fetchWalletData();
-  }, []);
+      if (transactionError) throw transactionError;
+
+      fetchWallet();
+      fetchTransactions();
+      setAmount("");
+      setActivePreset(null);
+      toast.success(`Wallet funded with ${fundingAmount} BLZ`);
+    } catch (error) {
+      console.error("Funding error:", error);
+      toast.error(error.message || "Failed to fund wallet");
+    } finally {
+      setIsFunding(false);
+    }
+  };
 
   if (!user || isLoading) {
     return (
@@ -124,16 +115,17 @@ export default function WalletPage() {
               <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
               <div className="flex flex-wrap items-end gap-2">
                 <p className="text-xl md:text-3xl font-bold">
-                  {wallet.currency} {wallet.balance.toFixed(2)}
+                  {wallet?.currency ?? "BLZ"}{" "}
+                  {wallet?.balance?.toFixed(2) ?? "0.00"}
                 </p>
                 <p className="text-gray-400 text-sm mb-1">
-                  (₦{blzToNaira(wallet.balance).toLocaleString()})
+                  (₦{blzToNaira(wallet?.balance).toLocaleString() ?? "0.00"})
                 </p>
               </div>
             </div>
             <button
               className="bg-gray-700 hover:bg-gray-600 cursor-pointer p-2 rounded-lg"
-              onClick={() => window.location.reload()}
+              onClick={() => fetchWallet()}
             >
               <HiRefresh className="text-xl" />
             </button>
@@ -194,11 +186,11 @@ export default function WalletPage() {
                     setAmount(e.target.value);
                     setActivePreset(null);
                   }}
-                  placeholder="0.00"
+                  placeholder="0"
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pl-12 outline-none"
                   required
                   min="1"
-                  step="0.01"
+                  disabled={isFunding}
                 />
                 <span className="absolute left-3 top-3.5 text-gray-400">
                   BLZ
@@ -213,9 +205,10 @@ export default function WalletPage() {
 
             <button
               type="submit"
+              disabled={isFunding}
               className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-3 rounded-lg transition-colors font-medium"
             >
-              Fund Wallet
+              {isFunding ? "Processing..." : "Fund Wallet"}
             </button>
           </form>
         </div>

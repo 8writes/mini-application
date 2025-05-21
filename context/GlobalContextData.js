@@ -1,0 +1,153 @@
+"use client";
+import { billzpaddi } from "@/lib/client";
+import { useRouter } from "next/navigation";
+import { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
+
+// Context for global data
+const GlobalContextData = createContext();
+
+// Custom hook to use the GlobalContextData
+export const useGlobalContextData = () => {
+  return useContext(GlobalContextData);
+};
+
+export const GlobalProviderData = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [wallet, setWallet] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+
+  // Set up real-time subscriptions
+  useEffect(() => {
+    if (!user) return;
+
+    // Wallet subscription
+    const walletSubscription = billzpaddi
+      .channel("wallet_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "wallets",
+          filter: `user_id=eq.${user.user_id}`,
+        },
+        (payload) => {
+          setWallet(payload.new);
+        }
+      )
+      .subscribe();
+
+    // Transactions subscription
+    const transactionsSubscription = billzpaddi
+      .channel("transactions_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "transactions",
+          filter: `user_id=eq.${user.user_id}`,
+        },
+        () => {
+          fetchTransactions(); // Refresh transactions list
+        }
+      )
+      .subscribe();
+
+    return () => {
+      billzpaddi.removeChannel(walletSubscription);
+      billzpaddi.removeChannel(transactionsSubscription);
+    };
+  }, [user]);
+
+  // Fetch user data
+  const fetchUserData = async () => {
+    setIsLoading(true);
+
+    try {
+      // check for token
+      const tokenString = localStorage.getItem(
+        "sb-xwgqadrwygwhwvqcwsde-auth-token"
+      );
+      const token = tokenString ? JSON.parse(tokenString) : null;
+
+      const { data, error } = await billzpaddi
+        .from("users")
+        .select()
+        .eq("user_id", token?.user?.id)
+        .single();
+
+      if (error) throw error;
+      setUser(data);
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+      toast.error("Failed to load user data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch data
+  useEffect(() => {
+    fetchUserData();
+  }, [router]);
+
+  // Fetch user wallet
+  const fetchWallet = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await billzpaddi
+        .from("wallets")
+        .select()
+        .eq("user_id", user?.user_id)
+        .single();
+
+      if (error) throw error;
+      setWallet(data);
+    } catch (err) {
+      console.error("Wallet fetch error:", err);
+      toast.error("Failed to load wallet data");
+    }
+  };
+
+  // Fetch user transactions
+  const fetchTransactions = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await billzpaddi
+        .from("transactions")
+        .select()
+        .eq("user_id", user?.user_id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setTransactions(data);
+    } catch (err) {
+      console.error("Transactions fetch error:", err);
+      toast.error("Failed to load transactions");
+    }
+  };
+
+  // Fetch data
+  useEffect(() => {
+    fetchWallet();
+    fetchTransactions();
+  }, [user]);
+
+  return (
+    <GlobalContextData.Provider
+      value={{
+        isLoading,
+        wallet,
+        transactions,
+        fetchWallet,
+        fetchTransactions,
+      }}
+    >
+      {children}
+    </GlobalContextData.Provider>
+  );
+};

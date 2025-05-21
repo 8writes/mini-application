@@ -3,10 +3,11 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
 import { HiSearch, HiFilter, HiArrowDown, HiArrowUp } from "react-icons/hi";
 import { FaExchangeAlt } from "react-icons/fa";
+import { useGlobalContextData } from "@/context/GlobalContextData";
 
 export default function TransactionsPage() {
   const { user, isLoading } = useGlobalContext();
-  const [transactions, setTransactions] = useState([]);
+  const { transactions } = useGlobalContextData();
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -15,66 +16,6 @@ export default function TransactionsPage() {
 
   // Convert Naira to BLZ
   const nairaToBlz = (naira) => (naira / conversionRate).toFixed(2);
-
-  useEffect(() => {
-    // Fetch transactions from API
-    const fetchTransactions = async () => {
-      // Simulate API call with mock data
-      setTimeout(() => {
-        const mockTransactions = [
-          {
-            id: 1,
-            type: "credit",
-            amount: 5000,
-            description: "Wallet Funding",
-            date: "2023-06-15T10:30:00",
-            status: "completed",
-            reference: "REF-123456",
-          },
-          {
-            id: 2,
-            type: "debit",
-            amount: 1500,
-            description: "Airtime Purchase - MTN",
-            date: "2023-06-14T14:45:00",
-            status: "completed",
-            reference: "REF-789012",
-          },
-          {
-            id: 3,
-            type: "credit",
-            amount: 10000,
-            description: "Referral Bonus",
-            date: "2023-06-10T08:15:00",
-            status: "completed",
-            reference: "REF-345678",
-          },
-          {
-            id: 4,
-            type: "debit",
-            amount: 2500,
-            description: "DSTV Subscription",
-            date: "2023-06-08T16:20:00",
-            status: "completed",
-            reference: "REF-901234",
-          },
-          {
-            id: 5,
-            type: "debit",
-            amount: 500,
-            description: "Data Purchase - Airtel",
-            date: "2023-06-05T11:10:00",
-            status: "failed",
-            reference: "REF-567890",
-          },
-        ];
-        setTransactions(mockTransactions);
-        setFilteredTransactions(mockTransactions);
-      }, 1000);
-    };
-
-    fetchTransactions();
-  }, []);
 
   useEffect(() => {
     // Filter and sort transactions
@@ -96,8 +37,8 @@ export default function TransactionsPage() {
 
     // Apply sorting
     result.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     });
 
@@ -236,10 +177,10 @@ export default function TransactionsPage() {
                   {/* Date (Desktop) */}
                   <div className="col-span-2 hidden md:block">
                     <p className="text-sm">
-                      {new Date(txn.date).toLocaleDateString()}
+                      {new Date(txn.created_at).toLocaleDateString()}
                     </p>
                     <p className="text-xs text-gray-400">
-                      {new Date(txn.date).toLocaleTimeString([], {
+                      {new Date(txn.created_at).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
