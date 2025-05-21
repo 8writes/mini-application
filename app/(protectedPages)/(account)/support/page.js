@@ -19,7 +19,7 @@ export default function Page() {
   }
   return (
     <div className="flex flex-col items-center justify-center bg-gray-700 text-white">
-      <section className="max-w-4xl w-full space-y-8 pt-4">
+      <section className="max-w-4xl w-full space-y-8 px-4">
         {/* Header with icon */}
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center bg-blue-900/20 p-4 rounded-full">

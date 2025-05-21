@@ -46,7 +46,7 @@ export default function GlobalNavbar() {
       }`}
     >
       <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4 md:py-6">
+        <div className="flex justify-between items-center py-5 md:py-6">
           {/* Logo */}
           <div className="header__logo">
             <Link href="/home" className="text-2xl font-bold">

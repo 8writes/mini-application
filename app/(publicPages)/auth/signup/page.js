@@ -19,6 +19,13 @@ export default function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+      const token = localStorage.getItem("token_mini_app");
+      if (token) {
+        router.push("/dashboard");
+      }
+    }, [router]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
