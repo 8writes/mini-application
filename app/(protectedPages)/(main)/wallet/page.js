@@ -36,11 +36,13 @@ export default function WalletPage() {
 
   const presetAmounts = [1000, 2000, 5000, 10000];
 
+  const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+
   // Function to handle Paystack payment
   const initializePayment = async () => {
     return new Promise((resolve, reject) => {
       const handler = PaystackPop.setup({
-        key: "pk_test_ad8c15adff0dfa46cc159f7fc8b76526b18dc7a6",
+        key: paystackKey,
         email: user?.email.trim(),
         amount: blzToNaira(parseFloat(amount || 0)) * 100, // Convert to kobo (multiply by 100)
         currency: "NGN",
