@@ -67,13 +67,22 @@ export const GlobalProviderData = ({ children }) => {
   const fetchUserData = async () => {
     setIsLoading(true);
 
-    try {
-      // check for token
-      const tokenString = localStorage.getItem(
-        "sb-xwgqadrwygwhwvqcwsde-auth-token"
-      );
-      const token = tokenString ? JSON.parse(tokenString) : null;
+    // check for token
+    const tokenString = localStorage.getItem(
+      "sb-xwgqadrwygwhwvqcwsde-auth-token"
+    );
+    const token = tokenString ? JSON.parse(tokenString) : null;
 
+    if (!token) {
+      toast.error("User not authenticated", {
+        toastId: "auth",
+      });
+      router.push("/auth/login");
+
+      return;
+    }
+
+    try {
       const { data, error } = await billzpaddi
         .from("users")
         .select()
@@ -83,8 +92,7 @@ export const GlobalProviderData = ({ children }) => {
       if (error) throw error;
       setUser(data);
     } catch (err) {
-      console.error("Error fetching user data:", err);
-      toast.error("Failed to load user data");
+      toast.error(err);
     } finally {
       setIsLoading(false);
     }

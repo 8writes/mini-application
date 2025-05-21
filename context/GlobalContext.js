@@ -21,28 +21,31 @@ export const GlobalProvider = ({ children }) => {
   // Fetch data
   const fetchData = async () => {
     setIsLoading(true);
+
+    // check for token
+    const tokenString = localStorage.getItem(
+      "sb-xwgqadrwygwhwvqcwsde-auth-token"
+    );
+    const token = tokenString ? JSON.parse(tokenString) : null;
+
+    if (!token) {
+      toast.error("User not authenticated", {
+        toastId: "auth",
+      });
+      router.push("/auth/login");
+
+      return;
+    }
+
     try {
-      // check for token
-      const tokenString = localStorage.getItem(
-        "sb-xwgqadrwygwhwvqcwsde-auth-token"
-      );
-      const token = tokenString ? JSON.parse(tokenString) : null;
+      const { data, error } = await billzpaddi
+        .from("users")
+        .select()
+        .eq("user_id", token?.user?.id)
+        .single();
 
-      if (token) {
-        const { data, error } = await billzpaddi
-          .from("users")
-          .select()
-          .eq("user_id", token?.user?.id)
-          .single();
-
-        // set the user data in the context
-        setUser(data);
-      } else {
-        toast.error("User not authenticated", {
-          toastId: "auth",
-        });
-        router.push("/auth/login");
-      }
+      // set the user data in the context
+      setUser(data);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -54,6 +57,21 @@ export const GlobalProvider = ({ children }) => {
     fetchData();
   }, [router]);
 
+  // handle logout
+  const handleLogout = async () => {
+    try {
+      const { error } = await billzpaddi.auth.signOut();
+
+      if (!error) {
+        router.push("/auth/login");
+      } else {
+        toast.error(error.message || "Failed to logout");
+      }
+    } catch (err) {
+      console.error("Error during logout:", err);
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -62,6 +80,7 @@ export const GlobalProvider = ({ children }) => {
         isSidebarOpen,
         setIsSidebarOpen,
         fetchData,
+        handleLogout,
       }}
     >
       {children}

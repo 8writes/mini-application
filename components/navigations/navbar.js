@@ -12,43 +12,19 @@ import {
   HiOutlineUserCircle,
 } from "react-icons/hi";
 import Link from "next/link";
+import { billzpaddi } from "@/lib/client";
 
 export default function NavBar() {
   const pathname = usePathname();
-  const { user, isSidebarOpen, setIsSidebarOpen } = useGlobalContext();
+  const { user, isSidebarOpen, setIsSidebarOpen, handleLogout } =
+    useGlobalContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
   const dropdownRef = useRef(null);
 
   // toggle dropdown
   const toggleDropdown = () => {
     setIsDropdownOpen((prevState) => !prevState);
-  };
-
-  // handle logout
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      // logout user
-      const res = await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      if (res.ok) {
-        // clear token from localStorage
-        localStorage.removeItem("token_mini_app");
-
-        router.push("/auth/login");
-      } else {
-        toast.error("Failed to logout");
-        console.error("Failed to logout");
-      }
-    } catch (err) {
-      console.error("Error during logout:", err);
-    } finally {
-      setIsLoggingOut(false);
-    }
   };
 
   // close dropdown when clicking outside
@@ -146,7 +122,7 @@ export default function NavBar() {
                 className="flex items-center gap-2 px-4 py-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
               >
                 <HiOutlineLogout className="text-xl" />
-                {isLoggingOut ? "Logging out..." : "Logout"}
+                Logout
               </li>
             </ul>
           </div>

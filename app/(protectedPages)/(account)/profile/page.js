@@ -15,7 +15,7 @@ import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
 
 export default function ProfilePage() {
-  const { user, fetchData, isLoading, logout } = useGlobalContext();
+  const { user, fetchData, isLoading, handleLogout } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,7 +53,7 @@ export default function ProfilePage() {
         console.log(error.message || "Something went wrong");
         return;
       }
-      
+
       fetchData();
 
       toast.success("Profile updated");
@@ -269,7 +269,7 @@ export default function ProfilePage() {
                 Delete Account
               </button>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="w-full text-left flex cursor-pointer items-center gap-3 p-3 hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <HiLogout className="text-xl" />
