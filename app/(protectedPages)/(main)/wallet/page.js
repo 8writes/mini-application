@@ -49,6 +49,19 @@ export default function WalletPage() {
             await updateWalletBalance(response.reference);
             resolve(response);
           } else {
+            // Create transaction record
+            const { error: transactionError } = await billzpaddi
+              .from("transactions")
+              .insert({
+                user_id: user.user_id,
+                amount: blzToNaira(fundingAmount),
+                type: "credit",
+                description: "Wallet Funding",
+                status: "failed",
+                reference,
+              });
+
+            if (transactionError) throw transactionError;
             reject(toast.error("Payment failed."));
           }
         },
@@ -59,7 +72,7 @@ export default function WalletPage() {
   };
 
   const updateWalletBalance = async (reference) => {
-    setIsFunding(true)
+    setIsFunding(true);
     try {
       const fundingAmount = parseFloat(amount);
       const currentBalance = parseFloat(wallet?.balance || 0);
