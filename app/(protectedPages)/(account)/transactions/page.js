@@ -57,9 +57,6 @@ export default function TransactionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">Transaction History</h1>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400">1 BLZ = ₦50</span>
-        </div>
       </div>
 
       {/* Controls - Stacked on mobile */}
@@ -156,8 +153,8 @@ export default function TransactionsPage() {
                             : "text-red-400"
                         }`}
                       >
-                        {txn.type === "credit" ? "+" : "-"}
-                        {nairaToBlz(txn.amount)} BLZ
+                        {txn.type === "credit" ? "+" : "-"}₦
+                        {txn.amount.toLocaleString()}
                       </p>
                       <span
                         className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
@@ -209,11 +206,8 @@ export default function TransactionsPage() {
                           : "text-red-400"
                       }`}
                     >
-                      {txn.type === "credit" ? "+" : "-"}
-                      {nairaToBlz(txn.amount)} BLZ
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      ₦{txn.amount.toLocaleString()}
+                      {txn.type === "credit" ? "+" : "-"}₦
+                      {txn.amount.toLocaleString()}
                     </p>
                   </div>
 

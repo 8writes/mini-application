@@ -145,6 +145,11 @@ export const GlobalProviderData = ({ children }) => {
     fetchTransactions();
   }, [user]);
 
+  const uniqueRequestId = `req_${Date.now()}_${Math.floor(
+    Math.random() * 10000
+  )}`;
+
+
   return (
     <GlobalContextData.Provider
       value={{
@@ -153,6 +158,7 @@ export const GlobalProviderData = ({ children }) => {
         transactions,
         fetchWallet,
         fetchTransactions,
+        uniqueRequestId,
       }}
     >
       {children}

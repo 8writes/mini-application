@@ -384,10 +384,10 @@ export default function BettingServices() {
       </div>
       <h3 className="text-xl font-medium mb-2">Premium AI Predictions</h3>
       <p className="text-gray-400 mb-6">
-        Unlock our advanced AI predictions for just 5 BLZ
+        Unlock our advanced AI predictions for just ₦250
       </p>
       <button className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white py-2 px-6 rounded-md font-medium">
-        Unlock for 5 BLZ
+        Unlock for ₦250
       </button>
     </div>
   );

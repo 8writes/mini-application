@@ -102,8 +102,9 @@ const PurchaseDialog = ({
   phoneNumber,
   onSuccess,
 }) => {
-  const { user, updateUser } = useGlobalContext();
-  const { wallet, fetchWallet } = useGlobalContextData();
+  const { user } = useGlobalContext();
+  const { wallet, fetchWallet, uniqueRequestId, fetchTransactions } =
+    useGlobalContextData();
   const [walletBalance, setWalletBalance] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
@@ -136,7 +137,6 @@ const PurchaseDialog = ({
 
     if (open && user) {
       fetchWalletBalance();
-      fetchWallet();
       setError("");
     }
   }, [open, user]);
@@ -148,7 +148,7 @@ const PurchaseDialog = ({
     }
 
     if (walletBalance < totalAmount) {
-      setError("Insufficient funds in your wallet");
+      setError("Insufficient funds");
       return;
     }
 
@@ -156,8 +156,28 @@ const PurchaseDialog = ({
     setError("");
 
     try {
+      // 2. Then make the VTpass purchase
+      const res = await fetch("/api/vtpass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceID: selectedISP.serviceID,
+          variation_code: selectedPlan.variation_code,
+          billersCode: phoneNumber,
+          request_id: uniqueRequestId,
+          phone: phoneNumber,
+          amount: selectedPlan.variation_amount,
+        }),
+      });
+
+      const { data } = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.response_description);
+        return;
+      }
+
       // 1. First deduct from wallet
-      // Deduct 5 from balance and update
       const { error: updateError } = await billzpaddi
         .from("wallets")
         .update({ balance: walletBalance - totalAmount })
@@ -167,34 +187,29 @@ const PurchaseDialog = ({
         throw new Error("Failed to update wallet balance");
       }
 
-      // 2. Then make the VTpass purchase
-      const res = await fetch("/api/vtpass", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceID: selectedISP.serviceID,
-          variation_code: selectedPlan.variation_code,
-          billersCode: phoneNumber,
-          request_id: "reference",
-          phone: phoneNumber,
-          amount: selectedPlan.variation_amount,
-        }),
-      });
+      // Create transaction record Pending
+      const { error: transactionError } = await billzpaddi
+        .from("transactions")
+        .insert({
+          user_id: user?.user_id,
+          amount: totalAmount,
+          type: "debit",
+          description: "Data Purchase",
+          status: "completed",
+          reference: uniqueRequestId,
+        });
 
-      const data = await res.json();
-      console.log(data);
+      if (transactionError) throw transactionError;
 
       toast.success("Data purchase successful!");
       onSuccess();
       onOpenChange(false);
     } catch (err) {
-      console.error("Purchase failed:", err);
-      const errorMessage =
-        err.response?.data?.message || "Purchase failed. Please try again.";
-      setError(errorMessage);
-      toast.error(errorMessage);
+      setError(err.data.message || "Purchase failed. Please try again.");
+      toast.error(err.data.message || "Purchase failed. Please try again.");
     } finally {
       fetchWallet();
+      fetchTransactions();
       setIsProcessing(false);
     }
   };
@@ -236,7 +251,7 @@ const PurchaseDialog = ({
               <span className="text-gray-400">Available Balance:</span>
               <span
                 className={`${
-                  walletBalance >= totalAmount
+                  (walletBalance || wallet?.balance) >= totalAmount
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
@@ -244,7 +259,7 @@ const PurchaseDialog = ({
                 ₦{wallet.balance.toLocaleString()}
               </span>
             </div>
-            {walletBalance <= totalAmount && (
+            {(walletBalance || wallet?.balance) <= totalAmount && (
               <Link
                 href="/wallet"
                 className="flex justify-end bg-gray-700 w-fit ml-auto px-2 py-1 rounded-sm text-sm"
@@ -266,9 +281,11 @@ const PurchaseDialog = ({
             </button>
             <button
               onClick={handlePurchase}
-              disabled={isProcessing || walletBalance < totalAmount}
+              disabled={
+                isProcessing || (walletBalance || wallet?.balance) < totalAmount
+              }
               className={`px-7 py-2 rounded-md text-white cursor-pointer ${
-                walletBalance >= totalAmount
+                (walletBalance || wallet?.balance) >= totalAmount
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-gray-600 cursor-not-allowed"
               } disabled:opacity-50`}

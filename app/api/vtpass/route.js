@@ -23,10 +23,28 @@ export async function POST(request) {
       }
     );
 
-    return new Response(JSON.stringify(response.data), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    if (response.data.code === "016") {
+      return new Response(
+        JSON.stringify({
+          message: "Payment failed",
+          data: response.data,
+        }),
+        { status: 500 }
+      );
+    } else if (response.data.code === "000") {
+      return new Response(JSON.stringify(response.data), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } else if (response.data.code === "099") {
+      return new Response(
+        JSON.stringify({
+          message: "Pending",
+          data: response.data,
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
   } catch (error) {
     console.error("VTpass Axios Error:", error.response?.data || error.message);
     return new Response(
