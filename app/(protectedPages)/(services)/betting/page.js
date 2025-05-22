@@ -173,7 +173,7 @@ function BetCodeConverter({
             Wallet Balance: {wallet?.currency} {wallet?.balance}
           </p>
           <p className="text-green-400 text-sm mb-2">
-            You will be charged BLZ 5
+            You will be charged BLZ 1
           </p>
           <button
             onClick={convertCode}
@@ -233,6 +233,7 @@ export default function BettingServices() {
   // Fetch bookies on component mount
   useEffect(() => {
     const fetchBookies = async () => {
+      if (!user) return;
       try {
         const response = await axios.get(
           "https://betpaddi.com/api/v1/conversion/bookies",
@@ -251,7 +252,7 @@ export default function BettingServices() {
             (b) => b.bookie === "sportybet:ng"
           );
           //  const bet9ja = bookiesArray.find((b) => b.bookie === "bet9ja");
-          if (sportybetNg) setSelectedBookie2(sportybetNg);
+          //  if (sportybetNg) setSelectedBookie2(sportybetNg);
           //  if (bet9ja) setSelectedBookie2(bet9ja);
         }
       } catch (error) {
@@ -308,11 +309,13 @@ export default function BettingServices() {
 
       const currentBalance = walletData.balance;
 
-      if (currentBalance < 5) {
+      if (currentBalance < 1) {
         toast.error("Insufficient balance");
         setIsConverting(false);
         return;
       }
+
+      setConvertedCode("");
 
       const response = await axios.post(
         "https://betpaddi.com/api/v1/conversion/convert-code",
@@ -329,12 +332,15 @@ export default function BettingServices() {
       );
 
       if (response.data.message === "Conversion successful") {
-        console.log(response.data);
-        setConvertedCode(response?.data.code);
+        console.log("Codee", response.data);
+        setConvertedCode(
+          response?.data?.code?.converted_code ||
+            response?.data?.code
+        );
         // Deduct 5 from balance and update
         const { error: updateError } = await billzpaddi
           .from("wallets")
-          .update({ balance: currentBalance - 5 })
+          .update({ balance: currentBalance - 1 })
           .eq("user_id", user.user_id);
 
         if (updateError) {
@@ -363,7 +369,7 @@ export default function BettingServices() {
       <p className="text-gray-400 mb-6">
         Unlock our advanced AI predictions for just 5 BLZ
       </p>
-      <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg font-medium">
+      <button className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white py-2 px-6 rounded-md font-medium">
         Unlock for 5 BLZ
       </button>
     </div>
@@ -373,7 +379,7 @@ export default function BettingServices() {
     <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
       <h3 className="text-lg font-medium mb-4">Free Predictions</h3>
       <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 text-center">
-        <h3 className="text-xl font-medium mb-2">Top Up Coming Soon!</h3>
+        <h3 className="text-xl font-medium mb-2">Coming Soon!</h3>
         <p className="text-gray-400">
           We're working on bringing you a seamless top-up experience
         </p>
@@ -416,7 +422,7 @@ export default function BettingServices() {
         <div className="flex border-b border-gray-700 mb-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab("betcode")}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
               activeTab === "betcode"
                 ? "text-blue-400 border-b-2 border-blue-400"
                 : "text-gray-400"
@@ -427,7 +433,7 @@ export default function BettingServices() {
           </button>
           <button
             onClick={() => setActiveTab("ai")}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
               activeTab === "ai"
                 ? "text-blue-400 border-b-2 border-blue-400"
                 : "text-gray-400"
@@ -438,7 +444,7 @@ export default function BettingServices() {
           </button>
           <button
             onClick={() => setActiveTab("free")}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
               activeTab === "free"
                 ? "text-blue-400 border-b-2 border-blue-400"
                 : "text-gray-400"
@@ -449,7 +455,7 @@ export default function BettingServices() {
           </button>
           <button
             onClick={() => setActiveTab("topup")}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
               activeTab === "topup"
                 ? "text-blue-400 border-b-2 border-blue-400"
                 : "text-gray-400"
