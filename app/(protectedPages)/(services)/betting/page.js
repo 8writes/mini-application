@@ -309,7 +309,7 @@ export default function BettingServices() {
 
       const currentBalance = walletData.balance;
 
-      if (currentBalance < 1) {
+      if (currentBalance < 50) {
         toast.error("Insufficient balance");
         setIsConverting(false);
         return;
@@ -336,10 +336,10 @@ export default function BettingServices() {
           response?.data?.code?.converted_code || response?.data?.code;
 
         setConvertedCode(code);
-        // Deduct 5 from balance and update
+        // Deduct from balance and update
         const { error: updateError } = await billzpaddi
           .from("wallets")
-          .update({ balance: currentBalance - 1 })
+          .update({ balance: currentBalance - 50 })
           .eq("user_id", user.user_id);
 
         if (updateError) {

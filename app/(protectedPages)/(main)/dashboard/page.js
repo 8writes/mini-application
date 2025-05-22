@@ -59,11 +59,11 @@ export default function DashboardPage() {
               <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
               <div className="flex flex-wrap items-end gap-2">
                 <p className="text-xl md:text-3xl font-bold">
-                  {wallet?.currency ?? "BLZ"}{" "}
-                  {wallet?.balance?.toFixed(2) ?? "0.00"}
-                </p>
-                <p className="text-gray-400 text-sm mb-1">
-                  (₦{blzToNaira(wallet?.balance).toLocaleString() ?? "0.00"})
+                  ₦
+                  {wallet?.balance?.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }) ?? "0.00"}
                 </p>
               </div>
             </div>
