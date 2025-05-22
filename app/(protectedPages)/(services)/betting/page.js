@@ -217,7 +217,7 @@ function BetCodeConverter({
 
 export default function BettingServices() {
   const { user, isLoading } = useGlobalContext();
-  const { wallet, fetchWallet } = useGlobalContextData();
+  const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
   const [activeTab, setActiveTab] = useState("betcode");
   const [bookingCode, setBookingCode] = useState("");
   const [convertedCode, setConvertedCode] = useState("");
@@ -332,11 +332,10 @@ export default function BettingServices() {
       );
 
       if (response.data.message === "Conversion successful") {
-        console.log("Codee", response.data);
-        setConvertedCode(
-          response?.data?.code?.converted_code ||
-            response?.data?.code
-        );
+        const code =
+          response?.data?.code?.converted_code || response?.data?.code;
+
+        setConvertedCode(code);
         // Deduct 5 from balance and update
         const { error: updateError } = await billzpaddi
           .from("wallets")
@@ -346,6 +345,21 @@ export default function BettingServices() {
         if (updateError) {
           throw new Error("Failed to update wallet balance");
         }
+
+        // Create transaction record
+        const { error: transactionError } = await billzpaddi
+          .from("transactions")
+          .insert({
+            user_id: user?.user_id,
+            amount: 50,
+            type: "debit",
+            description: "Code Conversion",
+            status: "completed",
+            reference: `CODE-${code}`,
+          });
+
+        if (transactionError) throw transactionError;
+
         toast.success("Code converted successfully!");
       } else {
         throw new Error("Unable to convert code");
@@ -356,6 +370,7 @@ export default function BettingServices() {
     } finally {
       setIsConverting(false);
       fetchWallet();
+      fetchTransactions();
     }
   };
 
