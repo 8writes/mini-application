@@ -170,11 +170,13 @@ function BetCodeConverter({
             </div>
           </div>
           <p className="text-gray-300 text-sm mb-2">
-            Wallet Balance: {wallet?.currency} {wallet?.balance}
+            Wallet Balance: ₦
+            {wallet?.balance?.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }) ?? "0.00"}
           </p>
-          <p className="text-green-400 text-sm mb-2">
-            You will be charged BLZ 1
-          </p>
+          <p className="text-green-400 text-sm mb-2">You will be charged ₦50</p>
           <button
             onClick={convertCode}
             disabled={isConverting}
