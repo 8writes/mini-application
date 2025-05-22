@@ -181,12 +181,10 @@ export default function DashboardPage() {
                             : "text-red-400"
                         }`}
                       >
-                        {txn.type === "credit" ? "+" : "-"}
-                        {nairaToBlz(txn.amount)} BLZ
+                        {txn.type === "credit" ? "+" : "-"}₦
+                        {txn.amount.toLocaleString()}
                       </p>
-                      <p className="text-xs text-gray-400">
-                        ₦{txn.amount.toLocaleString()}
-                      </p>
+
                       <span
                         className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
                           txn.status === "completed"

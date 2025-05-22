@@ -391,7 +391,6 @@ export default function Page() {
         );
         const dataISPs = res.data.content || [];
         setIsps(dataISPs);
-        setSelectedISP(dataISPs[0] || null);
       } catch (err) {
         console.error("Error fetching ISPs:", err);
         toast.error("Failed to load ISPs");
