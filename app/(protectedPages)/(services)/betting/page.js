@@ -372,22 +372,11 @@ export default function BettingServices() {
   const FreePrediction = () => (
     <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
       <h3 className="text-lg font-medium mb-4">Free Predictions</h3>
-      <div className="space-y-4">
-        {[1, 2, 3].map((item) => (
-          <div
-            key={item}
-            className="bg-gray-700/50 rounded-lg p-4 border border-gray-600"
-          >
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-medium">Match {item}</span>
-              <span className="text-sm text-green-400">65% Confidence</span>
-            </div>
-            <p className="text-sm text-gray-300">Home Team vs Away Team</p>
-            <p className="text-sm mt-2">
-              Prediction: <span className="font-medium">1X</span>
-            </p>
-          </div>
-        ))}
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 text-center">
+        <h3 className="text-xl font-medium mb-2">Top Up Coming Soon!</h3>
+        <p className="text-gray-400">
+          We're working on bringing you a seamless top-up experience
+        </p>
       </div>
     </div>
   );
