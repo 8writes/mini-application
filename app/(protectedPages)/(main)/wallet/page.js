@@ -168,7 +168,6 @@ export default function WalletPage() {
           {/* Currency Conversion Info */}
           <div className="bg-gray-700/50 rounded-lg p-3 mb-6 text-sm">
             <div className="flex items-center gap-2 text-gray-300">
-              <HiCurrencyDollar />
               <span>1 BLZ = ₦50</span>
             </div>
           </div>
