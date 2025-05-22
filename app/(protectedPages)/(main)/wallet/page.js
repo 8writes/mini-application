@@ -227,16 +227,10 @@ export default function WalletPage() {
                   NGN
                 </span>
               </div>
-              {false && (
-                <p className="text-sm text-gray-400 mt-1">
-                  ₦{blzToNaira(amount).toLocaleString()} NGN
-                </p>
-              )}
             </div>
-
             <button
               type="submit"
-              disabled={isFunding}
+              disabled={true}
               className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-3 rounded-lg transition-colors font-medium"
             >
               {isFunding ? "Processing..." : "Fund Wallet"}
