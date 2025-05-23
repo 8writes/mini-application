@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "BillzPaddi",
+  title: "BillzPaddi - Affordable Data Bundles, Game Top-ups and more",
   description:
-    "BillzPaddi - Purchase of Airtime, Cheap Internet Data Bundles. Fast, secure, and reliable solutions for your everyday digital needs.",
+    "BillzPaddi - Purchase of Airtime, Cheap Internet Data Bundles, Games Direct Top up. Fast, secure, and reliable solutions for your everyday digital needs.",
 };
 
 export default function RootLayout({ children }) {

@@ -7,6 +7,7 @@ import {
   HiOutlineClipboardCheck,
 } from "react-icons/hi";
 import { FaGamepad } from "react-icons/fa";
+import Image from "next/image";
 
 export default function Page() {
   const services = [
@@ -51,12 +52,14 @@ export default function Page() {
   return (
     <div className="min-h-[80dvh] text-white bg-gray-800">
       {/** Hero section */}
-      <section className="pt-20 pb-12 text-center px-4">
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+      <section className="pt-20 pb-12 text-center px-2">
+        <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
           Explore Our Services
         </h2>
         <p className="text-base sm:text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
-          Fast, secure, and reliable solutions for your everyday digital needs.
+          Buy Airtime, Affordable Data Bundles, Game Top-ups & Bet Code
+          Conversions — Fast, secure, and reliable solutions tailored for your
+          everyday digital needs.
         </p>
         <div className="mb-12">
           <Link href="/auth/signup">
@@ -84,7 +87,11 @@ export default function Page() {
             </Link>
           ))}
         </div>
-      </section>
+          </section>
+          
+          <section className="flex justify-center pb-7">
+              <Image src='/images/app-desk.png' alt="" width={1000} height={1000} className="rounded-md shadow-2xl" />
+          </section>
     </div>
   );
 }
