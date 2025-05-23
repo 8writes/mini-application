@@ -1,5 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import { billzpaddi } from "@/lib/client";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaCoins, FaSpinner } from "react-icons/fa";
@@ -84,8 +85,13 @@ const CustomDropdown = ({
 
 export default function BetTopUp() {
   const { user } = useGlobalContext();
-  const { uniqueRequestId, fetchWallet, fetchTransactions } =
-    useGlobalContextData();
+  const {
+    uniqueRequestId,
+    wallet,
+    fetchWallet,
+    getUniqueRequestId,
+    fetchTransactions,
+  } = useGlobalContextData();
   const [formData, setFormData] = useState({
     bettingCompany: "",
     customerId: "",
@@ -194,6 +200,25 @@ export default function BetTopUp() {
 
     setIsLoading(true);
 
+    // Fetch current wallet balance for user.user_id
+    const { data: walletData, error: fetchError } = await billzpaddi
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.user_id)
+      .single();
+
+    if (fetchError || !walletData) {
+      throw new Error("Failed to fetch wallet balance");
+    }
+
+    const currentBalance = walletData.balance;
+
+    if (currentBalance < formData.amount) {
+      toast.error("Insufficient balance");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const userID = "CK101247664";
       const apiKey =
@@ -209,13 +234,44 @@ export default function BetTopUp() {
 
       if (fundData.statuscode === "100") {
         setOrderStatus(fundData);
-        toast.success("Top-up request successful!");
+        // Create transaction record
+        const { error: transactionError } = await billzpaddi
+          .from("transactions")
+          .insert({
+            user_id: user?.user_id,
+            amount: formData.amount,
+            type: "debit",
+            description: "Betting Top Up",
+            status: "completed",
+            reference: uniqueRequestId,
+          });
+
+        if (transactionError) throw transactionError;
+
+        fetchWallet();
+        fetchTransactions();
+        toast.success("TRANSACTION SUCCESSFUL");
       } else {
+        // Create transaction record
+
+        const { error: transactionError } = await billzpaddi
+          .from("transactions")
+          .insert({
+            user_id: user?.user_id,
+            amount: 0,
+            type: "debit",
+            description: "Betting Top Up",
+            status: "failed",
+            reference: uniqueRequestId,
+          });
+        
+        if (transactionError) throw transactionError;
         throw new Error(fundData.status || "Top-up failed");
       }
     } catch (error) {
       toast.error(error.message);
     } finally {
+      getUniqueRequestId();
       setIsLoading(false);
     }
   };
@@ -299,7 +355,13 @@ export default function BetTopUp() {
               required
             />
           </div>
-
+          <p className="text-gray-300 text-sm mb-2">
+            Wallet Balance: ₦
+            {wallet?.balance?.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }) ?? "0.00"}
+          </p>
           <button
             type="submit"
             disabled={isLoading || verifying}
@@ -311,7 +373,7 @@ export default function BetTopUp() {
                 Processing...
               </>
             ) : (
-              "Fund Wallet"
+              "Top Up"
             )}
           </button>
         </form>

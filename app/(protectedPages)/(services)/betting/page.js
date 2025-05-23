@@ -226,7 +226,8 @@ function BetCodeConverter({
 
 export default function BettingServices() {
   const { user, isLoading } = useGlobalContext();
-  const { wallet, fetchWallet, fetchTransactions, uniqueRequestId } =
+  const { wallet, fetchWallet,
+    getUniqueRequestId, fetchTransactions, uniqueRequestId } =
     useGlobalContextData();
   const [activeTab, setActiveTab] = useState("betcode");
   const [bookingCode, setBookingCode] = useState("");
@@ -369,18 +370,33 @@ export default function BettingServices() {
           });
 
         if (transactionError) throw transactionError;
-
+        
         toast.success("TRANSACTION SUCCESSFUL");
       } else {
+        // Create transaction record
+        const { error: transactionError } = await billzpaddi
+          .from("transactions")
+          .insert({
+            user_id: user?.user_id,
+            amount: 0,
+            type: "debit",
+            description: "Code Conversion",
+            status: "failed",
+            reference: uniqueRequestId,
+          });
+
+        if (transactionError) throw transactionError;
+        
         toast.error("TRANSACTION FAILED", { autoClose: false });
       }
     } catch (error) {
       toast.error("TRANSACTION FAILED", { autoClose: false });
       console.error("Conversion error:", error);
     } finally {
-      setIsConverting(false);
       fetchWallet();
       fetchTransactions();
+      getUniqueRequestId();
+      setIsConverting(false);
     }
   };
 

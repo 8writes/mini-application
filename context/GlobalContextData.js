@@ -18,6 +18,7 @@ export const GlobalProviderData = ({ children }) => {
   const router = useRouter();
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [uniqueRequestId, setUniqueRequestId] = useState();
 
   // Set up real-time subscriptions
   useEffect(() => {
@@ -163,7 +164,9 @@ export const GlobalProviderData = ({ children }) => {
     return `${timestamp}${randomStr}`;
   };
 
-  const uniqueRequestId = getUniqueRequestId();
+  const regenerateUniqueRequestId = () => {
+    setUniqueRequestId(getUniqueRequestId());
+  };
 
   return (
     <GlobalContextData.Provider
@@ -174,6 +177,7 @@ export const GlobalProviderData = ({ children }) => {
         fetchWallet,
         fetchTransactions,
         uniqueRequestId,
+        getUniqueRequestId: regenerateUniqueRequestId,
       }}
     >
       {children}

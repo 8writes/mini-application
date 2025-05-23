@@ -104,7 +104,8 @@ const PurchaseDialog = ({
   onSuccess,
 }) => {
   const { user } = useGlobalContext();
-  const { wallet, fetchWallet, uniqueRequestId, fetchTransactions } =
+  const { wallet, fetchWallet, 
+    getUniqueRequestId, uniqueRequestId, fetchTransactions } =
     useGlobalContextData();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
@@ -212,6 +213,7 @@ const PurchaseDialog = ({
     } finally {
       fetchWallet();
       fetchTransactions();
+      getUniqueRequestId();
       setIsProcessing(false);
     }
   };
