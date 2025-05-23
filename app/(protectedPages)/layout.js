@@ -12,7 +12,7 @@ export default function PagesLayout({ children }) {
           <NavBar />
           <div className="flex">
             <SideNav />
-            <main className="flex-1 bg-gray-700 py-24 md:px-10 md:py-28 overflow-auto">
+            <main className="flex-1 bg-gray-700 py-24 md:px-10 md:py-28 overflow-auto min-h-[100dvh]">
               {children}
             </main>
           </div>
