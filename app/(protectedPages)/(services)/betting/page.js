@@ -14,7 +14,6 @@ import { HiClipboardCopy, HiOutlineArrowRight } from "react-icons/hi";
 import { setErrorMap } from "zod";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { billzpaddi } from "@/lib/client";
-import { unique } from "next/dist/build/utils";
 // import Select from "react-select";
 
 const API_KEY =
@@ -134,12 +133,10 @@ function BetCodeConverter({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:mb-10">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 md:mb-10">
             {/* Convert From */}
-            <div className="w-full flex flex-col justify-end">
-              <label className="block text-sm text-gray-400 mb-2">
-                Convert From
-              </label>
+            <div className="w-full md:w-72 flex flex-col">
+              <label className="text-sm text-gray-400 mb-2">Convert From</label>
               <CustomDropdown
                 options={bookies}
                 selected={selectedBookie1}
@@ -150,16 +147,14 @@ function BetCodeConverter({
               />
             </div>
 
-            {/* Arrow - perfectly centered */}
-            <div className="flex items-center justify-center">
-              <HiOutlineArrowRight className="text-2xl text-gray-400 rotate-90 md:rotate-0" />
+            {/* Arrow */}
+            <div className="flex items-center justify-center transform rotate-90 md:rotate-0 text-gray-400 text-2xl">
+              <HiOutlineArrowRight />
             </div>
 
             {/* Convert To */}
-            <div className="w-full flex flex-col justify-end">
-              <label className="block text-sm text-gray-400 mb-2">
-                Convert To
-              </label>
+            <div className="w-full md:w-72 flex flex-col">
+              <label className="text-sm text-gray-400 mb-2">Convert To</label>
               <CustomDropdown
                 options={bookies}
                 selected={selectedBookie2}
@@ -170,6 +165,7 @@ function BetCodeConverter({
               />
             </div>
           </div>
+
           <p className="text-gray-300 text-sm mb-2">
             Wallet Balance: ₦
             {wallet?.balance?.toLocaleString(undefined, {
