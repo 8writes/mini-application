@@ -13,6 +13,8 @@ export default function TransactionsPage() {
   const [filter, setFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
   const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
+  const transactionsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const nairaToBlz = (naira) => (naira / conversionRate).toFixed(2);
 
@@ -51,6 +53,18 @@ export default function TransactionsPage() {
       </div>
     );
   }
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filter, sortOrder]);
+
+  const totalPages = Math.ceil(
+    filteredTransactions.length / transactionsPerPage
+  );
+  const paginatedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * transactionsPerPage,
+    currentPage * transactionsPerPage
+  );
 
   return (
     <div className="p-4 md:p-6">
@@ -116,7 +130,7 @@ export default function TransactionsPage() {
 
         {filteredTransactions.length > 0 ? (
           <ul className="divide-y divide-gray-700">
-            {filteredTransactions.map((txn) => (
+            {paginatedTransactions.map((txn) => (
               <li
                 key={txn.id}
                 className="hover:bg-gray-700/50 transition-colors"
@@ -250,6 +264,31 @@ export default function TransactionsPage() {
           </div>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-6 text-sm">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="px-3 py-1 border border-gray-500 rounded hover:bg-gray-500 cursor-pointer disabled:opacity-30"
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+
+          <span className="text-gray-400">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            className="px-3 py-1 border border-gray-500 rounded hover:bg-gray-500 cursor-pointer disabled:opacity-30"
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
