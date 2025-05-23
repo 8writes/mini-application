@@ -87,11 +87,24 @@ export default function Page() {
             </Link>
           ))}
         </div>
-          </section>
-          
-          <section className="flex justify-center pb-7">
-              <Image src='/images/app-desk.png' alt="" width={1000} height={1000} className="rounded-md shadow-2xl" />
-          </section>
+      </section>
+
+      <section className="flex justify-center pb-7 px-7">
+        <Image
+          src="/images/app-desk.png"
+          alt=""
+          width={1000}
+          height={1000}
+          className="rounded-md shadow-2xl hidden md:block"
+        />
+        <Image
+          src="/images/app-mobile.png"
+          alt=""
+          width={1000}
+          height={1000}
+          className="rounded-md shadow-2xl hidden"
+        />
+      </section>
     </div>
   );
 }
