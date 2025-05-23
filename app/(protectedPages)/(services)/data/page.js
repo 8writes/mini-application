@@ -593,7 +593,7 @@ export default function Page() {
 
           {/* Plans for active tab */}
           {plans[activeTab]?.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 overflow-y-auto">
               {plans[activeTab].map((plan, index) => (
                 <div
                   key={`${selectedISP?.serviceID}-${plan.variation_code}-${index}`}
