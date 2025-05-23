@@ -7,6 +7,7 @@ import {
   FaCoins,
   FaLock,
   FaChevronDown,
+  FaSpinner,
 } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -14,8 +15,10 @@ import { HiClipboardCopy, HiOutlineArrowRight } from "react-icons/hi";
 import { setErrorMap } from "zod";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { billzpaddi } from "@/lib/client";
+import BetTopUp from "@/components/betting/topUp";
 // import Select from "react-select";
 
+// remember to take this out
 const API_KEY =
   "5vQvjHdN3XXUluU2R2PZvBWXJwdPHkA0Pn24sVAyIpThtxEoansokYuhDIKMWJoF";
 
@@ -36,8 +39,9 @@ const CustomDropdown = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 outline-none"
+        className="flex items-center justify-between w-full cursor-pointer bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 outline-none"
       >
         <span>{selected ? selected.name : "Select bookie"}</span>
         <FaChevronDown
@@ -176,11 +180,18 @@ function BetCodeConverter({
           <button
             onClick={convertCode}
             disabled={isConverting}
-            className={`w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-3 rounded-md font-medium ${
-              isConverting ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`w-full bg-blue-600 flex justify-center items-center hover:bg-blue-700 
+              cursor-pointer text-white py-2 px-4 rounded-md font-medium`}
           >
-            {isConverting ? "Converting..." : "Convert Code ₦50"}
+            {isConverting ? (
+              <>
+                {" "}
+                <FaSpinner className="animate-spin mr-2" />
+                Converting...
+              </>
+            ) : (
+              "Convert Code ₦50"
+            )}
           </button>
 
           {convertedCode && (
@@ -402,15 +413,9 @@ export default function BettingServices() {
   );
 
   const TopUp = () => (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 text-center">
-      <div className="inline-flex items-center justify-center bg-blue-900/20 p-4 rounded-full mb-4">
-        <FaCoins className="text-2xl text-blue-400" />
-      </div>
-      <h3 className="text-xl font-medium mb-2">Top Up Coming Soon!</h3>
-      <p className="text-gray-400">
-        We're working on bringing you a seamless top-up experience
-      </p>
-    </div>
+    <>
+      <BetTopUp />
+    </>
   );
 
   if (!user || isLoading) {
