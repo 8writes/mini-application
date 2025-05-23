@@ -230,7 +230,7 @@ export default function WalletPage() {
             </div>
             <button
               type="submit"
-              disabled={true}
+              disabled={isFunding}
               className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-3 rounded-lg transition-colors font-medium"
             >
               {isFunding ? "Processing..." : "Fund Wallet"}
