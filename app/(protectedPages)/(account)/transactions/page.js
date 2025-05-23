@@ -6,17 +6,16 @@ import { FaExchangeAlt } from "react-icons/fa";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 
 export default function TransactionsPage() {
+  // All hooks must be called unconditionally at the top
   const { user, isLoading } = useGlobalContext();
   const { transactions } = useGlobalContextData();
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
-  const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
+  const [conversionRate] = useState(50);
   const transactionsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-
-  const nairaToBlz = (naira) => (naira / conversionRate).toFixed(2);
 
   useEffect(() => {
     let result = [...transactions];
@@ -42,18 +41,6 @@ export default function TransactionsPage() {
     setFilteredTransactions(result);
   }, [searchTerm, filter, sortOrder, transactions]);
 
-  if (!user || isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[30rem]">
-        <img
-          src="/icons/loader-white.svg"
-          alt="Loading..."
-          className="w-20 h-20"
-        />
-      </div>
-    );
-  }
-
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, filter, sortOrder]);
@@ -65,6 +52,18 @@ export default function TransactionsPage() {
     (currentPage - 1) * transactionsPerPage,
     currentPage * transactionsPerPage
   );
+
+  if (!user || isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[30rem]">
+        <img
+          src="/icons/loader-white.svg"
+          alt="Loading..."
+          className="w-20 h-20"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6">
