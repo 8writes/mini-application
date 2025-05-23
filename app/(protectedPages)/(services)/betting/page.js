@@ -438,7 +438,7 @@ export default function BettingServices() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-gray-700 mb-6 overflow-x-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 border-b border-gray-700 mb-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab("betcode")}
             className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
@@ -449,6 +449,17 @@ export default function BettingServices() {
           >
             <FaExchangeAlt className="inline mr-2" />
             Code Converter
+          </button>
+          <button
+            onClick={() => setActiveTab("topup")}
+            className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
+              activeTab === "topup"
+                ? "text-blue-400 border-b-2 border-blue-400"
+                : "text-gray-400"
+            }`}
+          >
+            <FaCoins className="inline mr-2" />
+            Top Up
           </button>
           <button
             onClick={() => setActiveTab("ai")}
@@ -471,17 +482,6 @@ export default function BettingServices() {
           >
             <FaRobot className="inline mr-2" />
             Free Predictions
-          </button>
-          <button
-            onClick={() => setActiveTab("topup")}
-            className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
-              activeTab === "topup"
-                ? "text-blue-400 border-b-2 border-blue-400"
-                : "text-gray-400"
-            }`}
-          >
-            <FaCoins className="inline mr-2" />
-            Top Up
           </button>
         </div>
 
