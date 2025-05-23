@@ -145,10 +145,25 @@ export const GlobalProviderData = ({ children }) => {
     fetchTransactions();
   }, [user]);
 
-  const uniqueRequestId = `req_${Date.now()}_${Math.floor(
-    Math.random() * 10000
-  )}`;
+  const getUniqueRequestId = () => {
+    const lagosOffset = 60 * 60 * 1000; // Africa/Lagos is GMT+1
+    const lagosDate = new Date(Date.now() + lagosOffset);
 
+    const pad = (n) => (n < 10 ? "0" + n : n);
+
+    const YYYY = lagosDate.getUTCFullYear();
+    const MM = pad(lagosDate.getUTCMonth() + 1);
+    const DD = pad(lagosDate.getUTCDate());
+    const HH = pad(lagosDate.getUTCHours());
+    const mm = pad(lagosDate.getUTCMinutes());
+
+    const timestamp = `${YYYY}${MM}${DD}${HH}${mm}`;
+    const randomStr = Math.random().toString(36).substring(2, 10); // e.g., 'ak7e3d8h'
+
+    return `${timestamp}${randomStr}`;
+  };
+
+  const uniqueRequestId = getUniqueRequestId();
 
   return (
     <GlobalContextData.Provider

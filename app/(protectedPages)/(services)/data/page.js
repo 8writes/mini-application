@@ -30,7 +30,8 @@ const CustomDropdown = ({
         className="flex items-center justify-between w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 outline-none"
       >
         <div className="flex items-center gap-2">
-          {selected?.image && (
+          {/**{selected?.image && (
+            
             <Image
               src={selected.image}
               alt={selected.name}
@@ -38,7 +39,7 @@ const CustomDropdown = ({
               height={24}
               className="rounded-full"
             />
-          )}
+          )}*/}
           <span>{selected ? selected.name : "Select ISP"}</span>
         </div>
         <FaChevronDown
@@ -73,7 +74,7 @@ const CustomDropdown = ({
                   selected?.serviceID === isp.serviceID ? "bg-blue-900/20" : ""
                 }`}
               >
-                {isp.image && (
+                {/** {isp.image && (
                   <Image
                     src={isp.image}
                     alt={isp.name}
@@ -81,7 +82,7 @@ const CustomDropdown = ({
                     height={20}
                     className="rounded-full"
                   />
-                )}
+                )}*/}
                 <span>{isp.name}</span>
               </div>
             ))
@@ -268,7 +269,6 @@ const PurchaseDialog = ({
           autoClose: false,
         }
       );
-      
     } catch (err) {
       toast.error(err.message || "Purchase failed. Please try again.", {
         autoClose: false,
@@ -473,7 +473,10 @@ export default function Page() {
           }
         );
         const dataISPs = res.data.content || [];
-        setIsps(dataISPs);
+        const filteredISPs = dataISPs.filter(
+          (isp) => isp.serviceID !== "spectranet"
+        );
+        setIsps(filteredISPs);
       } catch (err) {
         console.error("Error fetching ISPs:", err);
         toast.error("Failed to load ISPs");

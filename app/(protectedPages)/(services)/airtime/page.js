@@ -30,7 +30,7 @@ const CustomDropdown = ({
         className="flex items-center justify-between w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 outline-none"
       >
         <div className="flex items-center gap-2">
-          {selected?.image && (
+          {/**{selected?.image && (
             <Image
               src={selected?.image || "/icons/user.png"}
               alt={selected.name}
@@ -38,7 +38,7 @@ const CustomDropdown = ({
               height={24}
               className="rounded-full"
             />
-          )}
+          )}*/}
           <span>{selected ? selected.name : "Select Network"}</span>
         </div>
         <FaChevronDown
@@ -73,6 +73,7 @@ const CustomDropdown = ({
                   selected?.serviceID === isp.serviceID ? "bg-blue-900/20" : ""
                 }`}
               >
+                {/**
                 {isp.image && (
                   <Image
                     src={isp?.image || "/icons/user.png"}
@@ -81,7 +82,7 @@ const CustomDropdown = ({
                     height={20}
                     className="rounded-full"
                   />
-                )}
+                )}*/}
                 <span>{isp.name}</span>
               </div>
             ))
@@ -108,7 +109,7 @@ const PurchaseDialog = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
 
-    const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
+  const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
 
   const handlePurchase = async () => {
     if (!amount || !phoneNumber || !selectedISP) {
