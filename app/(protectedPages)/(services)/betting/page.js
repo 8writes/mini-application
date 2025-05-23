@@ -14,6 +14,7 @@ import { HiClipboardCopy, HiOutlineArrowRight } from "react-icons/hi";
 import { setErrorMap } from "zod";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { billzpaddi } from "@/lib/client";
+import { unique } from "next/dist/build/utils";
 // import Select from "react-select";
 
 const API_KEY =
@@ -219,7 +220,8 @@ function BetCodeConverter({
 
 export default function BettingServices() {
   const { user, isLoading } = useGlobalContext();
-  const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
+  const { wallet, fetchWallet, fetchTransactions, uniqueRequestId } =
+    useGlobalContextData();
   const [activeTab, setActiveTab] = useState("betcode");
   const [bookingCode, setBookingCode] = useState("");
   const [convertedCode, setConvertedCode] = useState("");
@@ -357,7 +359,7 @@ export default function BettingServices() {
             type: "debit",
             description: "Code Conversion",
             status: "completed",
-            reference: `CODE-${code}`,
+            reference: uniqueRequestId,
           });
 
         if (transactionError) throw transactionError;
