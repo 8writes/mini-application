@@ -362,12 +362,12 @@ export default function BettingServices() {
 
         if (transactionError) throw transactionError;
 
-        toast.success("Code converted successfully!");
+        toast.success("TRANSACTION SUCCESSFUL");
       } else {
-        throw new Error("Unable to convert code");
+        toast.error("TRANSACTION FAILED", { autoClose: false });
       }
     } catch (error) {
-      toast.error("Unable to convert code");
+      toast.error("TRANSACTION FAILED", { autoClose: false });
       console.error("Conversion error:", error);
     } finally {
       setIsConverting(false);

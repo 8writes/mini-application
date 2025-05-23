@@ -153,7 +153,6 @@ const PurchaseDialog = ({
     }
 
     setIsProcessing(true);
-    setError("");
 
     try {
       // 2. Then make the VTpass purchase
@@ -170,43 +169,110 @@ const PurchaseDialog = ({
         }),
       });
 
-      const { data } = await res.json();
+      const data = await res.json();
 
-      if (!res.ok) {
-        toast.error(data.response_description);
+      if (data.code === "030") {
+        // Unreachable
+        toast.error(data.response_description || "Service unreachable.");
         return;
       }
 
-      // 1. First deduct from wallet
-      const { error: updateError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: walletBalance - totalAmount })
-        .eq("user_id", user.user_id);
-
-      if (updateError) {
-        throw new Error("Failed to update wallet balance");
-      }
-
-      // Create transaction record Pending
-      const { error: transactionError } = await billzpaddi
-        .from("transactions")
-        .insert({
-          user_id: user?.user_id,
-          amount: totalAmount,
-          type: "debit",
-          description: "Data Purchase",
-          status: "completed",
-          reference: uniqueRequestId,
+      if (data.code === "016") {
+        // Failed
+        toast.error(data.response_description || "Transaction failed.", {
+          autoClose: false,
         });
 
-      if (transactionError) throw transactionError;
+        const { error: transactionError } = await billzpaddi
+          .from("transactions")
+          .insert({
+            user_id: user?.user_id,
+            amount: 0,
+            type: "debit",
+            description: "Data Purchase",
+            status: "failed",
+            reference: uniqueRequestId,
+          });
 
-      toast.success("Data purchase successful!");
-      onSuccess();
-      onOpenChange(false);
+        if (transactionError) throw transactionError;
+        return;
+      }
+
+      if (data.code === "099") {
+        // Pending
+        toast.warning(data.response_description || "Transaction pending...", {
+          autoClose: false,
+        });
+
+        // Deduct from wallet
+        const { error: updateError } = await billzpaddi
+          .from("wallets")
+          .update({ balance: walletBalance - totalAmount })
+          .eq("user_id", user.user_id);
+
+        if (updateError) throw new Error("Failed to update wallet balance");
+
+        const { error: transactionError } = await billzpaddi
+          .from("transactions")
+          .insert({
+            user_id: user?.user_id,
+            amount: totalAmount,
+            type: "debit",
+            description: "Data Purchase",
+            status: "pending",
+            reference: uniqueRequestId,
+          });
+
+        if (transactionError) throw transactionError;
+        return;
+      }
+
+      if (data.code === "000") {
+        // Success
+        toast.success(
+          data.response_description || "Transaction completed successfully.",
+          {
+            autoClose: false,
+          }
+        );
+
+        const { error: updateError } = await billzpaddi
+          .from("wallets")
+          .update({ balance: walletBalance - totalAmount })
+          .eq("user_id", user.user_id);
+
+        if (updateError) throw new Error("Failed to update wallet balance");
+
+        const { error: transactionError } = await billzpaddi
+          .from("transactions")
+          .insert({
+            user_id: user?.user_id,
+            amount: totalAmount,
+            type: "debit",
+            description: "Data Purchase",
+            status: "completed",
+            reference: uniqueRequestId,
+          });
+
+        if (transactionError) throw transactionError;
+
+        onSuccess();
+        onOpenChange(false);
+        return;
+      }
+
+      // Catch-all for unknown response codes or unexpected failures
+      toast.error(
+        data.response_description || "Purchase failed. Please try again.",
+        {
+          autoClose: false,
+        }
+      );
+      
     } catch (err) {
-      setError(err.data.message || "Purchase failed. Please try again.");
-      toast.error(err.data.message || "Purchase failed. Please try again.");
+      toast.error(err.message || "Purchase failed. Please try again.", {
+        autoClose: false,
+      });
     } finally {
       fetchWallet();
       fetchTransactions();
@@ -401,8 +467,8 @@ export default function Page() {
           "https://sandbox.vtpass.com/api/services?identifier=data",
           {
             headers: {
-              "api-key": "a494a966debe749ecafb59b02305d4a0",
-              "public-key": "PK_572ee768e2c3700b6dc9f401353846d9d6626dbad03",
+              "api-key": process.env.VTPASS_API_KEY,
+              "public-key": process.env.VTPASS_PUBLIC_KEY,
             },
           }
         );
@@ -425,8 +491,8 @@ export default function Page() {
           `https://sandbox.vtpass.com/api/service-variations?serviceID=${selectedISP.serviceID}`,
           {
             headers: {
-              "api-key": "a494a966debe749ecafb59b02305d4a0",
-              "public-key": "PK_572ee768e2c3700b6dc9f401353846d9d6626dbad03",
+              "api-key": process.env.VTPASS_API_KEY,
+              "public-key": process.env.VTPASS_PUBLIC_KEY,
             },
           }
         );
