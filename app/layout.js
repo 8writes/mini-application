@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "BillzPaddi",
-  description: "Fast, secure, and reliable solutions for your everyday digital needs.",
+  description:
+    "BillzPaddi - Purchase of Airtime, Cheap Internet Data Bundles. Fast, secure, and reliable solutions for your everyday digital needs.",
 };
 
 export default function RootLayout({ children }) {
@@ -27,13 +28,13 @@ export default function RootLayout({ children }) {
         {/** our toast */}
         <ToastContainer
           autoClose={1900}
-          hideProgressBar={true}
-          newestOnTop={true}
+          hideProgressBar
           draggable
           transition={Zoom}
-          closeOnClick={true}
+          closeOnClick
           theme="dark"
-          className=" md:mt-20"
+          className="mt-20 md:mt-4" // Responsive margin
+          style={{ top: "4.7rem" }}
         />
         {children}
       </body>

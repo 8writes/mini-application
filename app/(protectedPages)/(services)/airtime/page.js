@@ -108,6 +108,7 @@ const PurchaseDialog = ({
     useGlobalContextData();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
+  
 
   const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
 
