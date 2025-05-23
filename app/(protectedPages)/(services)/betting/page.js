@@ -173,7 +173,6 @@ function BetCodeConverter({
               maximumFractionDigits: 2,
             }) ?? "0.00"}
           </p>
-          <p className="text-green-400 text-sm mb-2">You will be charged ₦50</p>
           <button
             onClick={convertCode}
             disabled={isConverting}
@@ -181,7 +180,7 @@ function BetCodeConverter({
               isConverting ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
-            {isConverting ? "Converting..." : "Convert Code"}
+            {isConverting ? "Converting..." : "Convert Code ₦50"}
           </button>
 
           {convertedCode && (

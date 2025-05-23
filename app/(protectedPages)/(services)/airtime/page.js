@@ -434,7 +434,7 @@ export default function Page() {
           placeholder="Enter phone number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-3 rounded-lg bg-gray-900 text-white border border-gray-700"
+          className="w-full md:w-1/2 px-4 py-3 rounded-lg bg-gray-900 text-white border border-gray-700 outline-none"
         />
       </div>
 
@@ -445,7 +445,7 @@ export default function Page() {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           min="50"
-          className="w-full px-4 py-3 rounded-lg bg-gray-900 text-white border border-gray-700"
+          className="w-full px-4 py-3 rounded-lg bg-gray-900 text-white border border-gray-700 outline-none"
         />
       </div>
 

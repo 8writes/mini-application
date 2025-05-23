@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
           transition={Zoom}
           closeOnClick
           theme="dark"
-          className="mt-20" // Responsive margin
+          className="mt-4" // Responsive margin
           style={{ top: "4.7rem" }}
         />
         {children}
