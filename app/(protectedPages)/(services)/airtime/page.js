@@ -108,7 +108,6 @@ const PurchaseDialog = ({
     useGlobalContextData();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
-  
 
   const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
 
@@ -305,6 +304,27 @@ export default function Page() {
   const [showDialog, setShowDialog] = useState(false);
   const [phone, setPhone] = useState("");
   const dropdownRef = useRef(null);
+  const inputRef = useRef(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    const handleBlur = () => {
+      window.scrollTo(0, scrollPosition);
+    };
+
+    const input = inputRef.current;
+    input?.addEventListener("focus", handleFocus);
+    input?.addEventListener("blur", handleBlur);
+
+    return () => {
+      input?.removeEventListener("focus", handleFocus);
+      input?.removeEventListener("blur", handleBlur);
+    };
+  }, [scrollPosition]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -430,6 +450,7 @@ export default function Page() {
           />
         </div>
         <input
+          ref={inputRef}
           type="tel"
           placeholder="Enter phone number"
           value={phone}
@@ -440,7 +461,8 @@ export default function Page() {
 
       <div className="mb-8">
         <input
-          type="number"
+          ref={inputRef}
+          type="tel"
           placeholder="Enter amount (minimum ₦50)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}

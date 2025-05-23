@@ -82,7 +82,7 @@ export default function TransactionsPage() {
           <input
             type="text"
             placeholder="Search..."
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 outline-none text-sm md:text-base"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 outline-none text-base"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
