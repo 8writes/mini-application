@@ -160,8 +160,8 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            disabled={true}
-            onClick={() => toast.info("Not Live, Check back later")}
+            disabled={isSubmitting}
+            
             className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50"
           >
             {isSubmitting ? "Signing up... " : "Sign Up"}
