@@ -365,7 +365,7 @@ export default function BetTopUp() {
           <button
             type="submit"
             disabled={isLoading || verifying}
-            className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 px-4 rounded flex items-center justify-center"
+            className="w-full bg-gray-900 hover:bg-gray-700 cursor-pointer text-white py-2 px-4 rounded flex items-center justify-center"
           >
             {isLoading ? (
               <>

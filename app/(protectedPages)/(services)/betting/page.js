@@ -180,8 +180,8 @@ function BetCodeConverter({
           <button
             onClick={convertCode}
             disabled={isConverting}
-            className={`w-full bg-blue-600 flex justify-center items-center hover:bg-blue-700 
-              cursor-pointer text-white py-2 px-4 rounded-md font-medium`}
+            className={`w-full bg-gray-900 flex justify-center items-center hover:bg-gray-700 
+              cursor-pointer text-white py-3 px-4 rounded-md font-medium`}
           >
             {isConverting ? (
               <>
@@ -410,7 +410,7 @@ export default function BettingServices() {
       <p className="text-gray-400 mb-6">
         Unlock our advanced AI predictions for just ₦250
       </p>
-      <button onClick={() => toast.info('UNAVAILABLE')} className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white py-2 px-6 rounded-md font-medium">
+      <button onClick={() => toast.info('UNAVAILABLE')} className="bg-gray-900 cursor-pointer hover:bg-gray-700 text-white py-3 px-6 rounded-md font-medium">
         Unlock for ₦250
       </button>
     </div>

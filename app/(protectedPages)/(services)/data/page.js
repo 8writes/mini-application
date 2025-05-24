@@ -565,7 +565,7 @@ export default function Page() {
           placeholder="Enter phone number"
           value={phone || ""}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-3 rounded-lg bg-gray-900 text-white border border-gray-700"
+          className="w-full md:w-1/2 px-4 py-3 rounded-lg outline-none bg-gray-800 text-white border border-gray-600"
         />
       </div>
 
