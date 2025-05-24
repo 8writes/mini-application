@@ -54,8 +54,8 @@ export default function NavBar() {
             {isSidebarOpen ? <HiX size={30} /> : <HiMenu size={30} />}
           </button>
           <div className="header__logo">
-            <Link href="/home" className="text-2xl font-bold">
-              𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
+            <Link href="/home" className="text-2xl font-bold flex items-center gap-1">
+             <Image src='/billzpaddi-logo-icon.png' alt="BillzPaddi Logo" width={20} height={20} /> 𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶 
             </Link>
           </div>
         </div>

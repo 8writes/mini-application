@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { billzpaddi } from "@/lib/client";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ password: "" });
@@ -19,7 +20,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (!hasAccessToken) {
       // Redirect to login if no token found
-    //  router.push("/auth/login");
+      //  router.push("/auth/login");
     }
   }, [router]);
 
@@ -49,7 +50,13 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
         <div className="text-center mb-6">
           {/* Replace with your logo */}
-          <div className="text-3xl font-bold text-blue-900 mb-2">
+          <div className="text-3xl font-bold text-blue-900 mb-2 flex items-center gap-1 justify-center">
+            <Image
+              src="/billzpaddi-logo-icon.png"
+              alt="BillzPaddi Logo"
+              width={20}
+              height={20}
+            />{" "}
             𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
           </div>
           <p className="text-blue-800">Enter New Password</p>

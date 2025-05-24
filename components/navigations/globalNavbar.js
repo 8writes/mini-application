@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
@@ -49,7 +50,16 @@ export default function GlobalNavbar() {
         <div className="flex justify-between items-center py-5 md:py-6">
           {/* Logo */}
           <div className="header__logo">
-            <Link href="/home" className="text-2xl font-bold">
+            <Link
+              href="/home"
+              className="text-2xl font-bold flex items-center gap-1"
+            >
+              <Image
+                src="/billzpaddi-logo-icon.png"
+                alt="BillzPaddi Logo"
+                width={20}
+                height={20}
+              />{" "}
               𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
             </Link>
           </div>
