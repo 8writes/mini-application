@@ -133,7 +133,7 @@ const PurchaseDialog = ({
           throw new Error("Failed to fetch wallet balance");
         }
 
-        const currentBalance = walletData.balance;
+        const currentBalance = walletData?.balance;
         setWalletBalance(currentBalance);
       } catch (err) {
         console.error("Failed to fetch wallet balance:", err);
@@ -214,7 +214,7 @@ const PurchaseDialog = ({
         const { error: updateError } = await billzpaddi
           .from("wallets")
           .update({ balance: walletBalance - totalAmount })
-          .eq("user_id", user.user_id);
+          .eq("user_id", user?.user_id);
 
         if (updateError) throw new Error("Failed to update wallet balance");
 
@@ -245,7 +245,7 @@ const PurchaseDialog = ({
         const { error: updateError } = await billzpaddi
           .from("wallets")
           .update({ balance: walletBalance - totalAmount })
-          .eq("user_id", user.user_id);
+          .eq("user_id", user?.user_id);
 
         if (updateError) throw new Error("Failed to update wallet balance");
 
@@ -328,7 +328,7 @@ const PurchaseDialog = ({
                     : "text-red-500"
                 }`}
               >
-                ₦{wallet.balance.toLocaleString()}
+                ₦{wallet?.balance.toLocaleString()}
               </span>
             </div>
             {(walletBalance || wallet?.balance) <= totalAmount && (
@@ -414,10 +414,47 @@ export default function Page() {
         "0903",
         "0906",
         "0703",
+        "0706",
+        "0704",
+        "07025",
+        "07026",
       ],
-      "glo-data": ["0805", "0807", "0811", "0815", "0905", "0705"],
-      "airtel-data": ["0802", "0808", "0812", "0701", "0902", "0901", "0907"],
-      "etisalat-data": ["0809", "0817", "0818", "0908", "0909"],
+      "glo-data": [
+        "0805",
+        "0807",
+        "0811",
+        "0815",
+        "0905",
+        "0705",
+        "0915",
+        "08055",
+        "08155",
+      ],
+      "airtel-data": [
+        "0802",
+        "0808",
+        "0812",
+        "0701",
+        "0708",
+        "0902",
+        "0901",
+        "0907",
+        "08028",
+        "08121",
+        "07026",
+      ],
+      "9mobile-data": [
+        // Formerly Etisalat
+        "0809",
+        "0817",
+        "0818",
+        "0908",
+        "0909",
+        "08097",
+        "08187",
+      ],
+      "mtn-sme": ["07025", "07026", "0704"], // MTN SME special prefixes
+      "airtel-corporate": ["07026"], // Airtel corporate lines
     };
 
     for (const [serviceID, prefixes] of Object.entries(mapping)) {
@@ -428,18 +465,28 @@ export default function Page() {
     return null;
   };
 
+  // 1. When user object changes, update phone state
   useEffect(() => {
-    if (user) {
-      setPhone(user?.phone);
+    if (user?.phone) {
+      setPhone(user.phone);
     }
   }, [user]);
 
+  // 2. When phone input changes, detect ISP
   useEffect(() => {
-    if (phone.length >= 4) {
+    const defaultISP = isps.find((i) => i.serviceID === "airtel-data");
+    if (defaultISP) {
+      setSelectedISP(defaultISP);
+    }
+    if (phone?.length >= 4 && isps.length > 0) {
       const detectedISP = detectISPFromPhone(phone);
+      console.log("Detected ISP:", detectedISP);
+
       if (detectedISP) {
         const isp = isps.find((i) => i.serviceID === detectedISP);
-        if (isp) setSelectedISP(isp);
+        if (isp) {
+          setSelectedISP(isp);
+        }
       }
     }
   }, [phone, isps]);
@@ -602,7 +649,7 @@ export default function Page() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 overflow-y-auto">
               {plans[activeTab].map((plan, index) => (
                 <div
-                  key={`${selectedISP?.serviceID}-${plan.variation_code}-${index}`}
+                  key={`${selectedISP?.serviceID}-${plan?.variation_code}-${index}`}
                   onClick={() => handlePlanClick(plan)}
                   className="bg-gray-800 p-3 rounded-md border cursor-pointer border-gray-700 hover:border-blue-400 transition-all text-sm"
                 >
@@ -611,7 +658,7 @@ export default function Page() {
                     {plan.name}
                   </h3>
                   <p className="text-blue-300 mt-1">
-                    ₦{addGain(plan.variation_amount).toLocaleString()}
+                    ₦{addGain(plan?.variation_amount).toLocaleString()}
                   </p>
                 </div>
               ))}

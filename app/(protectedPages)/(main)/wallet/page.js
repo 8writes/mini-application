@@ -107,7 +107,7 @@ export default function WalletPage() {
       fetchTransactions();
 
       setAmount("");
-      toast.success(`Wallet funded with ${fundingAmount}`);
+      toast.success(`Wallet funded with ₦${fundingAmount.toLocaleString()}`);
     } catch (error) {
       console.error("Wallet update error:", error);
       toast.error("Payment successful but wallet update failed");

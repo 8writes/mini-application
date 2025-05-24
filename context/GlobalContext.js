@@ -63,9 +63,12 @@ export const GlobalProvider = ({ children }) => {
       const { error } = await billzpaddi.auth.signOut();
 
       if (!error) {
+        // check for token
+        localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
         router.push("/auth/login");
       } else {
-        toast.error(error.message || "Failed to logout");
+        localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+        router.push("/auth/login");
       }
     } catch (err) {
       console.error("Error during logout:", err);

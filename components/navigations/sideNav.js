@@ -41,6 +41,13 @@ export default function SideNav() {
     };
   }, [isSidebarOpen, setIsSidebarOpen]);
 
+  {
+    /** 
+        <NavItem href="/bills" icon={<HiOutlineClipboardCheck />}>
+          Bills Payment
+        </NavItem>*/
+  }
+
   return (
     <div
       ref={sidebarRef}
@@ -84,9 +91,6 @@ export default function SideNav() {
         </NavItem>
         <NavItem href="/betting" icon={<HiOutlineCash />}>
           Betting
-        </NavItem>
-        <NavItem href="/bills" icon={<HiOutlineClipboardCheck />}>
-          Bills Payment
         </NavItem>
 
         {/* ACCOUNT */}
