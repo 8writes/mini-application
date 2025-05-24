@@ -41,13 +41,17 @@ export default function Page() {
       href: "/betting",
       description: "Convert your betting codes instantly",
     },
+  ];
+
+  {
+    /**
     {
       name: "Bills Payment",
       icon: <HiOutlineClipboardCheck className="w-8 h-8" />,
       href: "/bills",
       description: "Pay utilities and other bills seamlessly",
-    },
-  ];
+    }, */
+  }
 
   return (
     <div className="min-h-[80dvh] text-white bg-gray-800">
@@ -58,8 +62,8 @@ export default function Page() {
         </h2>
         <p className="text-base sm:text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
           Buy Airtime, Affordable Data Bundles, Game Top-ups, Bet Code
-          Conversions & more — Fast, secure, and reliable solutions tailored for your
-          everyday digital needs.
+          Conversions & more — Fast, secure, and reliable solutions tailored for
+          your everyday digital needs.
         </p>
         <div className="mb-12">
           <Link href="/auth/signup">
