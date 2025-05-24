@@ -57,8 +57,8 @@ export default function Page() {
           Explore Our Services
         </h2>
         <p className="text-base sm:text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
-          Buy Airtime, Affordable Data Bundles, Game Top-ups & Bet Code
-          Conversions — Fast, secure, and reliable solutions tailored for your
+          Buy Airtime, Affordable Data Bundles, Game Top-ups, Bet Code
+          Conversions & more — Fast, secure, and reliable solutions tailored for your
           everyday digital needs.
         </p>
         <div className="mb-12">
