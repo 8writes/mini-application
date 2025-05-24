@@ -104,9 +104,13 @@ const PurchaseDialog = ({
   onSuccess,
 }) => {
   const { user } = useGlobalContext();
-  const { wallet, fetchWallet, 
-    getUniqueRequestId, uniqueRequestId, fetchTransactions } =
-    useGlobalContextData();
+  const {
+    wallet,
+    fetchWallet,
+    getUniqueRequestId,
+    uniqueRequestId,
+    fetchTransactions,
+  } = useGlobalContextData();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
 
@@ -330,10 +334,45 @@ export default function Page() {
         "0903",
         "0906",
         "0703",
+        "0706",
+        "0704",
+        "07025",
+        "07026",
       ],
-      glo: ["0805", "0807", "0811", "0815", "0905", "0705"],
-      airtel: ["0802", "0808", "0812", "0701", "0902", "0901", "0907"],
-      "9mobile": ["0809", "0817", "0818", "0908", "0909"],
+      glo: [
+        "0805",
+        "0807",
+        "0811",
+        "0815",
+        "0905",
+        "0705",
+        "0915",
+        "08055",
+        "08155",
+      ],
+      airtel: [
+        "0802",
+        "0808",
+        "0812",
+        "0701",
+        "0708",
+        "0902",
+        "0901",
+        "0907",
+        "08028",
+        "08121",
+        "07026",
+      ],
+      etisalat: [
+        // Formerly Etisalat
+        "0809",
+        "0817",
+        "0818",
+        "0908",
+        "0909",
+        "08097",
+        "08187",
+      ],
     };
 
     for (const [serviceID, prefixes] of Object.entries(mapping)) {
@@ -344,18 +383,28 @@ export default function Page() {
     return null;
   };
 
+  // 1. When user object changes, update phone state
   useEffect(() => {
-    if (user) {
-      setPhone(user?.phone || "");
+    if (user?.phone) {
+      setPhone(user.phone);
     }
   }, [user]);
 
+  // 2. When phone input changes, detect ISP
   useEffect(() => {
-    if (phone.length >= 4) {
+    const defaultISP = isps.find((i) => i.serviceID === "airtel-data");
+    if (defaultISP) {
+      setSelectedISP(defaultISP);
+    }
+    if (phone?.length >= 4 && isps.length > 0) {
       const detectedISP = detectISPFromPhone(phone);
+      console.log("Detected ISP:", detectedISP);
+
       if (detectedISP) {
         const isp = isps.find((i) => i.serviceID === detectedISP);
-        if (isp) setSelectedISP(isp);
+        if (isp) {
+          setSelectedISP(isp);
+        }
       }
     }
   }, [phone, isps]);

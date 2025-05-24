@@ -6,8 +6,9 @@ import {
   HiRefresh,
   HiCreditCard,
   HiOutlineCash,
+  HiChartBar,
 } from "react-icons/hi";
-import { FaMoneyBillWave, FaHistory } from "react-icons/fa";
+import { FaMoneyBillWave, FaHistory, FaGamepad } from "react-icons/fa";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -104,7 +105,7 @@ export default function DashboardPage() {
             <Link href="/data" passHref>
               <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
                 <div className="bg-purple-500/20 p-3 rounded-full mb-2">
-                  <HiCreditCard className="text-purple-400 text-xl" />
+                  <HiChartBar className="text-purple-400 text-xl" />
                 </div>
                 <span>Buy Data</span>
               </button>
@@ -114,9 +115,9 @@ export default function DashboardPage() {
             <Link href="/bills" passHref>
               <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
                 <div className="bg-yellow-500/20 p-3 rounded-full mb-2">
-                  <FaMoneyBillWave className="text-yellow-400 text-xl" />
+                  <FaGamepad className="text-yellow-400 text-xl" />
                 </div>
-                <span>Pay Bills</span>
+                <span>Gaming</span>
               </button>
             </Link>
           </div>

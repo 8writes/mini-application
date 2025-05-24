@@ -443,7 +443,7 @@ export default function Page() {
         "08121",
         "07026",
       ],
-      "9mobile-data": [
+      "etisalat-data": [
         // Formerly Etisalat
         "0809",
         "0817",
@@ -453,8 +453,6 @@ export default function Page() {
         "08097",
         "08187",
       ],
-      "mtn-sme": ["07025", "07026", "0704"], // MTN SME special prefixes
-      "airtel-corporate": ["07026"], // Airtel corporate lines
     };
 
     for (const [serviceID, prefixes] of Object.entries(mapping)) {
