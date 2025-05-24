@@ -23,7 +23,7 @@ export default function WalletPage() {
       });
     }
   }, []);
-  const { user, isLoading } = useGlobalContext();
+  const { user, isLoading, fetchData } = useGlobalContext();
   const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
   const [isFunding, setIsFunding] = useState(false);
   const [amount, setAmount] = useState("");
@@ -56,7 +56,7 @@ export default function WalletPage() {
               .from("transactions")
               .insert({
                 user_id: user.user_id,
-                amount: fundingAmount,
+                amount: 0,
                 type: "credit",
                 description: "Wallet Funding",
                 status: "failed",
@@ -107,7 +107,7 @@ export default function WalletPage() {
       fetchTransactions();
 
       setAmount("");
-      toast.success(`Wallet funded with ${fundingAmount} BLZ`);
+      toast.success(`Wallet funded with ${fundingAmount}`);
     } catch (error) {
       console.error("Wallet update error:", error);
       toast.error("Payment successful but wallet update failed");
@@ -116,14 +116,38 @@ export default function WalletPage() {
     }
   };
 
-  const handleFundWallet = (e) => {
+  const handleFundWallet = async (e) => {
     e.preventDefault();
 
     if (!amount || parseFloat(amount) <= 0) {
       toast.info("Please enter a valid amount");
       return;
     }
-    initializePayment();
+
+    if (amount > wallet?.limit) {
+      toast.error(`Max deposit of ₦${wallet?.limit.toLocaleString()}`);
+      return;
+    }
+
+    // Fetch current wallet balance for user.user_id
+    const { data: walletData, error: fetchError } = await billzpaddi
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.user_id)
+      .single();
+
+    if (fetchError || !walletData) {
+      throw new Error("Failed to fetch wallet balance");
+    }
+
+    const currentBalance = walletData.balance;
+
+    if ((currentBalance || wallet?.balance) >= wallet?.limit) {
+      toast.error(`Max wallet balance of ₦${wallet?.limit.toLocaleString()}`);
+      return;
+    }
+
+    await initializePayment();
   };
 
   if (!user || isLoading) {
@@ -159,18 +183,33 @@ export default function WalletPage() {
             </div>
             <button
               className="bg-gray-700 hover:bg-gray-600 cursor-pointer p-2 rounded-lg"
-              onClick={() => fetchWallet()}
+              onClick={() => {
+                fetchWallet();
+                //fetchData();
+              }}
             >
               <HiRefresh className="text-xl" />
             </button>
           </div>
 
-          {/* Currency Conversion Info 
+          {/* Wallet Info */}
           <div className="bg-gray-700/50 rounded-lg p-3 mb-6 text-sm">
-            <div className="flex items-center gap-2 text-gray-300">
-              <span>1 BLZ = ₦50</span>
+            <div className="flex items-center justify-between flex-wrap gap-2 text-gray-300">
+              <span>Wallet Limit ₦{wallet?.limit.toLocaleString()}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-yellow-400">Account Status:</span>
+                <span
+                  className={`${
+                    user?.verified
+                      ? "text-green-400 bg-green-500/10 "
+                      : "text-red-400 bg-red-500/10 "
+                  } text-xs px-2 py-0.5 rounded-md`}
+                >
+                  {user?.verified ? "Verified" : "Unverified"}
+                </span>
+              </div>
             </div>
-          </div>*/}
+          </div>
         </div>
       </section>
 
@@ -217,7 +256,7 @@ export default function WalletPage() {
                     setAmount(e.target.value);
                     setActivePreset(null);
                   }}
-                  placeholder="0"
+                  placeholder="(minimum ₦100)"
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pl-12 outline-none"
                   required
                   min="100"

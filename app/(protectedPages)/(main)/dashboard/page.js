@@ -70,7 +70,7 @@ export default function DashboardPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => window.location.reload()}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-sm cursor-pointer flex items-center gap-2 text-sm transition-colors"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-sm cursor-pointer flex items-center gap-2 text-sm transition-colors"
               >
                 <HiRefresh className="text-lg" />
                 Refresh
@@ -132,7 +132,7 @@ export default function DashboardPage() {
           </h2>
           <Link
             href="/transactions"
-            className="text-sm text-blue-400 hover:underline"
+            className="text-sm text-gray-200 hover:underline pr-2"
           >
             View All
           </Link>

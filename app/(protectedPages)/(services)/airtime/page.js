@@ -442,7 +442,7 @@ export default function Page() {
       <div className="mb-8">
         <input
           type="tel"
-          placeholder="Enter amount (minimum ₦50)"
+          placeholder="(minimum ₦50)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           min="50"

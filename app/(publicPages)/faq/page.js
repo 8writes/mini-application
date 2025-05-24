@@ -23,7 +23,7 @@ export default function Page() {
     {
       question: "Is my payment information secure with BillzPaddi?",
       answer:
-        "Absolutely. We use bank-level 256-bit SSL encryption to protect all transactions. Your payment details are never stored on our servers and are processed through PCI-DSS compliant payment gateways.",
+        "Absolutely. We process all transactions through Paystack. Your payment details are never stored on our servers and are processed through Paystack payment gateways.",
       icon: <FaLock className="text-blue-400 mr-3" />,
       category: "security",
     },
@@ -31,7 +31,7 @@ export default function Page() {
       question:
         "What should I do if a transaction fails but my account was debited?",
       answer:
-        "Don't worry! First, wait 5-10 minutes as some transactions may take time to process. If the issue persists, contact our support team with your transaction reference number. We'll investigate and ensure you get either the service you paid for or a full refund within 24 hours.",
+        "Don't worry! First, wait 5-10 minutes as some transactions may take time to process. If the issue persists, contact our support team with your transaction reference number. We'll investigate and ensure you get either the service you paid for or a full refund within 48 hours.",
       icon: <FaCreditCard className="text-blue-400 mr-3" />,
       category: "transactions",
     },
@@ -66,14 +66,14 @@ export default function Page() {
     {
       question: "What security measures protect my account?",
       answer:
-        "We employ multiple layers of security including: Two-Factor Authentication (2FA), login alerts, device recognition, and regular security audits. We recommend using a strong, unique password and enabling 2FA for maximum protection.",
+        "We employ multiple layers of security including: Cloudflare Authentication, and regular security audits. We recommend using a strong, unique password.",
       icon: <FaShieldAlt className="text-blue-400 mr-3" />,
       category: "security",
     },
     {
       question: "How do I report suspicious activity on my account?",
       answer:
-        "Immediately contact our support team through the official channels if you notice any unauthorized activity. Change your password and enable 2FA if available. We monitor for fraud 24/7 and will take immediate action to secure your account.",
+        "Immediately contact our support team through the official channels if you notice any unauthorized activity. Change your password. We monitor for fraud 24/7 and will take immediate action to secure your account.",
       icon: <FaLock className="text-blue-400 mr-3" />,
       category: "security",
     },

@@ -350,7 +350,7 @@ export default function BetTopUp() {
               value={formData.amount}
               onChange={handleChange}
               className="w-full bg-gray-700 border border-gray-600 outline-none rounded py-2 px-3 text-white"
-              placeholder="e.g. 1000"
+              placeholder="(minimum ₦100)"
               min="100"
               required
             />
