@@ -137,7 +137,7 @@ function BetCodeConverter({
             />
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 md:mb-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 md:mb-10">
             {/* Convert From */}
             <div className="w-full md:w-72 flex flex-col">
               <label className="text-sm text-gray-400 mb-2">Convert From</label>
