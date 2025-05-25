@@ -8,21 +8,13 @@ import {
   HiOutlineCash,
   HiChartBar,
 } from "react-icons/hi";
-import { FaMoneyBillWave, FaHistory, FaGamepad } from "react-icons/fa";
+import { FaHistory, FaGamepad } from "react-icons/fa";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { billzpaddi } from "@/lib/client";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 
 export default function DashboardPage() {
   const { user, isLoading } = useGlobalContext();
   const { wallet, transactions } = useGlobalContextData();
-  const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
-
-  // Convert Naira to BLZ
-  const nairaToBlz = (naira) => naira / conversionRate;
-  const blzToNaira = (blz) => blz * conversionRate;
 
   if (!user || isLoading) {
     return (

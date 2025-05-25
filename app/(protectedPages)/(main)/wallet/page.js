@@ -2,13 +2,9 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
 import {
-  HiArrowUp,
-  HiArrowDown,
   HiRefresh,
-  HiCurrencyDollar,
 } from "react-icons/hi";
 import { FaMoneyBillWave } from "react-icons/fa";
-import Link from "next/link";
 import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
 import { useGlobalContextData } from "@/context/GlobalContextData";
@@ -23,16 +19,11 @@ export default function WalletPage() {
       });
     }
   }, []);
-  const { user, isLoading, fetchData } = useGlobalContext();
+  const { user, isLoading } = useGlobalContext();
   const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
   const [isFunding, setIsFunding] = useState(false);
   const [amount, setAmount] = useState("");
   const [activePreset, setActivePreset] = useState(null);
-  const [conversionRate] = useState(50); // 1 BLZ = 50 Naira
-
-  // Convert Naira to BLZ
-  const nairaToBlz = (naira) => naira / conversionRate;
-  const blzToNaira = (blz) => blz * conversionRate;
 
   const presetAmounts = [1000, 2000, 5000, 10000];
 
@@ -133,14 +124,14 @@ export default function WalletPage() {
     const { data: walletData, error: fetchError } = await billzpaddi
       .from("wallets")
       .select("balance")
-      .eq("user_id", user.user_id)
+      .eq("user_id", user?.user_id)
       .single();
 
     if (fetchError || !walletData) {
       throw new Error("Failed to fetch wallet balance");
     }
 
-    const currentBalance = walletData.balance;
+    const currentBalance = walletData?.balance;
 
     if ((currentBalance || wallet?.balance) >= wallet?.limit) {
       toast.error(`Max wallet balance of ₦${wallet?.limit.toLocaleString()}`);

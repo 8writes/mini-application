@@ -3,12 +3,12 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { billzpaddi } from "@/lib/client";
 import axios from "axios";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Link from "next/link";
 
+// Custom dropdown
 const CustomDropdown = ({
   options,
   selected,
@@ -95,6 +95,7 @@ const CustomDropdown = ({
   );
 };
 
+// Purchase dialog
 const PurchaseDialog = ({
   open,
   onOpenChange,
@@ -246,7 +247,7 @@ const PurchaseDialog = ({
             <div className="flex justify-between">
               <span className="text-gray-400">Amount:</span>
               <span className="text-white">
-                ₦{totalAmount.toLocaleString()}
+                ₦{totalAmount?.toLocaleString()}
               </span>
             </div>
 
@@ -364,7 +365,6 @@ export default function Page() {
         "07026",
       ],
       etisalat: [
-        // Formerly Etisalat
         "0809",
         "0817",
         "0818",
@@ -386,7 +386,7 @@ export default function Page() {
   // 1. When user object changes, update phone state
   useEffect(() => {
     if (user?.phone) {
-      setPhone(user.phone);
+      setPhone(user?.phone);
     }
   }, [user]);
 
@@ -396,9 +396,8 @@ export default function Page() {
     if (defaultISP) {
       setSelectedISP(defaultISP);
     }
-    if (phone?.length >= 4 && isps.length > 0) {
+    if (phone?.length >= 4 && isps?.length > 0) {
       const detectedISP = detectISPFromPhone(phone);
-      console.log("Detected ISP:", detectedISP);
 
       if (detectedISP) {
         const isp = isps.find((i) => i.serviceID === detectedISP);
