@@ -244,7 +244,7 @@ export default function BettingServices() {
   // Fetch bookies on component mount
   useEffect(() => {
     const fetchBookies = async () => {
-      if (!user) return;
+      
       try {
         const response = await axios.get(
           "https://betpaddi.com/api/v1/conversion/bookies",
