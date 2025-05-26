@@ -116,7 +116,7 @@ const PurchaseDialog = ({
   const [error, setError] = useState("");
 
   const totalAmount = selectedPlan
-    ? Math.round(Number(selectedPlan.variation_amount) * 1.01)
+    ? Math.round(Number(selectedPlan.variation_amount) * 1.0)
     : 0;
 
   useEffect(() => {
