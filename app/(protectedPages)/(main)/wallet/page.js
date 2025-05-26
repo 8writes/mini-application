@@ -29,13 +29,17 @@ export default function WalletPage() {
 
   const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
 
+  const PROCESSING_FEE = 20; // Paystack processing fee in NGN
+
+  const amountToCredit = amount + PROCESSING_FEE;
+
   // Function to handle Paystack payment
   const initializePayment = async () => {
     return new Promise((resolve, reject) => {
       const handler = PaystackPop.setup({
         key: paystackKey,
         email: user?.email.trim(),
-        amount: parseFloat(amount || 0) * 100, // Convert to kobo (multiply by 100)
+        amount: parseFloat(amountToCredit || 0) * 100, // Convert to kobo (multiply by 100)
         currency: "NGN",
         callback: async (response) => {
           if (response.status === "success") {
