@@ -90,7 +90,7 @@ export default function GlobalFooter() {
         {/* Copyright Section */}
         <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
           <p>
-            &copy; {new Date().getFullYear()} BillzPaddi. All rights reserved.
+            &copy; {new Date().getFullYear()} Ozmictech Ventures. All rights reserved.
           </p>
         </div>
       </section>
