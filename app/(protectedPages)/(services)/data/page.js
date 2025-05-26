@@ -396,7 +396,7 @@ export default function Page() {
   }, []);
 
   const addGain = (baseAmount) => {
-    return Math.round(Number(baseAmount) * 1.01); // 1% gain
+    return Math.round(Number(baseAmount) * 1.0); // 1% gain
   };
 
   const detectISPFromPhone = (phone) => {
