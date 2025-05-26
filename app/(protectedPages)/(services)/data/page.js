@@ -553,6 +553,8 @@ export default function Page() {
           ...v,
           name: cleanPlanName(v.name),
         }));
+
+        console.log("Fetched Plans:", cleaned);
         setPlans(categorizePlans(cleaned));
       } catch (err) {
         console.error("Error fetching data plans:", err);

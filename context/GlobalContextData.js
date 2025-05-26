@@ -91,6 +91,11 @@ export const GlobalProviderData = ({ children }) => {
         .single();
 
       if (error) throw error;
+
+      if (data.status === false) {
+        return;
+      }
+
       setUser(data);
     } catch (err) {
       toast.error(err);

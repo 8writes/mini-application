@@ -44,6 +44,17 @@ export const GlobalProvider = ({ children }) => {
         .eq("user_id", token?.user?.id)
         .single();
 
+      if (data.status === false) {
+        router.push("/auth/login");
+        const { error } = await billzpaddi.auth.signOut();
+        localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+        toast.error("Your account is disabled. Please contact support.", {
+          toastId: "account-disabled",
+          autoClose: false,
+        });
+        return;
+      }
+
       // set the user data in the context
       setUser(data);
     } catch (err) {

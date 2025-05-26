@@ -157,7 +157,7 @@ export default function DashboardPage() {
                           )}
                         </div>
                         <div>
-                          <p className="font-medium">{txn.description}</p>
+                          <p className="text-sm font-medium">{txn.description}</p>
                           <p className="text-sm text-gray-400">
                             {new Date(txn.created_at).toLocaleDateString()}
                           </p>

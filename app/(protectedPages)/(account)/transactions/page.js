@@ -206,7 +206,7 @@ export default function TransactionsPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-medium">{txn.description}</p>
+                      <p className="text-sm font-medium">{txn.description}</p>
                       <p className="text-xs text-gray-400">{txn.reference}</p>
                     </div>
                   </div>
