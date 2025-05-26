@@ -129,6 +129,8 @@ const PurchaseDialog = ({
     }
 
     setIsProcessing(true);
+    
+    getUniqueRequestId();
 
     try {
       const res = await fetch("/api/vtpass", {

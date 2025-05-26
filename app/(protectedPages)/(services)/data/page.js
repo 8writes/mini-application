@@ -159,6 +159,8 @@ const PurchaseDialog = ({
     }
 
     setIsProcessing(true);
+    
+    getUniqueRequestId();
 
     try {
       // 2. Then make the VTpass purchase
