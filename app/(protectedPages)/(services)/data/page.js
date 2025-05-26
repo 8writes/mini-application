@@ -147,8 +147,12 @@ const PurchaseDialog = ({
     }
   }, [open, user]);
 
+  useEffect(() => {
+    getUniqueRequestId();
+  }, []);
+
   const handlePurchase = async () => {
-    if (!selectedPlan || !phoneNumber || !selectedISP) {
+    if (!selectedPlan || !phoneNumber || !selectedISP || !uniqueRequestId) {
       setError("Missing required information for purchase");
       return;
     }
@@ -159,8 +163,6 @@ const PurchaseDialog = ({
     }
 
     setIsProcessing(true);
-    
-    getUniqueRequestId();
 
     try {
       // 2. Then make the VTpass purchase

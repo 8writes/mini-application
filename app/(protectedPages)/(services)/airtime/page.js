@@ -3,7 +3,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { billzpaddi } from "@/lib/client";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -117,8 +117,12 @@ const PurchaseDialog = ({
 
   const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
 
+  useEffect(() => {
+    getUniqueRequestId();
+  }, []);
+
   const handlePurchase = async () => {
-    if (!amount || !phoneNumber || !selectedISP) {
+    if (!amount || !phoneNumber || !selectedISP || !uniqueRequestId) {
       setError("Missing required information for purchase");
       return;
     }
@@ -129,8 +133,6 @@ const PurchaseDialog = ({
     }
 
     setIsProcessing(true);
-    
-    getUniqueRequestId();
 
     try {
       const res = await fetch("/api/vtpass", {
@@ -366,15 +368,7 @@ export default function Page() {
         "08121",
         "07026",
       ],
-      etisalat: [
-        "0809",
-        "0817",
-        "0818",
-        "0908",
-        "0909",
-        "08097",
-        "08187",
-      ],
+      etisalat: ["0809", "0817", "0818", "0908", "0909", "08097", "08187"],
     };
 
     for (const [serviceID, prefixes] of Object.entries(mapping)) {
