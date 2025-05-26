@@ -515,7 +515,7 @@ export default function Page() {
     const fetchISPs = async () => {
       try {
         const res = await axios.get(
-          "https://sandbox.vtpass.com/api/services?identifier=data",
+          "https://vtpass.com/api/services?identifier=data",
           {
             headers: {
               "api-key": process.env.VTPASS_API_KEY,
@@ -542,7 +542,7 @@ export default function Page() {
       try {
         setLoadingPlans(true);
         const res = await axios.get(
-          `https://sandbox.vtpass.com/api/service-variations?serviceID=${selectedISP.serviceID}`,
+          `https://vtpass.com/api/service-variations?serviceID=${selectedISP.serviceID}`,
           {
             headers: {
               "api-key": process.env.VTPASS_API_KEY,

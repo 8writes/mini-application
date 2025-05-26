@@ -5,7 +5,7 @@ export async function POST(request) {
     const body = await request.json();
 
     const response = await axios.post(
-      "https://sandbox.vtpass.com/api/pay",
+      "https://vtpass.com/api/pay",
       {
         serviceID: body.serviceID,
         variation_code: body.variation_code,

@@ -412,7 +412,7 @@ export default function Page() {
     const fetchISPs = async () => {
       try {
         const res = await axios.get(
-          "https://sandbox.vtpass.com/api/services?identifier=airtime",
+          "https://vtpass.com/api/services?identifier=airtime",
           {
             headers: {
               "api-key": process.env.NEXT_PUBLIC_VTPASS_API_KEY,
