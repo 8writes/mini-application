@@ -165,7 +165,34 @@ const PurchaseDialog = ({
     setIsProcessing(true);
 
     try {
-      // 2. Then make the VTpass purchase
+      // 1. First create a pending transaction record
+      const { error: createError } = await billzpaddi
+        .from("transactions")
+        .insert({
+          user_id: user?.user_id,
+          amount: totalAmount,
+          type: "debit",
+          description: `Data Purchase (${selectedISP.name})`,
+          status: "pending",
+          reference: uniqueRequestId,
+          metadata: {
+            plan: selectedPlan.name,
+            phone: phoneNumber,
+            isp: selectedISP.name,
+          },
+        });
+
+      if (createError) throw new Error("Failed to record transaction");
+
+      // 2. Deduct from wallet immediately (for pending transaction)
+      const { error: updateError } = await billzpaddi
+        .from("wallets")
+        .update({ balance: walletBalance - totalAmount })
+        .eq("user_id", user?.user_id);
+
+      if (updateError) throw new Error("Failed to update wallet balance");
+
+      // 3. Make the VTpass purchase
       const res = await fetch("/api/vtpass", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -181,107 +208,64 @@ const PurchaseDialog = ({
 
       const data = await res.json();
 
-      if (data.code === "030") {
-        // Unreachable
-        toast.error(data.response_description || "Service unreachable.");
-        return;
+      // 4. Update transaction based on response
+      let transactionStatus = "failed";
+      let toastMessage = data.response_description;
+      let toastType = "error";
+
+      switch (data.code) {
+        case "000": // Success
+          transactionStatus = "completed";
+          toastType = "success";
+          break;
+
+        case "099": // Pending
+          transactionStatus = "pending";
+          toastType = "warning";
+          break;
+
+        case "016": // Failed
+        case "030": // Unreachable
+        default:
+          transactionStatus = "failed";
+          // Refund if failed
+          await billzpaddi
+            .from("wallets")
+            .update({ balance: walletBalance })
+            .eq("user_id", user?.user_id);
+          break;
       }
 
-      if (data.code === "016") {
-        // Failed
-        toast.error(data.response_description || "Transaction failed.", {
-          autoClose: false,
-        });
+      // Update transaction record
+      await billzpaddi
+        .from("transactions")
+        .update({
+          status: transactionStatus,
+          metadata: {
+            ...data, // Store full API response
+            updated_at: new Date().toISOString(),
+          },
+        })
+        .eq("reference", uniqueRequestId);
 
-        const { error: transactionError } = await billzpaddi
-          .from("transactions")
-          .insert({
-            user_id: user?.user_id,
-            amount: 0,
-            type: "debit",
-            description: "Data Purchase",
-            status: "failed",
-            reference: uniqueRequestId,
-          });
+      // Show appropriate toast
+      toast[toastType](toastMessage || getDefaultMessage(transactionStatus), {
+        autoClose: transactionStatus === "pending" ? false : 5000,
+      });
 
-        if (transactionError) throw transactionError;
-        return;
-      }
-
-      if (data.code === "099") {
-        // Pending
-        toast.warning(data.response_description || "Transaction pending...", {
-          autoClose: false,
-        });
-
-        // Deduct from wallet
-        const { error: updateError } = await billzpaddi
-          .from("wallets")
-          .update({ balance: walletBalance - totalAmount })
-          .eq("user_id", user?.user_id);
-
-        if (updateError) throw new Error("Failed to update wallet balance");
-
-        const { error: transactionError } = await billzpaddi
-          .from("transactions")
-          .insert({
-            user_id: user?.user_id,
-            amount: totalAmount,
-            type: "debit",
-            description: "Data Purchase",
-            status: "pending",
-            reference: uniqueRequestId,
-          });
-
-        if (transactionError) throw transactionError;
-        return;
-      }
-
-      if (data.code === "000") {
-        // Success
-        toast.success(
-          data.response_description || "Transaction completed successfully.",
-          {
-            autoClose: false,
-          }
-        );
-
-        const { error: updateError } = await billzpaddi
-          .from("wallets")
-          .update({ balance: walletBalance - totalAmount })
-          .eq("user_id", user?.user_id);
-
-        if (updateError) throw new Error("Failed to update wallet balance");
-
-        const { error: transactionError } = await billzpaddi
-          .from("transactions")
-          .insert({
-            user_id: user?.user_id,
-            amount: totalAmount,
-            type: "debit",
-            description: "Data Purchase",
-            status: "completed",
-            reference: uniqueRequestId,
-          });
-
-        if (transactionError) throw transactionError;
-
+      if (transactionStatus === "completed") {
         onSuccess();
         onOpenChange(false);
-        return;
       }
-
-      // Catch-all for unknown response codes or unexpected failures
-      toast.error(
-        data.response_description || "Purchase failed. Please try again.",
-        {
-          autoClose: false,
-        }
-      );
     } catch (err) {
-      toast.error(err.message || "Purchase failed. Please try again.", {
-        autoClose: false,
-      });
+      console.error("Purchase error:", err);
+      toast.error(err.message || "Purchase failed. Please try again.");
+
+      // Ensure wallet is refunded if error occurs after deduction
+      await billzpaddi
+        .from("wallets")
+        .update({ balance: walletBalance })
+        .eq("user_id", user?.user_id);
     } finally {
       fetchWallet();
       fetchTransactions();
@@ -289,6 +273,16 @@ const PurchaseDialog = ({
       setIsProcessing(false);
     }
   };
+
+  // Helper function
+  function getDefaultMessage(status) {
+    const messages = {
+      completed: "Data purchase successful!",
+      pending: "Transaction pending...",
+      failed: "Transaction failed. Funds refunded.",
+    };
+    return messages[status] || "Transaction processed";
+  }
 
   if (!open) return null;
 

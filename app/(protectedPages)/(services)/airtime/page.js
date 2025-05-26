@@ -122,6 +122,7 @@ const PurchaseDialog = ({
   }, []);
 
   const handlePurchase = async () => {
+    // Validate inputs
     if (!amount || !phoneNumber || !selectedISP || !uniqueRequestId) {
       setError("Missing required information for purchase");
       return;
@@ -135,6 +136,32 @@ const PurchaseDialog = ({
     setIsProcessing(true);
 
     try {
+      // 1. First create a pending transaction record
+      const { error: txError } = await billzpaddi.from("transactions").insert({
+        user_id: user?.user_id,
+        amount: totalAmount,
+        type: "debit",
+        description: `Airtime Purchase (${selectedISP.name})`,
+        status: "pending",
+        reference: uniqueRequestId,
+        metadata: {
+          phone: phoneNumber,
+          network: selectedISP.name,
+          amount: amount,
+        },
+      });
+
+      if (txError) throw new Error("Failed to record transaction");
+
+      // 2. Deduct from wallet immediately
+      const { error: walletError } = await billzpaddi
+        .from("wallets")
+        .update({ balance: wallet.balance - totalAmount })
+        .eq("user_id", user.user_id);
+
+      if (walletError) throw new Error("Failed to deduct from wallet");
+
+      // 3. Process payment with VTPass
       const res = await fetch("/api/vtpass", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -149,83 +176,84 @@ const PurchaseDialog = ({
 
       const data = await res.json();
 
-      if (data.code === "016") {
-        toast.error(data.response_description || "Transaction failed.", {
-          autoClose: false,
-        });
+      // 4. Handle response and update transaction
+      let newStatus = "failed";
+      let toastType = "error";
+      let message = data.response_description;
 
-        await billzpaddi.from("transactions").insert({
-          user_id: user?.user_id,
-          amount: 0,
-          type: "debit",
-          description: "Airtime Purchase",
-          status: "failed",
-          reference: uniqueRequestId,
-        });
-        return;
+      switch (data.code) {
+        case "000": // Success
+          newStatus = "completed";
+          toastType = "success";
+          break;
+
+        case "099": // Pending
+          newStatus = "pending";
+          toastType = "warning";
+          break;
+
+        case "016": // Failed
+        default:
+          // Refund wallet if failed
+          await billzpaddi
+            .from("wallets")
+            .update({ balance: wallet.balance })
+            .eq("user_id", user.user_id);
+          break;
       }
 
-      if (data.code === "099") {
-        toast.warning(data.response_description || "Transaction pending...", {
-          autoClose: false,
-        });
+      // Update transaction status
+      await billzpaddi
+        .from("transactions")
+        .update({
+          status: newStatus,
+          metadata: {
+            ...data,
+            updated_at: new Date().toISOString(),
+          },
+        })
+        .eq("reference", uniqueRequestId);
 
-        await billzpaddi
-          .from("wallets")
-          .update({ balance: wallet.balance - totalAmount })
-          .eq("user_id", user.user_id);
+      // Show appropriate notification
+      toast[toastType](message || getStatusMessage(newStatus), {
+        autoClose: newStatus === "pending" ? false : 5000,
+      });
 
-        await billzpaddi.from("transactions").insert({
-          user_id: user?.user_id,
-          amount: totalAmount,
-          type: "debit",
-          description: "Airtime Purchase",
-          status: "pending",
-          reference: uniqueRequestId,
-        });
-        return;
-      }
-
-      if (data.code === "000") {
-        toast.success(
-          data.response_description || "Transaction completed successfully.",
-          { autoClose: false }
-        );
-
-        await billzpaddi
-          .from("wallets")
-          .update({ balance: wallet.balance - totalAmount })
-          .eq("user_id", user.user_id);
-
-        await billzpaddi.from("transactions").insert({
-          user_id: user?.user_id,
-          amount: totalAmount,
-          type: "debit",
-          description: "Airtime Purchase",
-          status: "completed",
-          reference: uniqueRequestId,
-        });
-
+      if (newStatus === "completed") {
         onSuccess();
         onOpenChange(false);
-        return;
       }
-
-      toast.error(
-        data.response_description || "Purchase failed. Please try again.",
-        { autoClose: false }
-      );
     } catch (err) {
-      toast.error(err.message || "Purchase failed. Please try again.", {
-        autoClose: false,
-      });
+      console.error("Purchase error:", err);
+      toast.error(err.message || "Transaction failed");
+
+      // Attempt to refund if error occurred after deduction
+      try {
+        await billzpaddi
+          .from("wallets")
+          .update({ balance: wallet.balance })
+          .eq("user_id", user.user_id);
+      } catch (refundError) {
+        console.error("Refund failed:", refundError);
+      }
     } finally {
+      // Refresh data
       fetchWallet();
       fetchTransactions();
       getUniqueRequestId();
       setIsProcessing(false);
     }
   };
+
+  // Helper function for status messages
+  function getStatusMessage(status) {
+    const messages = {
+      completed: "Airtime purchase successful!",
+      pending: "Transaction in progress...",
+      failed: "Transaction failed. Funds refunded.",
+    };
+    return messages[status] || "Transaction processed";
+  }
 
   if (!open) return null;
 
