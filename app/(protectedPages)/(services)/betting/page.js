@@ -190,7 +190,7 @@ function BetCodeConverter({
                 Converting...
               </>
             ) : (
-              "Convert Code ₦50"
+              "Convert Code ₦100"
             )}
           </button>
 
@@ -320,7 +320,7 @@ export default function BettingServices() {
 
       const currentBalance = walletData.balance;
 
-      if (currentBalance < 50) {
+      if (currentBalance < 100) {
         toast.error("Insufficient balance");
         setIsConverting(false);
         return;
@@ -350,7 +350,7 @@ export default function BettingServices() {
         // Deduct from balance and update
         const { error: updateError } = await billzpaddi
           .from("wallets")
-          .update({ balance: currentBalance - 50 })
+          .update({ balance: currentBalance - 100 })
           .eq("user_id", user.user_id);
 
         if (updateError) {
@@ -362,7 +362,7 @@ export default function BettingServices() {
           .from("transactions")
           .insert({
             user_id: user?.user_id,
-            amount: 50,
+            amount: 100,
             type: "debit",
             description: "Code Conversion",
             status: "completed",
