@@ -162,7 +162,7 @@ const PurchaseDialog = ({
       if (walletError) throw new Error("Failed to deduct from wallet");
 
       // 3. Process payment with VTPass
-      const res = await fetch("/api/vtpass", {
+      const res = await fetch("/api/vtpass/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -216,7 +216,7 @@ const PurchaseDialog = ({
 
       // Show appropriate notification
       toast[toastType](message || getStatusMessage(newStatus), {
-        autoClose: newStatus === "pending" ? false : 5000,
+        autoClose: false,
       });
 
       if (newStatus === "completed") {
@@ -336,6 +336,7 @@ const PurchaseDialog = ({
 
 export default function Page() {
   const { user, isLoading } = useGlobalContext();
+  const { fetchWallet } = useGlobalContextData();
   const [selectedISP, setSelectedISP] = useState(null);
   const [amount, setAmount] = useState("");
   const [isps, setIsps] = useState([]);
@@ -470,6 +471,7 @@ export default function Page() {
       toast.error("Please select a network");
       return;
     }
+    fetchWallet();
     setShowDialog(true);
   };
 

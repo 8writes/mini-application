@@ -193,7 +193,7 @@ const PurchaseDialog = ({
       if (updateError) throw new Error("Failed to update wallet balance");
 
       // 3. Make the VTpass purchase
-      const res = await fetch("/api/vtpass", {
+      const res = await fetch("/api/vtpass/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -250,7 +250,7 @@ const PurchaseDialog = ({
 
       // Show appropriate toast
       toast[toastType](toastMessage || getDefaultMessage(transactionStatus), {
-        autoClose: transactionStatus === "pending" ? false : 5000,
+        autoClose: false,
       });
 
       if (transactionStatus === "completed") {
@@ -329,7 +329,7 @@ const PurchaseDialog = ({
                 ₦{wallet?.balance.toLocaleString()}
               </span>
             </div>
-            {(walletBalance || wallet?.balance) <= totalAmount && (
+            {(walletBalance || wallet?.balance) < totalAmount && (
               <Link
                 href="/wallet"
                 className="flex justify-end bg-gray-700 w-fit ml-auto px-2 py-1 rounded-sm text-sm"
@@ -371,6 +371,7 @@ const PurchaseDialog = ({
 
 export default function Page() {
   const { user, isLoading } = useGlobalContext();
+  const { fetchWallet } = useGlobalContextData();
   const [selectedISP, setSelectedISP] = useState(null);
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
@@ -554,7 +555,6 @@ export default function Page() {
           name: cleanPlanName(v.name),
         }));
 
-        console.log("Fetched Plans:", cleaned);
         setPlans(categorizePlans(cleaned));
       } catch (err) {
         console.error("Error fetching data plans:", err);
@@ -572,6 +572,7 @@ export default function Page() {
       return;
     }
     setSelectedPlan(plan);
+    fetchWallet();
     setShowDialog(true);
   };
 
