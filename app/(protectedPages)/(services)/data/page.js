@@ -658,13 +658,13 @@ export default function Page() {
                 <div
                   key={`${selectedISP?.serviceID}-${plan?.variation_code}-${index}`}
                   onClick={() => handlePlanClick(plan)}
-                  className="bg-gray-800 p-3 rounded-md border cursor-pointer border-gray-700 hover:border-blue-400 transition-all text-sm"
+                  className="bg-gray-800 p-3 rounded-md border cursor-pointer border-gray-700 hover:border-blue-400 transition-all text-sm md:text-base"
                 >
                   <FaWifi className="text-blue-400 text-lg mb-1" />
                   <h3 className="text-white font-semibold text-sm md:text-base">
                     {plan.name}
                   </h3>
-                  <p className="text-blue-300 mt-1">
+                  <p className="text-blue-300 mt-1 ">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
                   </p>
                 </div>

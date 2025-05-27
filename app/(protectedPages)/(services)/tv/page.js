@@ -590,20 +590,20 @@ export default function TvSubscriptionPage() {
       ) : (
         <>
           {plans.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {plans.map((plan, index) => (
                 <div
                   key={`${selectedService?.serviceID}-${plan?.variation_code}-${index}`}
                   onClick={() => verifyAndPurchase(plan)}
                   className="bg-gray-800 p-4 rounded-md border border-gray-700 hover:border-blue-400 cursor-pointer"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col gap-3">
                     <FaTv className="text-blue-400 text-xl" />
                     <div>
-                      <h3 className="text-white font-semibold">
+                      <h3 className="text-white text-sm md:text-base font-semibold">
                         {cleanPlanName(plan.name)}
                       </h3>
-                      <p className="text-blue-300 mt-1">
+                      <p className="text-blue-300 mt-1 text-sm md:text-base">
                         ₦
                         {Math.round(
                           Number(plan.variation_amount) * 1.0
