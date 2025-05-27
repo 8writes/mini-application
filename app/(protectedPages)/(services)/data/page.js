@@ -507,6 +507,14 @@ export default function Page() {
         groups.Monthly.push(plan);
       else groups.Special.push(plan);
     });
+
+    // Sort each category by price (lowest to highest)
+    Object.keys(groups).forEach((category) => {
+      groups[category].sort(
+        (a, b) => Number(a.variation_amount) - Number(b.variation_amount)
+      );
+    });
+
     return groups;
   };
 
