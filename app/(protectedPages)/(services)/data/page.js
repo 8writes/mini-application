@@ -376,14 +376,14 @@ export default function Page() {
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [isps, setIsps] = useState([]);
-  const [activeTab, setActiveTab] = useState("Special");
+  const [activeTab, setActiveTab] = useState("Daily");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [phone, setPhone] = useState("");
   const dropdownRef = useRef(null);
 
-  const tabOrder = ["Special", "Daily", "Weekly", "Monthly"];
+  const tabOrder = ["Daily", "Weekly", "Monthly", "Others",];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -477,7 +477,6 @@ export default function Page() {
     }
     if (phone?.length >= 4 && isps.length > 0) {
       const detectedISP = detectISPFromPhone(phone);
-      console.log("Detected ISP:", detectedISP);
 
       if (detectedISP) {
         const isp = isps.find((i) => i.serviceID === detectedISP);
@@ -490,22 +489,30 @@ export default function Page() {
 
   const cleanPlanName = (name) => {
     return name
-      .replace(/\s*-\s*[\d,]+(?:\.\d+)?\s*Naira/i, "")
-      .replace(/\s*N\d+(?:,\d{3})*(?:\.\d+)?\s*/i, "")
-      .trim();
   };
 
   const categorizePlans = (variations) => {
-    const groups = { Daily: [], Weekly: [], Monthly: [], Special: [] };
+    const groups = { Daily: [], Weekly: [], Monthly: [], Others: [] };
     variations.forEach((plan) => {
       const name = cleanPlanName(plan.name).toLowerCase();
-      if (name.includes("24 hrs") || name.includes("1 day"))
+      if (
+        name.includes("24 hrs") ||
+        name.includes("1 day") ||
+        name.includes("1day") ||
+        name.includes("2 day") ||
+        name.includes("2days")
+      )
         groups.Daily.push(plan);
       else if (name.includes("7 days") || name.includes("week"))
         groups.Weekly.push(plan);
-      else if (name.includes("30 days") || name.includes("month"))
+      else if (
+        name.includes("30 days") ||
+        name.includes("month") ||
+        name.includes("30days") ||
+        name.includes("monthly")
+      )
         groups.Monthly.push(plan);
-      else groups.Special.push(plan);
+      else groups.Others.push(plan);
     });
 
     // Sort each category by price (lowest to highest)
@@ -557,7 +564,10 @@ export default function Page() {
             },
           }
         );
+
         const variations = res.data.content.variations || [];
+
+        console.log(res.data)
         const cleaned = variations.map((v) => ({
           ...v,
           name: cleanPlanName(v.name),

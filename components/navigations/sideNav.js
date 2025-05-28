@@ -85,7 +85,7 @@ export default function SideNav() {
           Data
         </NavItem>
         <NavItem href="/tv" icon={<HiOutlineDesktopComputer />}>
-          TV
+          TV Subscription
         </NavItem>
         <NavItem href="/gaming" icon={<FaGamepad />}>
           Gaming

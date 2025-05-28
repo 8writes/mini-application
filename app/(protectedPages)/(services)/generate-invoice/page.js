@@ -112,7 +112,7 @@ export default function InvoiceGenerator() {
   const deductFee = async () => {
     if (!user) return;
     try {
-      const FREE_INVOICE_LIMIT = 5;
+      const FREE_INVOICE_LIMIT = 100;
       const FEE = 25;
 
       setIsGenerating(true);
@@ -1022,10 +1022,12 @@ export default function InvoiceGenerator() {
                 ) : (
                   <>
                     Generate Invoice{" "}
-                    {invoiceCount < 5 ? (
-                      <p>{invoiceCount}/5 free</p>
-                    ) : (
-                      <p>₦25</p>
+                    {false && (
+                      <>
+                        <p>{invoiceCount}/5 free</p>
+
+                        <p>₦25</p>
+                      </>
                     )}
                   </>
                 )}

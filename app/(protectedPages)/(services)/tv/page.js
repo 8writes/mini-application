@@ -118,9 +118,8 @@ const PurchaseDialog = ({
   const [walletBalance, setWalletBalance] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
+  const [isRenewal, setIsRenewal] = useState(true);
 
-  // For DSTV/GOtv renewal, use the verified amount if available
-  const isRenewal = selectedPlan?.name.includes("Renew");
   const amount =
     isRenewal && verificationData?.Renewal_Amount
       ? verificationData.Renewal_Amount
@@ -213,8 +212,6 @@ const PurchaseDialog = ({
         phone: phoneNumber,
         amount: amount,
       };
-
-      console.log("VTpass payload:", payload);
 
       // Add subscription_type for DSTV/GOtv
       if (["dstv", "gotv"].includes(selectedService.serviceID.toLowerCase())) {
@@ -348,6 +345,32 @@ const PurchaseDialog = ({
                 ₦{totalAmount.toLocaleString()}
               </span>
             </div>
+            <div className="flex justify-between flex-wrap gap-2 my-3">
+              <span className="text-gray-400">Type:</span>
+              <div className="flex gap-4 ml-auto">
+                <button
+                  className={`text-sm px-3 py-1 cursor-pointer rounded-sm ${
+                    isRenewal
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-gray-300"
+                  }`}
+                  onClick={() => setIsRenewal(true)}
+                >
+                  Renew
+                </button>
+                <button
+                  className={`text-sm px-3 py-1 cursor-pointer rounded-sm ${
+                    !isRenewal
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-700 text-gray-300"
+                  }`}
+                  onClick={() => setIsRenewal(false)}
+                >
+                  Change Bouquet
+                </button>
+              </div>
+            </div>
+
             <div className="flex justify-between">
               <span className="text-gray-400">Balance:</span>
               <span
@@ -382,9 +405,13 @@ const PurchaseDialog = ({
             </button>
             <button
               onClick={handlePurchase}
-              disabled={isProcessing || wallet?.balance < totalAmount}
-              className={`px-7 py-2 rounded-md cursor-pointer text-white ${
-                wallet?.balance >= totalAmount
+              disabled={
+                isProcessing ||
+                wallet?.balance < totalAmount ||
+                isRenewal === null
+              }
+              className={`px-7 py-2 rounded-md text-sm md:text-base cursor-pointer text-white ${
+                wallet?.balance >= totalAmount && isRenewal !== null
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-gray-600 cursor-not-allowed"
               } disabled:opacity-50`}
@@ -392,7 +419,7 @@ const PurchaseDialog = ({
               {isProcessing ? (
                 "Processing..."
               ) : (
-                <>{isRenewal ? "Renew" : "Subscribe"}</>
+                <>{isRenewal ? "Renew Bouquet" : "Change Bouquet"}</>
               )}
             </button>
           </div>
