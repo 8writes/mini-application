@@ -389,7 +389,11 @@ const PurchaseDialog = ({
                   : "bg-gray-600 cursor-not-allowed"
               } disabled:opacity-50`}
             >
-              {isProcessing ? "Processing..." : "Subscribe Now"}
+              {isProcessing ? (
+                "Processing..."
+              ) : (
+                <>{isRenewal ? "Renew" : "Subscribe"}</>
+              )}
             </button>
           </div>
         </div>
