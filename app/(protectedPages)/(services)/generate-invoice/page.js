@@ -78,9 +78,7 @@ export default function InvoiceGenerator() {
 
     // Create preview with mobile-responsive sizing
     const reader = new FileReader();
-    console.log(reader)
     reader.onload = () => {
-      console.log(reader);
       setLogoPreview(reader.result);
       setInvoice((prev) => ({ ...prev, vendorLogo: reader.result }));
     };
@@ -278,7 +276,19 @@ export default function InvoiceGenerator() {
 
       if (invoice.vendorLogo) {
         try {
-          const logoImage = await pdfDoc.embedPng(invoice.vendorLogo);
+          let logoImage;
+
+          if (invoice.vendorLogo.startsWith("data:image/png")) {
+            logoImage = await pdfDoc.embedPng(invoice.vendorLogo);
+          } else if (
+            invoice.vendorLogo.startsWith("data:image/jpeg") ||
+            invoice.vendorLogo.startsWith("data:image/jpg")
+          ) {
+            logoImage = await pdfDoc.embedJpg(invoice.vendorLogo);
+          } else {
+            throw new Error("Unsupported logo format");
+          }
+
           // Responsive logo sizing for PDF
           const logoAspectRatio = logoImage.width / logoImage.height;
           const logoWidth = Math.min(100, page.getWidth() - 100); // Don't exceed page width
@@ -293,7 +303,7 @@ export default function InvoiceGenerator() {
         } catch (e) {
           console.error("Error embedding logo:", e);
         }
-      }
+      }      
 
       // Vendor info
       page.drawText(invoice.vendorName || "Your Business Name", {
