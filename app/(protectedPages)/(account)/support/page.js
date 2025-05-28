@@ -46,7 +46,7 @@ export default function Page() {
                 </p>
               </div>
               <Link
-                href="https://wa.me/2349011023653"
+                href="https://wa.me/2349163366286"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-3 transition-colors duration-200 font-medium"

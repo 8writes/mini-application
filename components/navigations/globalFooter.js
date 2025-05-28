@@ -66,12 +66,12 @@ export default function GlobalFooter() {
               <li className="flex items-center gap-2">
                 <span>WhatsApp:</span>
                 <Link
-                  href="https://wa.me/2349011023653"
+                  href="https://wa.me/2349163366286"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  +234 901 102 3653
+                  +234 916 336 6286
                 </Link>
               </li>
               <li className="flex items-center gap-2">
@@ -90,7 +90,8 @@ export default function GlobalFooter() {
         {/* Copyright Section */}
         <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
           <p>
-            &copy; {new Date().getFullYear()} Ozmictech Ventures. All rights reserved.
+            &copy; {new Date().getFullYear()} Ozmictech Ventures. All rights
+            reserved.
           </p>
         </div>
       </section>
