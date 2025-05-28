@@ -677,7 +677,6 @@ export default function InvoiceGenerator() {
     }
   };
 
-
   const downloadInvoice = async () => {
     const toastD = toast.loading("Downloading Invoice...");
 
@@ -758,9 +757,9 @@ export default function InvoiceGenerator() {
 
         <div className="max-w-4xl mx-auto">
           {/* Invoice Form */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 text-gray-800">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 text-white">
             {/* Vendor Info */}
-            <div className="bg-white p-6 rounded-lg shadow">
+            <div className="bg-gray-800 p-6 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">Your Business Info</h2>
               <div className="mb-4">
                 <label className="block mb-2">Business Name</label>
@@ -769,7 +768,7 @@ export default function InvoiceGenerator() {
                   name="vendorName"
                   value={invoice.vendorName}
                   onChange={handleInputChange || ""}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -779,7 +778,7 @@ export default function InvoiceGenerator() {
                   name="email"
                   value={invoice.email || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -789,7 +788,7 @@ export default function InvoiceGenerator() {
                   name="phone"
                   value={invoice.phone || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -810,7 +809,7 @@ export default function InvoiceGenerator() {
                     <img
                       src={logoPreview}
                       alt="Logo Preview"
-                      className="max-h-20 max-w-full object-contain border p-1 rounded-md"
+                      className="max-h-13 max-w-full object-contain p-1 rounded-md"
                       style={{
                         maxWidth: "150px", // Limits width on mobile
                         height: "auto", // Maintains aspect ratio
@@ -822,7 +821,7 @@ export default function InvoiceGenerator() {
             </div>
 
             {/* Customer Info */}
-            <div className="bg-white p-6 rounded-lg shadow">
+            <div className="bg-gray-800 p-6 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">Customer Info</h2>
               <div className="mb-4">
                 <label className="block mb-2">Customer Name</label>
@@ -831,7 +830,7 @@ export default function InvoiceGenerator() {
                   name="customerName"
                   value={invoice.customerName || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                   required
                 />
               </div>
@@ -842,19 +841,19 @@ export default function InvoiceGenerator() {
                   name="customerEmail"
                   value={invoice.customerEmail || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
             </div>
           </div>
 
           {/* Invoice Items */}
-          <div className="bg-white p-6 rounded-lg shadow mb-8 text-gray-800">
+          <div className="bg-gray-800 p-6 rounded-lg shadow mb-8 text-white">
             <h2 className="text-xl font-semibold mb-4">Items</h2>
             {invoice.items.map((item, index) => (
               <div
                 key={index}
-                className="grid grid-cols-4 gap-4 mb-4 items-end bg-gray-200 rounded-md p-2"
+                className="grid grid-cols-4 gap-4 mb-4 items-end bg-gray-900 rounded-md p-2"
               >
                 <div className="col-span-4 md:col-span-1">
                   <label className="block mb-2">Item Name</label>
@@ -864,7 +863,7 @@ export default function InvoiceGenerator() {
                     onChange={(e) =>
                       handleItemChange(index, "name", e.target.value)
                     }
-                    className="w-full p-2 border rounded outline-none"
+                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                     required
                   />
                 </div>
@@ -877,7 +876,7 @@ export default function InvoiceGenerator() {
                     onChange={(e) =>
                       handleItemChange(index, "quantity", e.target.value)
                     }
-                    className="w-full p-2 border rounded outline-none"
+                    className="w-full bg-gray-700 border uppercase border-gray-600 rounded-lg px-4 py-2 outline-none"
                     required
                   />
                 </div>
@@ -891,7 +890,7 @@ export default function InvoiceGenerator() {
                     onChange={(e) =>
                       handleItemChange(index, "price", e.target.value)
                     }
-                    className="w-full p-2 border rounded outline-none"
+                    className="w-full bg-gray-700 border uppercase border-gray-600 rounded-lg px-4 py-2 outline-none"
                     required
                   />
                 </div>
@@ -915,15 +914,15 @@ export default function InvoiceGenerator() {
             ))}
             <button
               onClick={addItem}
-              className="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-gray-800"
+              className="flex items-center gap-2 cursor-pointer text-gray-200 hover:text-gray-300"
             >
               <FaPlus /> Add Item
             </button>
           </div>
 
           {/* Invoice Details */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-gray-800">
-            <div className="bg-white p-6 rounded-lg shadow">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-white">
+            <div className="bg-gray-800 p-6 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
               <div className="mb-4">
                 <label className="block mb-2">Invoice Number</label>
@@ -932,7 +931,7 @@ export default function InvoiceGenerator() {
                   name="invoiceNumber"
                   value={invoice.invoiceNumber || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -942,12 +941,12 @@ export default function InvoiceGenerator() {
                   name="invoiceDate"
                   value={invoice.invoiceDate || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border uppercase border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow">
+            <div className="bg-gray-800 p-6 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">Tax & Discount</h2>
               <div className="mb-4">
                 <label className="block mb-2">Tax Rate (%)</label>
@@ -958,7 +957,7 @@ export default function InvoiceGenerator() {
                   name="taxRate"
                   value={invoice.taxRate || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border uppercase border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -970,12 +969,12 @@ export default function InvoiceGenerator() {
                   name="discount"
                   value={invoice.discount || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded outline-none"
+                  className="w-full bg-gray-700 border uppercase border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow">
+            <div className="bg-gray-800 p-6 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">Summary</h2>
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -999,37 +998,37 @@ export default function InvoiceGenerator() {
           </div>
 
           {/* Notes */}
-          <div className="bg-white p-6 rounded-lg shadow mb-8 text-gray-800">
+          <div className="bg-gray-800 p-6 rounded-lg shadow mb-8 text-white">
             <h2 className="text-xl font-semibold mb-4">Notes</h2>
             <textarea
               name="notes"
               value={invoice.notes || ""}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded h-24 outline-none"
+              className="w-full p-2 bg-gray-700 border-gray-600 border rounded h-24 outline-none"
               placeholder="Additional notes or terms..."
             />
-            <div className="pt-2 mt-2 text-sm text-green-700 text-center md:text-start">
-              {invoiceCount < 2 ? (
-                <p>
-                  * You can generate {invoiceCount}/5 free invoices then ₦30 per
-                  invoice.
-                </p>
-              ) : (
-                <p>* A ₦25 fee will be charged for each invoice generated.</p>
-              )}
-            </div>
           </div>
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4 w-full">
-            <div className="flex gap-4 w-full">
+            <div className="flex flex-col w-full">
               <button
                 onClick={generatePDF}
                 disabled={isGenerating}
                 className="flex items-center justify-center gap-2 w-full bg-gray-800 hover:bg-gray-900 text-white px-4 py-3 cursor-pointer rounded disabled:opacity-50"
               >
-                <HiDocumentText className="h-5 w-5" />{" "}
-                {isGenerating ? "Generating Invoice..." : "Generate Invoice"}
+                {isGenerating ? (
+                  "Generating Invoice..."
+                ) : (
+                  <>
+                    Generate Invoice{" "}
+                    {invoiceCount < 5 ? (
+                      <p>{invoiceCount}/5 free</p>
+                    ) : (
+                      <p>₦25</p>
+                    )}
+                  </>
+                )}
               </button>
             </div>
           </div>

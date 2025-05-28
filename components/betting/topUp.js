@@ -264,7 +264,7 @@ export default function BetTopUp() {
             status: "failed",
             reference: uniqueRequestId,
           });
-        
+
         if (transactionError) throw transactionError;
         throw new Error(fundData.status || "Top-up failed");
       }
@@ -367,14 +367,7 @@ export default function BetTopUp() {
             disabled={isLoading || verifying}
             className="w-full bg-gray-900 hover:bg-gray-700 cursor-pointer text-white py-3 px-4 rounded flex items-center justify-center"
           >
-            {isLoading ? (
-              <>
-                <FaSpinner className="animate-spin mr-2" />
-                Processing...
-              </>
-            ) : (
-              "Top Up"
-            )}
+            {isLoading ? <>Processing...</> : "Top Up"}
           </button>
         </form>
       )}

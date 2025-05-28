@@ -183,15 +183,7 @@ function BetCodeConverter({
             className={`w-full bg-gray-900 flex justify-center items-center hover:bg-gray-700 
               cursor-pointer text-white py-3 px-4 rounded-md font-medium`}
           >
-            {isConverting ? (
-              <>
-                {" "}
-                <FaSpinner className="animate-spin mr-2" />
-                Converting...
-              </>
-            ) : (
-              "Convert Code ₦70"
-            )}
+            {isConverting ? <> Converting...</> : "Convert Code ₦70"}
           </button>
 
           {convertedCode && (
