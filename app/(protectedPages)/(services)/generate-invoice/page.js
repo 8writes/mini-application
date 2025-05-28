@@ -636,7 +636,7 @@ export default function InvoiceGenerator() {
                   name="vendorName"
                   value={invoice.vendorName}
                   onChange={handleInputChange || ""}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -646,7 +646,7 @@ export default function InvoiceGenerator() {
                   name="email"
                   value={invoice.email || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -665,7 +665,7 @@ export default function InvoiceGenerator() {
                   type="file"
                   accept="image/*"
                   onChange={handleLogoUpload}
-                  className="w-full"
+                  className="w-full border"
                 />
                 {logoPreview && (
                   <div className="mt-2">
@@ -701,7 +701,7 @@ export default function InvoiceGenerator() {
                   name="customerEmail"
                   value={invoice.customerEmail || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
             </div>
@@ -791,7 +791,7 @@ export default function InvoiceGenerator() {
                   name="invoiceNumber"
                   value={invoice.invoiceNumber || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -801,7 +801,7 @@ export default function InvoiceGenerator() {
                   name="invoiceDate"
                   value={invoice.invoiceDate || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
             </div>
@@ -817,7 +817,7 @@ export default function InvoiceGenerator() {
                   name="taxRate"
                   value={invoice.taxRate || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -829,7 +829,7 @@ export default function InvoiceGenerator() {
                   name="discount"
                   value={invoice.discount || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
             </div>
@@ -864,10 +864,10 @@ export default function InvoiceGenerator() {
               name="notes"
               value={invoice.notes || ""}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded h-24"
+              className="w-full p-2 border rounded h-24 outline-none"
               placeholder="Additional notes or terms..."
             />
-            <div className="pt-2 mt-2 text-sm text-green-700">
+            <div className="pt-2 mt-2 text-sm text-green-700 text-center md:text-start">
               {invoiceCount < 2 ? (
                 <p>
                   * You can generate {invoiceCount}/2 free invoices then ₦30 per
