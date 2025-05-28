@@ -44,7 +44,7 @@ export default function Page() {
     {
       name: "Bills Payment",
       icon: <HiOutlineClipboardCheck className="w-8 h-8" />,
-      href: "/bills",
+      href: "/#",
       description: "Pay utilities and other bills seamlessly",
     },
   ];
