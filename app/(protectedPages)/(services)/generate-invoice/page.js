@@ -611,8 +611,8 @@ export default function InvoiceGenerator() {
 
       // Contact details in a clean list
       const contactDetails = [
-        { label: "Email:", value: user.email },
-        { label: "Phone:", value: user.phone || "N/A" },
+        { label: "Email:", value: invoice.vendorEmail || "N/A" },
+        { label: "Phone:", value: invoice.vendorPhone || "N/A" },
       ];
 
       contactDetails.forEach((detail, index) => {
