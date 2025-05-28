@@ -250,33 +250,67 @@ export default function InvoiceGenerator() {
       const pdfDoc = await PDFDocument.create();
       const page = pdfDoc.addPage([595, 842]); // A4 size
 
-      // Embed fonts - Using Helvetica Bold for headings and regular for text
+      // Embed fonts
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-      // Draw borders
-      page.drawRectangle({
-        x: 40,
-        y: 40,
-        width: 515,
-        height: 762,
-        borderWidth: 1,
-        borderColor: rgb(0.8, 0.8, 0.8),
-        color: rgb(1, 1, 1),
-      });
+      // Define constants for consistent spacing
+      const pageMargin = 40;
+      const contentWidth = page.getWidth() - 2 * pageMargin;
+      let currentY = page.getHeight() - pageMargin;
+
+      // Function to draw text with consistent line spacing
+      const drawTextWithSpacing = (
+        text,
+        x,
+        size,
+        font,
+        lineHeight = 12,
+        maxWidth = contentWidth
+      ) => {
+        page.drawText(text, {
+          x: pageMargin + x,
+          y: currentY,
+          size,
+          font,
+          maxWidth,
+        });
+        currentY -= lineHeight;
+      };
 
       // Header section
-      page.drawText("INVOICE", {
-        x: 50,
-        y: 750,
-        size: 24,
-        font: boldFont,
-      });
+      const headerHeight = 100;
+      const headerY = page.getHeight() - pageMargin - headerHeight;
 
+      // Invoice title and company name
+      currentY = headerY + headerHeight - 20;
+      drawTextWithSpacing("INVOICE", 0, 24, boldFont, 30);
+      drawTextWithSpacing(
+        invoice.vendorName || "Your Business Name",
+        0,
+        14,
+        boldFont,
+        18
+      );
+      drawTextWithSpacing(
+        `Invoice #: ${invoice.invoiceNumber}`,
+        0,
+        10,
+        font,
+        15
+      );
+      drawTextWithSpacing(
+        `Date: ${new Date(invoice.invoiceDate).toLocaleDateString()}`,
+        0,
+        10,
+        font,
+        15
+      );
+
+      // Logo on the right
       if (invoice.vendorLogo) {
         try {
           let logoImage;
-
           if (invoice.vendorLogo.startsWith("data:image/png")) {
             logoImage = await pdfDoc.embedPng(invoice.vendorLogo);
           } else if (
@@ -288,13 +322,14 @@ export default function InvoiceGenerator() {
             throw new Error("Unsupported logo format");
           }
 
-          // ✅ Fixed size
-          const logoWidth = 90;
-          const logoHeight = 30;
+          const logoWidth = 100;
+          const logoHeight = 35;
+          const logoX = page.getWidth() - pageMargin - logoWidth;
+          const logoY = headerY + headerHeight - logoHeight - 10;
 
           page.drawImage(logoImage, {
-            x: page.getWidth() - logoWidth - 70, // Right-aligned with padding
-            y: page.getHeight() - logoHeight - 65, // Consistent vertical position
+            x: logoX,
+            y: logoY,
             width: logoWidth,
             height: logoHeight,
           });
@@ -303,243 +338,328 @@ export default function InvoiceGenerator() {
         }
       }
 
-      // Vendor info
-      page.drawText(invoice.vendorName || "Your Business Name", {
-        x: 50,
-        y: 700,
-        size: 14,
-        font: boldFont,
-      });
-
-      // Invoice details
-      page.drawText(`Invoice #: ${invoice.invoiceNumber}`, {
-        x: 50,
-        y: 670,
-        size: 10,
-        font,
-      });
-      page.drawText(
-        `Date: ${new Date(invoice.invoiceDate).toLocaleDateString()}`,
-        {
-          x: 50,
-          y: 650,
-          size: 10,
-          font,
-        }
-      );
-
-      // Customer info
-      page.drawText("BILL TO:", {
-        x: 50,
-        y: 620,
-        size: 12,
-        font: boldFont,
-      });
-      page.drawText(invoice.customerName || "Customer Name", {
-        x: 50,
-        y: 600,
-        size: 10,
-        font,
-      });
-      page.drawText(invoice.customerEmail || "", {
-        x: 50,
-        y: 580,
-        size: 10,
-        font,
-      });
-
-      // Line separator
+      // Horizontal line after header
+      currentY = headerY;
       page.drawLine({
-        start: { x: 50, y: 560 },
-        end: { x: 545, y: 560 },
+        start: { x: pageMargin, y: currentY },
+        end: { x: page.getWidth() - pageMargin, y: currentY },
+        thickness: 1,
+        color: rgb(0.8, 0.8, 0.8),
+      });
+
+      // Customer Info section with background
+      const customerInfoHeight = invoice.customerEmail ? 60 : 45; // Adjust height based on content
+      const customerInfoY = currentY - customerInfoHeight;
+
+      // Light gray background for customer info
+      page.drawRectangle({
+        x: pageMargin,
+        y: customerInfoY,
+        width: contentWidth,
+        height: customerInfoHeight,
+        color: rgb(0.97, 0.97, 0.97), // Very light gray
+        borderWidth: 0,
+      });
+
+      // Customer info text
+      currentY = customerInfoY + customerInfoHeight - 15; // Position text inside box
+      drawTextWithSpacing("BILL TO:", 0, 12, boldFont, 15);
+      drawTextWithSpacing(
+        invoice.customerName || "Customer Name",
+        0,
+        10,
+        font,
+        15
+      );
+      if (invoice.customerEmail) {
+        drawTextWithSpacing(invoice.customerEmail, 0, 10, font, 15);
+      }
+
+      // Optional: Add subtle border at bottom
+      page.drawLine({
+        start: { x: pageMargin, y: customerInfoY },
+        end: { x: page.getWidth() - pageMargin, y: customerInfoY },
+        thickness: 1,
+        color: rgb(0.9, 0.9, 0.9), // Light gray border
+      });
+
+      currentY = customerInfoY - 15; // Adjust position for next section
+
+      // Horizontal line before items
+      currentY -= 20;
+      page.drawLine({
+        start: { x: pageMargin, y: currentY },
+        end: { x: page.getWidth() - pageMargin, y: currentY },
         thickness: 1,
         color: rgb(0.8, 0.8, 0.8),
       });
 
       // Items table header
+      currentY -= 20;
+      const itemX = 0;
+      const qtyX = contentWidth * 0.5; // Adjusted column positions
+      const priceX = contentWidth * 0.7;
+      const amountX = contentWidth * 0.85;
+
       page.drawText("Description", {
-        x: 50,
-        y: 540,
+        x: pageMargin + itemX,
+        y: currentY,
         size: 10,
         font: boldFont,
       });
       page.drawText("Qty", {
-        x: 350,
-        y: 540,
+        x: pageMargin + qtyX,
+        y: currentY,
         size: 10,
         font: boldFont,
       });
       page.drawText("Price", {
-        x: 400,
-        y: 540,
+        x: pageMargin + priceX,
+        y: currentY,
         size: 10,
         font: boldFont,
       });
       page.drawText("Amount", {
-        x: 480,
-        y: 540,
+        x: pageMargin + amountX,
+        y: currentY,
         size: 10,
         font: boldFont,
+        width: contentWidth - amountX,
+        textAlign: "right",
+      });
+
+      currentY -= 10;
+      page.drawLine({
+        start: { x: pageMargin, y: currentY },
+        end: { x: page.getWidth() - pageMargin, y: currentY },
+        thickness: 0.5,
+        color: rgb(0.8, 0.8, 0.8),
       });
 
       // Items rows
-      let yPosition = 520;
+      currentY -= 15;
       invoice.items.forEach((item) => {
-        page.drawText(item.name, {
-          x: 50,
-          y: yPosition,
-          size: 10,
-          font,
-        });
+        drawTextWithSpacing(item.name, itemX, 10, font, 18, qtyX - itemX - 10);
         page.drawText(item.quantity.toString(), {
-          x: 350,
-          y: yPosition,
+          x: pageMargin + qtyX,
+          y: currentY + 3,
           size: 10,
           font,
         });
         page.drawText(`NGN ${item.price.toLocaleString("en-NG")}`, {
-          x: 400,
-          y: yPosition,
+          x: pageMargin + priceX,
+          y: currentY + 3,
           size: 10,
           font,
         });
         page.drawText(
           `NGN ${(item.quantity * item.price).toLocaleString("en-NG")}`,
           {
-            x: 480,
-            y: yPosition,
+            x: pageMargin + amountX,
+            y: currentY + 3,
             size: 10,
-            font,
+            font: boldFont,
+            width: contentWidth - amountX - 10,
+            textAlign: "right",
           }
         );
-        yPosition -= 20;
+        currentY -= 20;
       });
 
-      // Line separator
-      yPosition -= 10;
+      // Horizontal line after items
+      currentY -= 10;
       page.drawLine({
-        start: { x: 50, y: yPosition },
-        end: { x: 545, y: yPosition },
+        start: { x: pageMargin, y: currentY },
+        end: { x: page.getWidth() - pageMargin, y: currentY },
         thickness: 1,
         color: rgb(0.8, 0.8, 0.8),
       });
 
-      // Totals
-      yPosition -= 20;
+      // Totals section
+      const totalsX = contentWidth * 0.6;
+      const totalsValueX = contentWidth * 0.85;
+
+      currentY -= 20;
       page.drawText("Subtotal:", {
-        x: 400,
-        y: yPosition,
+        x: pageMargin + totalsX,
+        y: currentY,
         size: 10,
         font,
       });
       page.drawText(`NGN ${subtotal.toLocaleString("en-NG")}`, {
-        x: 480,
-        y: yPosition,
+        x: pageMargin + totalsValueX,
+        y: currentY,
         size: 10,
         font: boldFont,
+        width: contentWidth - totalsValueX - 10,
+        textAlign: "right",
       });
 
-      yPosition -= 20;
+      currentY -= 20;
       page.drawText(`Tax (${invoice.taxRate}%):`, {
-        x: 400,
-        y: yPosition,
+        x: pageMargin + totalsX,
+        y: currentY,
         size: 10,
         font,
       });
       page.drawText(`NGN ${taxAmount.toLocaleString("en-NG")}`, {
-        x: 480,
-        y: yPosition,
+        x: pageMargin + totalsValueX,
+        y: currentY,
         size: 10,
         font: boldFont,
+        width: contentWidth - totalsValueX - 10,
+        textAlign: "right",
       });
 
-      yPosition -= 20;
+      currentY -= 20;
       page.drawText(`Discount (${invoice.discount}%):`, {
-        x: 400,
-        y: yPosition,
+        x: pageMargin + totalsX,
+        y: currentY,
         size: 10,
         font,
       });
       page.drawText(`NGN ${discountAmount.toLocaleString("en-NG")}`, {
-        x: 480,
-        y: yPosition,
+        x: pageMargin + totalsValueX,
+        y: currentY,
         size: 10,
         font: boldFont,
+        width: contentWidth - totalsValueX - 10,
+        textAlign: "right",
       });
 
-      yPosition -= 20;
+      currentY -= 20;
       page.drawText("Total:", {
-        x: 400,
-        y: yPosition,
+        x: pageMargin + totalsX,
+        y: currentY,
         size: 12,
         font: boldFont,
       });
       page.drawText(`NGN ${total.toLocaleString("en-NG")}`, {
-        x: 480,
-        y: yPosition,
+        x: pageMargin + totalsValueX,
+        y: currentY,
         size: 12,
         font: boldFont,
+        width: contentWidth - totalsValueX - 10,
+        textAlign: "right",
       });
 
-      // Notes
-      yPosition -= 40;
+      // Notes section
+      currentY -= 40;
       if (invoice.notes) {
-        page.drawText("Notes:", {
-          x: 50,
-          y: yPosition,
-          size: 10,
-          font: boldFont,
-        });
-        page.drawText(invoice.notes, {
-          x: 50,
-          y: yPosition - 20,
-          size: 10,
-          font,
-          maxWidth: 500,
-        });
-        yPosition -= 40;
+        drawTextWithSpacing("Notes:", 0, 10, boldFont, 15);
+        const notesLines = invoice.notes.match(/.{1,80}/g);
+        if (notesLines) {
+          notesLines.forEach((line) => {
+            drawTextWithSpacing(line, 0, 10, font, 15);
+          });
+        }
       }
 
-      // Line separator
-      yPosition -= 10;
-      page.drawLine({
-        start: { x: 50, y: yPosition },
-        end: { x: 545, y: yPosition },
-        thickness: 1,
-        color: rgb(0.8, 0.8, 0.8),
-      });
-
-      // Centered Thank you section
-      const thankYouText = "";
-      const contactText = "Please contact us with any questions:";
-      const emailText = `Email: ${user.email}`;
-      const phoneText = `Phone: ${user.phone || "N/A"}`;
-
-      // Calculate center positions
+      // Footer section
+      currentY -= 40;
       const centerText = (text, fontSize, y, useBold = true) => {
         const textWidth = (useBold ? boldFont : font).widthOfTextAtSize(
           text,
           fontSize
         );
         page.drawText(text, {
-          x: 40 + (515 - textWidth) / 2,
+          x: pageMargin + (contentWidth - textWidth) / 2,
           y,
           size: fontSize,
           font: useBold ? boldFont : font,
         });
       };
 
-      yPosition -= 60;
-      centerText(thankYouText, 14, yPosition);
+      // Footer section - Clean Professional Style
+      currentY -= 40; // Space before footer
 
-      yPosition -= 30;
-      centerText(contactText, 10, yPosition, false);
+      // Modified centerText function call with color
+      const thankYouText = "Thank you for your business!";
+      page.drawText(thankYouText, {
+        x:
+          pageMargin +
+          (contentWidth - boldFont.widthOfTextAtSize(thankYouText, 12)) / 2,
+        y: currentY,
+        size: 12,
+        font: boldFont,
+        color: rgb(0.4, 0.4, 0.4),
+      });
+      currentY -= 25;
 
-      yPosition -= 20;
-      centerText(emailText, 10, yPosition, false);
+      // Contact box with subtle styling
+      const contactBoxHeight = 60;
+      const contactBoxY = currentY - contactBoxHeight;
 
-      yPosition -= 15;
-      centerText(phoneText, 10, yPosition, false);
+      // Light gray background for contact box
+      page.drawRectangle({
+        x: pageMargin,
+        y: contactBoxY,
+        width: contentWidth,
+        height: contactBoxHeight,
+        color: rgb(0.97, 0.97, 0.97), // Very light gray
+        borderWidth: 0,
+      });
+
+      // Contact header
+      page.drawText("Contact Information", {
+        x: pageMargin + 10,
+        y: contactBoxY + contactBoxHeight - 15,
+        size: 10,
+        font: boldFont,
+        color: rgb(0.2, 0.2, 0.2),
+      });
+
+      // Contact details in a clean list
+      const contactDetails = [
+        { label: "Email:", value: user.email },
+        { label: "Phone:", value: user.phone || "N/A" },
+      ];
+
+      contactDetails.forEach((detail, index) => {
+        const yPos = contactBoxY + contactBoxHeight - 35 - index * 15;
+
+        // Label
+        page.drawText(detail.label, {
+          x: pageMargin + 15,
+          y: yPos,
+          size: 9,
+          font: boldFont,
+          color: rgb(0.4, 0.4, 0.4),
+        });
+
+        // Value
+        page.drawText(detail.value, {
+          x: pageMargin + 50,
+          y: yPos,
+          size: 9,
+          font,
+          color: rgb(0.4, 0.4, 0.4),
+        });
+      });
+
+      // Subtle top border for the contact box
+      page.drawLine({
+        start: { x: pageMargin, y: contactBoxY + contactBoxHeight },
+        end: {
+          x: page.getWidth() - pageMargin,
+          y: contactBoxY + contactBoxHeight,
+        },
+        thickness: 1,
+        color: rgb(0.9, 0.9, 0.9),
+      });
+
+      currentY = contactBoxY - 15; // Position for any content below
+
+      // Draw borders
+      page.drawRectangle({
+        x: pageMargin / 2,
+        y: pageMargin / 2,
+        width: page.getWidth() - pageMargin,
+        height: page.getHeight() - pageMargin,
+        borderWidth: 1,
+        borderColor: rgb(0.8, 0.8, 0.8),
+        color: undefined,
+      });
 
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
@@ -556,6 +676,7 @@ export default function InvoiceGenerator() {
       setIsGenerating(false);
     }
   };
+
 
   const downloadInvoice = async () => {
     const toastD = toast.loading("Downloading Invoice...");
