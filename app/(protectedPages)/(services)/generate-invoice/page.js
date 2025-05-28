@@ -642,7 +642,7 @@ export default function InvoiceGenerator() {
               <div className="mb-4">
                 <label className="block mb-2">Email</label>
                 <input
-                  type="text"
+                  type="email"
                   name="email"
                   value={invoice.email || ""}
                   onChange={handleInputChange}
@@ -652,7 +652,7 @@ export default function InvoiceGenerator() {
               <div className="mb-4">
                 <label className="block mb-2">Phone</label>
                 <input
-                  type="text"
+                  type="tel"
                   name="phone"
                   value={invoice.phone || ""}
                   onChange={handleInputChange}
