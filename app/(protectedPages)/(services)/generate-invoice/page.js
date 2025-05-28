@@ -112,8 +112,8 @@ export default function InvoiceGenerator() {
   const deductFee = async () => {
     if (!user) return;
     try {
-      const FREE_INVOICE_LIMIT = 2; // 2 free invoices total lifetime
-      const FEE = 30;
+      const FREE_INVOICE_LIMIT = 5;
+      const FEE = 25;
 
       setIsGenerating(true);
 
@@ -271,7 +271,6 @@ export default function InvoiceGenerator() {
         y: 750,
         size: 24,
         font: boldFont,
-        color: rgb(0, 0, 0.6),
       });
 
       if (invoice.vendorLogo) {
@@ -303,7 +302,6 @@ export default function InvoiceGenerator() {
           console.error("Error embedding logo:", e);
         }
       }
-      
 
       // Vendor info
       page.drawText(invoice.vendorName || "Your Business Name", {
@@ -512,7 +510,7 @@ export default function InvoiceGenerator() {
       });
 
       // Centered Thank you section
-      const thankYouText = "We appreciate your business!";
+      const thankYouText = "";
       const contactText = "Please contact us with any questions:";
       const emailText = `Email: ${user.email}`;
       const phoneText = `Phone: ${user.phone || "N/A"}`;
@@ -528,7 +526,6 @@ export default function InvoiceGenerator() {
           y,
           size: fontSize,
           font: useBold ? boldFont : font,
-          color: rgb(0, 0, 0.6),
         });
       };
 
@@ -680,12 +677,12 @@ export default function InvoiceGenerator() {
                   type="file"
                   accept="image/*"
                   onChange={handleLogoUpload}
-                  className="w-full text-sm text-gray-500
+                  className="w-full text-sm cursor-pointer text-gray-500
               file:mr-4 file:py-2 file:px-4
               file:rounded file:border-0
               file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              hover:file:bg-blue-100"
+              file:bg-gray-50 file:text-gray-700
+              hover:file:bg-gray-100"
                 />
                 {logoPreview && (
                   <div className="mt-2 flex justify-start">
@@ -897,7 +894,7 @@ export default function InvoiceGenerator() {
                   invoice.
                 </p>
               ) : (
-                <p>* A ₦30 fee will be charged for each invoice generated.</p>
+                <p>* A ₦25 fee will be charged for each invoice generated.</p>
               )}
             </div>
           </div>
