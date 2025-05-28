@@ -55,6 +55,10 @@ export default function SignupPage() {
         balance: 0,
       });
 
+      const { error: errorInvoiceGen } = await billzpaddi.from("invoice_generations").insert({
+        invoice_count: 0,
+      });
+
       toast.success("Signup successful!");
       router.push("/auth/login");
     } catch (err) {
