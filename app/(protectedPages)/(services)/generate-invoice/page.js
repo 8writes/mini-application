@@ -113,6 +113,8 @@ export default function InvoiceGenerator() {
     try {
       const FREE_INVOICE_LIMIT = 2; // 2 free invoices total lifetime
       const FEE = 30;
+      
+      setIsGenerating(true);
 
       // Get user's total invoice count (lifetime)
       const { data: invoiceGeneration, error: invoiceGenError } =
@@ -181,8 +183,6 @@ export default function InvoiceGenerator() {
         toast.error("Insufficient balance");
         return false;
       }
-
-      setIsGenerating(true);
 
       // Deduct fee from wallet
       const { error: updateWalletError } = await billzpaddi
