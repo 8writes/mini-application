@@ -71,11 +71,12 @@ export default function InvoiceGenerator() {
     }
   };
 
+  // In your handleLogoUpload function:
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Create preview
+    // Create preview with mobile-responsive sizing
     const reader = new FileReader();
     reader.onloadend = () => {
       setLogoPreview(reader.result);
@@ -113,7 +114,7 @@ export default function InvoiceGenerator() {
     try {
       const FREE_INVOICE_LIMIT = 2; // 2 free invoices total lifetime
       const FEE = 30;
-      
+
       setIsGenerating(true);
 
       // Get user's total invoice count (lifetime)
@@ -264,9 +265,6 @@ export default function InvoiceGenerator() {
         color: rgb(1, 1, 1),
       });
 
-      // Header section with flex layout between logo and title
-      const headerY = 750;
-
       // Header section
       page.drawText("INVOICE", {
         x: 50,
@@ -279,11 +277,16 @@ export default function InvoiceGenerator() {
       if (invoice.vendorLogo) {
         try {
           const logoImage = await pdfDoc.embedPng(invoice.vendorLogo);
+          // Responsive logo sizing for PDF
+          const logoAspectRatio = logoImage.width / logoImage.height;
+          const logoWidth = Math.min(100, page.getWidth() - 100); // Don't exceed page width
+          const logoHeight = logoWidth / logoAspectRatio;
+
           page.drawImage(logoImage, {
-            x: 450,
-            y: 700,
-            width: 100,
-            height: 50,
+            x: page.getWidth() - logoWidth - 50, // Right-aligned with padding
+            y: page.getHeight() - 100, // Consistent vertical position
+            width: logoWidth,
+            height: logoHeight,
           });
         } catch (e) {
           console.error("Error embedding logo:", e);
@@ -665,15 +668,23 @@ export default function InvoiceGenerator() {
                   type="file"
                   accept="image/*"
                   onChange={handleLogoUpload}
-                  className="w-full border"
+                  className="w-full text-sm text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-blue-700
+              hover:file:bg-blue-100"
                 />
                 {logoPreview && (
-                  <div className="mt-2">
-                    <p className="text-sm mb-1">Logo Preview:</p>
+                  <div className="mt-2 flex justify-start">
                     <img
                       src={logoPreview}
                       alt="Logo Preview"
-                      className="h-10 object-contain border p-1"
+                      className="max-h-20 max-w-full object-contain border p-1 rounded-md"
+                      style={{
+                        maxWidth: "150px", // Limits width on mobile
+                        height: "auto", // Maintains aspect ratio
+                      }}
                     />
                   </div>
                 )}
