@@ -789,7 +789,7 @@ export default function InvoiceGenerator() {
                   name="phone"
                   value={invoice.phone || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                 />
               </div>
               <div className="mb-4">
@@ -831,7 +831,7 @@ export default function InvoiceGenerator() {
                   name="customerName"
                   value={invoice.customerName || ""}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                   required
                 />
               </div>
@@ -1011,7 +1011,7 @@ export default function InvoiceGenerator() {
             <div className="pt-2 mt-2 text-sm text-green-700 text-center md:text-start">
               {invoiceCount < 2 ? (
                 <p>
-                  * You can generate {invoiceCount}/2 free invoices then ₦30 per
+                  * You can generate {invoiceCount}/5 free invoices then ₦30 per
                   invoice.
                 </p>
               ) : (
