@@ -45,7 +45,7 @@ export default function Page() {
       name: "Business Tools",
       icon: <HiOutlineClipboardCheck className="w-8 h-8" />,
       href: "/generate-invoice",
-      description: "Generate invoices for your business with ease",
+      description: "Generate free invoices with ease",
     },
   ];
 
