@@ -7,7 +7,7 @@ export default function PagesLayout({ children }) {
   return (
     <section>
       <GlobalNavbar />
-      <main className="pt-10">{children}</main>
+      <main className="pt-10 text-white">{children}</main>
       <GlobalFooter />
     </section>
   );
