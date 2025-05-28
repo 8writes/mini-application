@@ -78,7 +78,9 @@ export default function InvoiceGenerator() {
 
     // Create preview with mobile-responsive sizing
     const reader = new FileReader();
-    reader.onloadend = () => {
+    console.log(reader)
+    reader.onload = () => {
+      console.log(reader);
       setLogoPreview(reader.result);
       setInvoice((prev) => ({ ...prev, vendorLogo: reader.result }));
     };
