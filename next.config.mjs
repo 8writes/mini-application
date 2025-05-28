@@ -6,7 +6,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Apply these headers to all routes
+        // Apply these security headers to all routes
         source: "/(.*)",
         headers: [
           {
@@ -24,12 +24,12 @@ const nextConfig = {
         ],
       },
       {
-        // Special CORS headers for POST from https://dstvmicgrand.com
+        // CORS headers for API routes
         source: "/api/:path*",
         headers: [
           {
             key: "Access-Control-Allow-Origin",
-            value: "https://dstvmicgrand.com/",
+            value: "https://dstvmicgrand.com",
           },
           {
             key: "Access-Control-Allow-Methods",
@@ -37,24 +37,13 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Headers",
-            value: "Content-Type, Authorization",
+            value: "Content-Type, Authorization, X-Requested-With",
           },
-        ],
-      },
-    ];
-  },
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [
           {
-            type: "host",
-            value: "billzpaddi.com.ng", // no www
+            key: "Access-Control-Allow-Credentials",
+            value: "true",
           },
         ],
-        destination: "https://www.billzpaddi.com.ng/:path*",
-        permanent: true,
       },
     ];
   },
