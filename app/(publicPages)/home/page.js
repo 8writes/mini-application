@@ -42,10 +42,10 @@ export default function Page() {
       description: "Convert your betting codes instantly",
     },
     {
-      name: "Bills Payment",
+      name: "Business Tools",
       icon: <HiOutlineClipboardCheck className="w-8 h-8" />,
-      href: "/#",
-      description: "Pay utilities and other bills seamlessly",
+      href: "/generate-invoice",
+      description: "Generate branded invoices for your business with ease",
     },
   ];
 

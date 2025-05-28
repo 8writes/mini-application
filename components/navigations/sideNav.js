@@ -11,6 +11,7 @@ import {
   HiOutlineUserCircle,
   HiOutlineUsers,
   HiOutlineSupport,
+  HiDocumentText,
 } from "react-icons/hi";
 import { FaGamepad } from "react-icons/fa";
 import { useGlobalContext } from "@/context/GlobalContext";
@@ -91,6 +92,9 @@ export default function SideNav() {
         </NavItem>
         <NavItem href="/betting" icon={<HiOutlineCash />}>
           Betting
+        </NavItem>
+        <NavItem href="/generate-invoice" icon={<HiDocumentText />}>
+          Generate Invoice
         </NavItem>
 
         {/* ACCOUNT */}

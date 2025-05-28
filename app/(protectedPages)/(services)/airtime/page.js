@@ -129,7 +129,7 @@ const PurchaseDialog = ({
     }
 
     if (wallet?.balance < totalAmount) {
-      setError("Insufficient funds");
+      setError("Insufficient balance");
       return;
     }
 
