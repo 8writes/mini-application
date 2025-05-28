@@ -289,21 +289,21 @@ export default function InvoiceGenerator() {
             throw new Error("Unsupported logo format");
           }
 
-          // Responsive logo sizing for PDF
-          const logoAspectRatio = logoImage.width / logoImage.height;
-          const logoWidth = Math.min(100, page.getWidth() - 100); // Don't exceed page width
-          const logoHeight = logoWidth / logoAspectRatio;
+          // ✅ Fixed size
+          const logoWidth = 90;
+          const logoHeight = 30;
 
           page.drawImage(logoImage, {
-            x: page.getWidth() - logoWidth - 50, // Right-aligned with padding
-            y: page.getHeight() - 100, // Consistent vertical position
+            x: page.getWidth() - logoWidth - 70, // Right-aligned with padding
+            y: page.getHeight() - logoHeight - 65, // Consistent vertical position
             width: logoWidth,
             height: logoHeight,
           });
         } catch (e) {
           console.error("Error embedding logo:", e);
         }
-      }      
+      }
+      
 
       // Vendor info
       page.drawText(invoice.vendorName || "Your Business Name", {
