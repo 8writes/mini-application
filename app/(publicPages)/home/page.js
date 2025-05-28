@@ -41,17 +41,13 @@ export default function Page() {
       href: "/betting",
       description: "Convert your betting codes instantly",
     },
-  ];
-
-  {
-    /**
     {
       name: "Bills Payment",
       icon: <HiOutlineClipboardCheck className="w-8 h-8" />,
       href: "/bills",
       description: "Pay utilities and other bills seamlessly",
-    }, */
-  }
+    },
+  ];
 
   return (
     <div className="min-h-[80dvh] text-white bg-gray-800">
