@@ -174,7 +174,7 @@ export default function Page() {
     <div>
       <section className="px-4 py-10 md:p-10 w-full md:max-w-7xl mx-auto">
         <div className="flex flex-wrap justify-between gap-2 items-center mb-6">
-          <h1 className="text-2xl md:text-3xl">Super Admin</h1>
+          <h1 className="text-2xl md:text-3xl">All Users</h1>
         </div>
 
         {/** users table (paginated) */}

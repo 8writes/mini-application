@@ -12,6 +12,7 @@ import {
   HiOutlineUsers,
   HiOutlineSupport,
   HiDocumentText,
+  HiOutlineUser,
 } from "react-icons/hi";
 import { FaGamepad, FaHeadset } from "react-icons/fa";
 import { useGlobalContext } from "@/context/GlobalContext";
@@ -19,7 +20,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 export default function SideNav() {
-  const { isSidebarOpen, setIsSidebarOpen } = useGlobalContext();
+  const {user, isSidebarOpen, setIsSidebarOpen } = useGlobalContext();
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -63,6 +64,17 @@ export default function SideNav() {
       `}
     >
       <nav className="flex flex-col mt-4 space-y-1">
+        {/* ACCOUNT */}
+        {user?.role === "super_admin" && (
+          <>
+            <div className="px-6 text-xs text-gray-400 uppercase mt-6 mb-1">
+              Portal
+            </div>
+            <NavItem href="/portal/users" icon={<HiOutlineUser />}>
+              Users
+            </NavItem>
+          </>
+        )}
         {/* MAIN */}
         <div className="px-6 text-xs text-gray-400 uppercase mt-4 mb-1">
           Main
@@ -101,7 +113,7 @@ export default function SideNav() {
         <div className="px-6 text-xs text-gray-400 uppercase mt-6 mb-1">
           Account
         </div>
-        <NavItem href="/profile" icon={<HiOutlineUserCircle />}>
+        <NavItem href="/profile" icon={<HiOutlineUser />}>
           Profile
         </NavItem>
         <NavItem href="/transactions" icon={<HiOutlineCreditCard />}>
