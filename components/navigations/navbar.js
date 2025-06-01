@@ -10,6 +10,7 @@ import {
   HiX,
   HiOutlineSupport,
   HiOutlineUserCircle,
+  HiOutlineUser,
 } from "react-icons/hi";
 import Link from "next/link";
 import { billzpaddi } from "@/lib/client";
@@ -109,7 +110,7 @@ export default function NavBar() {
                       : ""
                   }`}
                 >
-                  <HiOutlineUserCircle className="text-xl" />
+                  <HiOutlineUser className="text-xl" />
                   Profile
                 </li>
               </Link>

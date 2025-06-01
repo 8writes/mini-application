@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useRouter, usePathname } from "next/navigation";
 import NotificationDialog from "@/components/dialogs/notificationDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -231,12 +232,9 @@ export default function Page() {
 
   return (
     <div className="px-4 py-10 md:p-10 w-full md:max-w-7xl mx-auto">
-      <button
-        onClick={() => router.back()}
-        className="mb-6 text-white cursor-pointer"
-      >
+      <Link href="/portal/users" className="mb-6 text-white cursor-pointer">
         ← Back to Users
-      </button>
+      </Link>
 
       <div className="grid grid-cols-1 gap-6 mb-8">
         {/* User Profile Card */}
