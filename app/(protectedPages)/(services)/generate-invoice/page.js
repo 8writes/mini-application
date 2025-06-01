@@ -3,10 +3,40 @@ import { useState, useEffect } from "react";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { FaDownload, FaEnvelope, FaEye, FaPlus, FaTrash } from "react-icons/fa";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
 import { toast } from "react-toastify";
 import { billzpaddi } from "@/lib/client";
 import { HiDocumentText } from "react-icons/hi";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+
+const CurrencySelector = ({ selectedCurrency, onSelect }) => {
+  const currencies = [
+    { code: "NGN", symbol: "₦", name: "Naira" },
+    { code: "USD", symbol: "$", name: "Dollar" },
+    { code: "EUR", symbol: "€", name: "Euro" },
+    { code: "GBP", symbol: "£", name: "Pound" },
+    { code: "GHS", symbol: "GH₵", name: "Cedi" },
+  ];
+
+  return (
+    <div className="grid grid-cols-3 gap-2 mt-4">
+      {currencies.map((currency) => (
+        <button
+          key={currency.code}
+          onClick={() => onSelect(currency)}
+          className={`p-1 border rounded-lg flex items-center justify-center transition-colors ${
+            selectedCurrency === currency.code
+              ? "bg-gray-900 text-white border-gray-800"
+              : "bg-gray-700 hover:bg-gray-600 border-gray-600"
+          }`}
+        >
+          <span className="font-bold mr-1">{currency.symbol}</span>
+          <span className="text-xs">{currency.code}</span>
+        </button>
+      ))}
+    </div>
+  );
+};
 
 export default function InvoiceGenerator() {
   const { user, isLoading } = useGlobalContext();
@@ -24,6 +54,8 @@ export default function InvoiceGenerator() {
     vendorPhone: "",
     customerName: "",
     customerEmail: "",
+    currency: "NGN",
+    currencySymbol: "₦",
     invoiceDate: new Date().toISOString().split("T")[0],
     invoiceNumber: `INV-${Math.floor(Math.random() * 10000)}`,
     items: [{ name: "", quantity: 1, price: 0 }],
@@ -36,6 +68,14 @@ export default function InvoiceGenerator() {
   const [blob, setBlob] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [logoPreview, setLogoPreview] = useState(null);
+
+  const handleCurrencyChange = (currency) => {
+    setInvoice((prev) => ({
+      ...prev,
+      currency: currency.code,
+      currencySymbol: currency.symbol,
+    }));
+  };
 
   // Calculate totals
   const subtotal = invoice.items.reduce(
@@ -248,11 +288,23 @@ export default function InvoiceGenerator() {
 
     try {
       const pdfDoc = await PDFDocument.create();
+
+      // Register fontkit before embedding fonts
+      pdfDoc.registerFontkit(fontkit);
+
+      // Ensure font is properly loaded
+
       const page = pdfDoc.addPage([595, 842]); // A4 size
 
-      // Embed fonts
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      // Load a custom Unicode font (replace with your actual font path)
+      const fontUrl = "/fonts/NotoSans-VariableFont_wdth,wght.ttf"; // Place this in your public folder
+      const fontResponse = await fetch(fontUrl);
+      const fontBytes = await fontResponse.arrayBuffer();
+
+      const font = await pdfDoc.embedFont(fontBytes);
+      const boldFont = await pdfDoc.embedFont(fontBytes, { bold: true });
+
+      console.log("Font embedded:", font !== undefined); // Should log true
 
       // Define constants for consistent spacing
       const pageMargin = 40;
@@ -446,14 +498,19 @@ export default function InvoiceGenerator() {
           size: 10,
           font,
         });
-        page.drawText(`NGN ${item.price.toLocaleString("en-NG")}`, {
-          x: pageMargin + priceX,
-          y: currentY + 3,
-          size: 10,
-          font,
-        });
         page.drawText(
-          `NGN ${(item.quantity * item.price).toLocaleString("en-NG")}`,
+          `${invoice.currencySymbol || "N/A"} ${total.toLocaleString("en-NG")}`,
+          {
+            x: pageMargin + priceX,
+            y: currentY + 3,
+            size: 10,
+            font,
+          }
+        );
+        page.drawText(
+          `${invoice.currencySymbol} ${(
+            item.quantity * item.price
+          ).toLocaleString("en-NG")}`,
           {
             x: pageMargin + amountX,
             y: currentY + 3,
@@ -486,14 +543,17 @@ export default function InvoiceGenerator() {
         size: 10,
         font,
       });
-      page.drawText(`NGN ${subtotal.toLocaleString("en-NG")}`, {
-        x: pageMargin + totalsValueX,
-        y: currentY,
-        size: 10,
-        font: boldFont,
-        width: contentWidth - totalsValueX - 10,
-        textAlign: "right",
-      });
+      page.drawText(
+        `${invoice.currencySymbol || "₦"} ${subtotal.toLocaleString("en-NG")}`,
+        {
+          x: pageMargin + totalsValueX,
+          y: currentY,
+          size: 10,
+          font: boldFont,
+          width: contentWidth - totalsValueX - 10,
+          textAlign: "right",
+        }
+      );
 
       currentY -= 20;
       page.drawText(`Tax (${invoice.taxRate}%):`, {
@@ -502,14 +562,17 @@ export default function InvoiceGenerator() {
         size: 10,
         font,
       });
-      page.drawText(`NGN ${taxAmount.toLocaleString("en-NG")}`, {
-        x: pageMargin + totalsValueX,
-        y: currentY,
-        size: 10,
-        font: boldFont,
-        width: contentWidth - totalsValueX - 10,
-        textAlign: "right",
-      });
+      page.drawText(
+        `${invoice.currencySymbol || "₦"} ${taxAmount.toLocaleString("en-NG")}`,
+        {
+          x: pageMargin + totalsValueX,
+          y: currentY,
+          size: 10,
+          font: boldFont,
+          width: contentWidth - totalsValueX - 10,
+          textAlign: "right",
+        }
+      );
 
       currentY -= 20;
       page.drawText(`Discount (${invoice.discount}%):`, {
@@ -518,14 +581,19 @@ export default function InvoiceGenerator() {
         size: 10,
         font,
       });
-      page.drawText(`NGN ${discountAmount.toLocaleString("en-NG")}`, {
-        x: pageMargin + totalsValueX,
-        y: currentY,
-        size: 10,
-        font: boldFont,
-        width: contentWidth - totalsValueX - 10,
-        textAlign: "right",
-      });
+      page.drawText(
+        `${invoice.currencySymbol || "₦"} ${discountAmount.toLocaleString(
+          "en-NG"
+        )}`,
+        {
+          x: pageMargin + totalsValueX,
+          y: currentY,
+          size: 10,
+          font: boldFont,
+          width: contentWidth - totalsValueX - 10,
+          textAlign: "right",
+        }
+      );
 
       currentY -= 20;
       page.drawText("Total:", {
@@ -534,14 +602,17 @@ export default function InvoiceGenerator() {
         size: 12,
         font: boldFont,
       });
-      page.drawText(`NGN ${total.toLocaleString("en-NG")}`, {
-        x: pageMargin + totalsValueX,
-        y: currentY,
-        size: 12,
-        font: boldFont,
-        width: contentWidth - totalsValueX - 10,
-        textAlign: "right",
-      });
+      page.drawText(
+        `${invoice.currencySymbol || "₦"} ${total.toLocaleString("en-NG")}`,
+        {
+          x: pageMargin + totalsValueX,
+          y: currentY,
+          size: 12,
+          font: boldFont,
+          width: contentWidth - totalsValueX - 10,
+          textAlign: "right",
+        }
+      );
 
       // Notes section
       currentY -= 40;
@@ -588,56 +659,58 @@ export default function InvoiceGenerator() {
 
       // Contact box with subtle styling
       const contactBoxHeight = 60;
-      const contactBoxY = currentY - contactBoxHeight;
+      const contactBoxY = currentY - contactBoxHeight - 20; // Added extra margin
 
-      // Light gray background for contact box
+      // 1. First draw the background
       page.drawRectangle({
         x: pageMargin,
         y: contactBoxY,
         width: contentWidth,
         height: contactBoxHeight,
-        color: rgb(0.97, 0.97, 0.97), // Very light gray
+        color: rgb(0.97, 0.97, 0.97),
         borderWidth: 0,
       });
 
-      // Contact header
+      // 2. Draw the header
       page.drawText("Contact Information", {
-        x: pageMargin + 10,
-        y: contactBoxY + contactBoxHeight - 15,
-        size: 10,
+        x: pageMargin + 15,
+        y: contactBoxY + contactBoxHeight - 20, // Adjusted position
+        size: 11, // Slightly larger
         font: boldFont,
-        color: rgb(0.2, 0.2, 0.2),
+        color: rgb(0.2, 0.2, 0.2), // Darker for better visibility
       });
 
-      // Contact details in a clean list
+      // 3. Draw contact details
       const contactDetails = [
-        { label: "Email:", value: invoice.vendorEmail || "N/A" },
-        { label: "Phone:", value: invoice.vendorPhone || "N/A" },
+        { label: "Email:", value: invoice.vendorEmail || "Not provided" },
+        { label: "Phone:", value: invoice.vendorPhone || "Not provided" },
       ];
 
-      contactDetails.forEach((detail, index) => {
-        const yPos = contactBoxY + contactBoxHeight - 35 - index * 15;
+      let detailY = contactBoxY + contactBoxHeight - 40; // Start position for details
 
-        // Label
+      contactDetails.forEach((detail) => {
+        // Draw label
         page.drawText(detail.label, {
-          x: pageMargin + 15,
-          y: yPos,
-          size: 9,
+          x: pageMargin + 20,
+          y: detailY,
+          size: 10,
           font: boldFont,
-          color: rgb(0.4, 0.4, 0.4),
+          color: rgb(0.3, 0.3, 0.3),
         });
 
-        // Value
+        // Draw value
         page.drawText(detail.value, {
-          x: pageMargin + 50,
-          y: yPos,
-          size: 9,
-          font,
-          color: rgb(0.4, 0.4, 0.4),
+          x: pageMargin + 70, // Increased from 50 for better spacing
+          y: detailY,
+          size: 10,
+          font: font,
+          color: rgb(0.3, 0.3, 0.3),
         });
+
+        detailY -= 18; // Move down for next line
       });
 
-      // Subtle top border for the contact box
+      // 4. Draw border (optional)
       page.drawLine({
         start: { x: pageMargin, y: contactBoxY + contactBoxHeight },
         end: {
@@ -648,18 +721,8 @@ export default function InvoiceGenerator() {
         color: rgb(0.9, 0.9, 0.9),
       });
 
-      currentY = contactBoxY - 15; // Position for any content below
-
-      // Draw borders
-      page.drawRectangle({
-        x: pageMargin / 2,
-        y: pageMargin / 2,
-        width: page.getWidth() - pageMargin,
-        height: page.getHeight() - pageMargin,
-        borderWidth: 1,
-        borderColor: rgb(0.8, 0.8, 0.8),
-        color: undefined,
-      });
+      // Update currentY for any following content
+      currentY = contactBoxY - 15;
 
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
@@ -775,8 +838,8 @@ export default function InvoiceGenerator() {
                 <label className="block mb-2">Email</label>
                 <input
                   type="email"
-                  name="email"
-                  value={invoice.email || ""}
+                  name="vendorEmail"
+                  value={invoice.vendorEmail || ""}
                   onChange={handleInputChange}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
@@ -785,8 +848,8 @@ export default function InvoiceGenerator() {
                 <label className="block mb-2">Phone</label>
                 <input
                   type="tel"
-                  name="phone"
-                  value={invoice.phone || ""}
+                  name="vendorPhone"
+                  value={invoice.vendorPhone || ""}
                   onChange={handleInputChange}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
                 />
@@ -897,7 +960,8 @@ export default function InvoiceGenerator() {
                 <div className="col-span-2 md:col-span-1">
                   <label className="block mb-2">Total</label>
                   <div className="px-2">
-                    ₦{(item.quantity * item.price).toLocaleString("en-NG")}
+                    {invoice?.currencySymbol}
+                    {(item.quantity * item.price).toLocaleString("en-NG")}
                   </div>
                 </div>
                 <div className="col-span-1">
@@ -924,6 +988,13 @@ export default function InvoiceGenerator() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-white">
             <div className="bg-gray-800 p-6 rounded-lg shadow">
               <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
+              <div className="mb-4">
+                <label className="block mb-2">Currency</label>
+                <CurrencySelector
+                  selectedCurrency={invoice.currency}
+                  onSelect={handleCurrencyChange}
+                />
+              </div>
               <div className="mb-4">
                 <label className="block mb-2">Invoice Number</label>
                 <input
@@ -979,19 +1050,19 @@ export default function InvoiceGenerator() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>₦{subtotal.toLocaleString("en-NG")}</span>
+                  <span>{invoice?.currencySymbol}{subtotal.toLocaleString("en-NG")}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax ({invoice.taxRate}%):</span>
-                  <span>₦{taxAmount.toLocaleString("en-NG")}</span>
+                  <span>{invoice?.currencySymbol}{taxAmount.toLocaleString("en-NG")}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Discount ({invoice.discount}%):</span>
-                  <span>-₦{discountAmount.toLocaleString("en-NG")}</span>
+                  <span>-{invoice?.currencySymbol}{discountAmount.toLocaleString("en-NG")}</span>
                 </div>
                 <div className="flex justify-between font-bold border-t pt-2 mt-2">
                   <span>Total:</span>
-                  <span>₦{total.toLocaleString("en-NG")}</span>
+                  <span>{invoice?.currencySymbol}{total.toLocaleString("en-NG")}</span>
                 </div>
               </div>
             </div>
