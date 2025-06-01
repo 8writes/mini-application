@@ -13,6 +13,7 @@ import {
 } from "react-icons/hi";
 import Link from "next/link";
 import { billzpaddi } from "@/lib/client";
+import { FaHeadset } from "react-icons/fa";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -54,8 +55,17 @@ export default function NavBar() {
             {isSidebarOpen ? <HiX size={30} /> : <HiMenu size={30} />}
           </button>
           <div className="header__logo">
-            <Link href="/home" className="text-2xl font-bold flex items-center gap-1">
-             <Image src='/billzpaddi-logo-icon.png' alt="BillzPaddi Logo" width={20} height={20} /> 𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶 
+            <Link
+              href="/home"
+              className="text-2xl font-bold flex items-center gap-1"
+            >
+              <Image
+                src="/billzpaddi-logo-icon.png"
+                alt="BillzPaddi Logo"
+                width={20}
+                height={20}
+              />{" "}
+              𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
             </Link>
           </div>
         </div>
@@ -95,7 +105,7 @@ export default function NavBar() {
                 <li
                   className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
                     pathname === "/profile"
-                      ? "bg-gray-700 border-l-4 border-blue-500 w-full"
+                      ? "bg-gray-700 w-full"
                       : ""
                   }`}
                 >
@@ -108,11 +118,11 @@ export default function NavBar() {
                 <li
                   className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
                     pathname === "/support"
-                      ? "bg-gray-700 border-l-4 border-blue-500 w-full"
+                      ? "bg-gray-700 w-full"
                       : ""
                   }`}
                 >
-                  <HiOutlineSupport className="text-xl" />
+                  <FaHeadset className="text-xl" />
                   Support
                 </li>
               </Link>

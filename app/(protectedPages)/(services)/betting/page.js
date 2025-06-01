@@ -234,8 +234,35 @@ export default function BettingServices() {
   const [selectedBookie2, setSelectedBookie2] = useState(null);
   const [dropdownOpen1, setDropdownOpen1] = useState(false);
   const [dropdownOpen2, setDropdownOpen2] = useState(false);
+  const [rate, setRate] = useState("");
   const dropdownRef1 = useRef(null);
   const dropdownRef2 = useRef(null);
+
+  // Fetch conversion rate on component mount
+  useEffect(() => {
+    const fetchRate = async () => {
+      try {
+        const response = await axios.get(
+          "https://betpaddi.com/api/v1/conversion/rate",
+          {
+            headers: {
+              Authorization: `Bearer ${API_KEY}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          const { rate } = response.data;
+          setRate(rate);
+        }
+      } catch (error) {
+        toast.error("Failed to load rate");
+        console.error("Error fetching rate:", error);
+      }
+    };
+
+    fetchRate();
+  }, []);
 
   // Fetch bookies on component mount
   useEffect(() => {
@@ -250,16 +277,9 @@ export default function BettingServices() {
           }
         );
 
-        if (response.data.status === "success") {
+        if (response.status === 200) {
           const bookiesArray = Object.values(response.data.data);
           setBookies(bookiesArray);
-          // Set default selections
-          const sportybetNg = bookiesArray.find(
-            (b) => b.bookie === "sportybet:ng"
-          );
-          //  const bet9ja = bookiesArray.find((b) => b.bookie === "bet9ja");
-          //  if (sportybetNg) setSelectedBookie2(sportybetNg);
-          //  if (bet9ja) setSelectedBookie2(bet9ja);
         }
       } catch (error) {
         toast.error("Failed to load bookies");

@@ -13,7 +13,7 @@ import {
   HiOutlineSupport,
   HiDocumentText,
 } from "react-icons/hi";
-import { FaGamepad } from "react-icons/fa";
+import { FaGamepad, FaHeadset } from "react-icons/fa";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
@@ -110,7 +110,7 @@ export default function SideNav() {
         {/**  <NavItem href="/referral" icon={<HiOutlineUsers />}>
           Referral
         </NavItem>*/}
-        <NavItem href="/support" icon={<HiOutlineSupport />}>
+        <NavItem href="/support" icon={<FaHeadset />}>
           Support
         </NavItem>
       </nav>
