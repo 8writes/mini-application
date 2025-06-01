@@ -54,7 +54,7 @@ export default function SideNav() {
       ref={sidebarRef}
       className={`
         fixed lg:sticky lg:top-0
-        flex flex-col h-[100dvh] overflow-y-auto pt-20 bg-gray-800 pb-10 text-white w-64 shadow-lg
+        flex flex-col h-[100dvh] overflow-y-auto custom-scrollbar pt-20 bg-gray-800 pb-10 text-white w-64 shadow-lg
         transform transition-transform duration-300 ease-in-out
         z-40
         ${

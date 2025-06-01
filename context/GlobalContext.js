@@ -48,7 +48,7 @@ export const GlobalProvider = ({ children }) => {
         router.push("/auth/login");
         const { error } = await billzpaddi.auth.signOut();
         localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
-        toast.error("Your account is disabled. Please contact support.", {
+        toast.error("Your account is restricted. Please contact support.", {
           toastId: "account-disabled",
           autoClose: false,
         });

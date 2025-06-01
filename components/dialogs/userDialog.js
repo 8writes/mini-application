@@ -173,51 +173,6 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/** we do not allow image process when Adding user in this app */}
-          {user && (
-            <div className="flex items-center gap-2">
-              <label className="flex items-center text-sm mb-1">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleChange}
-                  className="w-full cursor-pointer hidden"
-                />
-                <Image
-                  src={
-                    preview
-                      ? preview
-                      : formData.profile_photo || "/default-avatar.png"
-                  }
-                  alt="User profile photo"
-                  width={40}
-                  height={40}
-                  className="rounded-full h-14 w-14 object-cover border border-gray-200 cursor-pointer"
-                />
-                {(preview || !formData.profile_photo) && (
-                  <div className="px-2 cursor-pointer">
-                    <HiOutlineUpload className="text-2xl text-gray-600" />
-                  </div>
-                )}
-              </label>
-              {formData.profile_photo && !preview && (
-                <button
-                  onClick={handleDeleteImage}
-                  disabled={!formData.profile_photo}
-                  className="cursor-pointer text-red-500"
-                >
-                  <HiOutlineX className="text-3xl hover:bg-gray-100 rounded-full" />
-                </button>
-              )}
-              <p
-                className="text-sm"
-                title="Files larger than 6MB will not be accepted."
-              >
-                Max upload size: 5MB
-              </p>
-            </div>
-          )}
-
           <input
             name="first_name"
             placeholder="First Name"
@@ -244,21 +199,16 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
             required
           />
 
-          {/** default password set */}
-          <h2 className="text-base text-gray-500">
-            Default Password: Password12
-          </h2>
-
-          {/** role select */}
-          <select
-            name="role"
+          <input
+            name="email"
+            placeholder="Role"
             value={formData.role}
             onChange={handleChange}
+            type="text"
+            readOnly
             className="w-full p-2 border border-gray-400 rounded outline-none"
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
+            required
+          />
 
           {/** status set */}
           <div className="flex items-center gap-4">
@@ -291,7 +241,7 @@ export default function UserDialog({ user, onClose, onCloseFetch }) {
 
           {user && (
             <h2 className="text-base text-gray-500">
-              User since: {dayjs(user.createdAt).format("MMMM D, YYYY")}
+              User since: {dayjs(user.created_at).format("MMMM D, YYYY")}
             </h2>
           )}
 
