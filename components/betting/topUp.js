@@ -185,6 +185,11 @@ export default function BetTopUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (formData?.customerId) {
+      toast.info("Under maintenance");
+      return;
+    }
+
     const bettingCompanyVerify =
       selectedBookie?.code || formData.bettingCompany;
 

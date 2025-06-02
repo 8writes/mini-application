@@ -24,7 +24,7 @@ const CurrencySelector = ({ selectedCurrency, onSelect }) => {
         <button
           key={currency.code}
           onClick={() => onSelect(currency)}
-          className={`p-1 border rounded-lg flex items-center justify-center transition-colors ${
+          className={`p-1 border rounded-lg flex cursor-pointer items-center justify-center transition-colors ${
             selectedCurrency === currency.code
               ? "bg-gray-900 text-white border-gray-800"
               : "bg-gray-700 hover:bg-gray-600 border-gray-600"
@@ -171,7 +171,7 @@ export default function InvoiceGenerator() {
 
       let currentCount = invoiceGeneration?.invoice_count || 0;
 
-      if (currentCount < FREE_INVOICE_LIMIT) {
+      if (currentCount < FREE_INVOICE_LIMIT && invoice.currency === "NGN") {
         // Free invoice
 
         const { error: txError } = await billzpaddi
@@ -1050,19 +1050,31 @@ export default function InvoiceGenerator() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>{invoice?.currencySymbol}{subtotal.toLocaleString("en-NG")}</span>
+                  <span>
+                    {invoice?.currencySymbol}
+                    {subtotal.toLocaleString("en-NG")}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax ({invoice.taxRate}%):</span>
-                  <span>{invoice?.currencySymbol}{taxAmount.toLocaleString("en-NG")}</span>
+                  <span>
+                    {invoice?.currencySymbol}
+                    {taxAmount.toLocaleString("en-NG")}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Discount ({invoice.discount}%):</span>
-                  <span>-{invoice?.currencySymbol}{discountAmount.toLocaleString("en-NG")}</span>
+                  <span>
+                    -{invoice?.currencySymbol}
+                    {discountAmount.toLocaleString("en-NG")}
+                  </span>
                 </div>
                 <div className="flex justify-between font-bold border-t pt-2 mt-2">
                   <span>Total:</span>
-                  <span>{invoice?.currencySymbol}{total.toLocaleString("en-NG")}</span>
+                  <span>
+                    {invoice?.currencySymbol}
+                    {total.toLocaleString("en-NG")}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1093,13 +1105,7 @@ export default function InvoiceGenerator() {
                 ) : (
                   <>
                     Generate Invoice{" "}
-                    {false && (
-                      <>
-                        <p>{invoiceCount}/5 free</p>
-
-                        <p>₦25</p>
-                      </>
-                    )}
+                    {invoice.currency !== "NGN" ? "₦25" : "Free"}
                   </>
                 )}
               </button>

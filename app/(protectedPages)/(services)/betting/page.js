@@ -318,6 +318,10 @@ export default function BettingServices() {
   }, []);
 
   const convertCode = async () => {
+    if (bookingCode) {
+      toast.info('Under maintenance')
+      return
+    }
     if (!bookingCode || !selectedBookie1 || !selectedBookie2) {
       toast.info("Please fill all fields");
       return;
@@ -451,7 +455,7 @@ export default function BettingServices() {
         Unlock our advanced AI predictions for just ₦250
       </p>
       <button
-        onClick={() => toast.info("UNAVAILABLE")}
+        onClick={() => toast.info("Under maintenance")}
         className="bg-gray-900 cursor-pointer hover:bg-gray-700 text-white py-3 px-6 rounded-md font-medium"
       >
         Unlock for ₦250
