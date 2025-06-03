@@ -197,7 +197,7 @@ const PurchaseDialog = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": process.env.NEXT_PUBLIC_BILLZ_KEY,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY}`,
         },
         body: JSON.stringify({
           serviceID: selectedISP.serviceID,
@@ -535,8 +535,8 @@ export default function Page() {
           "https://vtpass.com/api/services?identifier=data",
           {
             headers: {
-              "api-key": process.env.NEXT_BILLZ_API_KEY,
-              "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
+              "api-key": process.env.NEXT_PUBLIC_BILLZ_API_KEY,
+              "public-key": process.env.NEXT_PUBLIC_BILLZ_PUBLIC_KEY,
             },
           }
         );
@@ -562,8 +562,8 @@ export default function Page() {
           `https://vtpass.com/api/service-variations?serviceID=${selectedISP.serviceID}`,
           {
             headers: {
-              "api-key": process.env.NEXT_BILLZ_API_KEY,
-              "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
+              "api-key": process.env.NEXT_PUBLIC_BILLZ_API_KEY,
+              "public-key": process.env.NEXT_PUBLIC_BILLZ_PUBLIC_KEY,
             },
           }
         );

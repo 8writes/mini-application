@@ -166,7 +166,7 @@ const PurchaseDialog = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-key": process.env.NEXT_PUBLIC_BILLZ_KEY,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY}`,
         },
         body: JSON.stringify({
           serviceID: selectedISP.serviceID,
@@ -179,6 +179,8 @@ const PurchaseDialog = ({
 
 
       const data = await res.json();
+
+      console.log(data)
 
       // 4. Handle response and update transaction
       let newStatus = "failed";
@@ -444,8 +446,8 @@ export default function Page() {
           "https://vtpass.com/api/services?identifier=airtime",
           {
             headers: {
-              "api-key": process.env.NEXT_BILLZ_API_KEY,
-              "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
+              "api-key": process.env.NEXT_PUBLIC_BILLZ_API_KEY,
+              "public-key": process.env.NEXT_PUBLIC_BILLZ_PUBLIC_KEY,
             },
           }
         );

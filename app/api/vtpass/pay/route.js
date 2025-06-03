@@ -6,9 +6,9 @@ const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX = 10; // 10 requests per minute
 
 export async function POST(request) {
-
-  const apiKey = request.headers.get("x-api-key");
-  if (!apiKey || apiKey !== process.env.NEXT_BILLZ_PUBLIC_KEY) {
+  // API Key Authentication
+  const apiKey = request.headers.get("authorization")?.split("Bearer ")[1];
+  if (!apiKey || apiKey !== process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY) {
     return new Response(
       JSON.stringify({ message: "Unauthorized", ok: false }),
       { status: 401, headers: { "Content-Type": "application/json" } }
@@ -18,7 +18,7 @@ export async function POST(request) {
   const clientIp = request.headers.get("x-forwarded-for") || request.ip;
   const currentTime = Date.now();
 
-  // 1. Rate Limiting
+  // Rate Limiting
   if (rateLimit.has(clientIp)) {
     const { count, firstRequestTime } = rateLimit.get(clientIp);
 
@@ -29,10 +29,7 @@ export async function POST(request) {
             message: "Too many requests. Please try again later.",
             ok: false,
           }),
-          {
-            status: 429,
-            headers: { "Content-Type": "application/json" },
-          }
+          { status: 429, headers: { "Content-Type": "application/json" } }
         );
       }
       rateLimit.set(clientIp, { count: count + 1, firstRequestTime });
@@ -43,59 +40,59 @@ export async function POST(request) {
     rateLimit.set(clientIp, { count: 1, firstRequestTime: currentTime });
   }
 
-  // 2. Strict Origin Checking
+  // Strict Origin Checking
   const origin = request.headers.get("origin");
   const allowedDomains = [
     "https://billzpaddi.com.ng",
     "https://www.billzpaddi.com.ng",
+    "http://localhost:3000"
   ];
 
   if (origin && !allowedDomains.includes(origin)) {
     return new Response(
-      JSON.stringify({
-        message: "Unauthorized domain",
-        ok: false,
-      }),
-      {
-        status: 403,
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({ message: "Unauthorized domain", ok: false }),
+      { status: 403, headers: { "Content-Type": "application/json" } }
     );
   }
 
-  // 3. Method Validation
+  // Method Validation
   if (request.method !== "POST") {
     return new Response(
-      JSON.stringify({
-        message: "Method not allowed",
-        ok: false,
-      }),
-      {
-        status: 405,
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({ message: "Method not allowed", ok: false }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
     );
   }
 
-  // 4. Content-Type Validation
+  // Content-Type Validation
   const contentType = request.headers.get("content-type");
   if (!contentType || !contentType.includes("application/json")) {
     return new Response(
-      JSON.stringify({
-        message: "Invalid content type",
-        ok: false,
-      }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      }
+      JSON.stringify({ message: "Invalid content type", ok: false }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
     );
   }
 
   try {
     const body = await request.json();
 
-    // 5-6. Phone Number Validation
+    // Request Body Validation
+    const requiredFields = [
+      "request_id",
+      "amount",
+    ];
+    const missingFields = requiredFields.filter((field) => !body[field]);
+
+    if (missingFields.length > 0) {
+      return new Response(
+        JSON.stringify({
+          message: `Missing required fields: ${missingFields.join(", ")}`,
+          ok: false,
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Phone Number Validation
     const phoneRegex = /^(\+234|0)[789][01]\d{8}$/;
     if (!phoneRegex.test(body.phone)) {
       return new Response(
@@ -103,28 +100,22 @@ export async function POST(request) {
           message: "Invalid Nigerian phone number format",
           ok: false,
         }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // 7. Amount Validation
+    // Amount Validation
     if (isNaN(body.amount) || body.amount <= 0) {
       return new Response(
         JSON.stringify({
           message: "Invalid amount",
           ok: false,
         }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // 8. Make the VTpass API call
+    // Make the VTpass API call
     const response = await axios.post(
       "https://vtpass.com/api/pay",
       {
@@ -137,20 +128,20 @@ export async function POST(request) {
       },
       {
         headers: {
-          "api-key": process.env.NEXT_BILLZ_API_KEY,
-          "secret-key": process.env.NEXT_BILLZ_SECRET_KEY,
+          "api-key": process.env.NEXT_PUBLIC_BILLZ_API_KEY,
+          "secret-key": process.env.BILLZ_SECRET_KEY,
           "Content-Type": "application/json",
         },
         timeout: 10000, // 10 seconds timeout
       }
     );
 
-    // 9. Response Headers for Security
+    // Response Headers for Security
     const responseHeaders = {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "https://billzpaddi.com.ng",
       "Access-Control-Allow-Methods": "POST",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
       "X-XSS-Protection": "1; mode=block",
@@ -166,31 +157,24 @@ export async function POST(request) {
       headers: responseHeaders,
     });
   } catch (error) {
-    console.error("VTpass Axios Error:", error.response?.data || error.message);
+    console.error("VTpass API Error:", error.message);
 
-    // 10. Error Handling without exposing sensitive information
+    // Error Handling
     let errorMessage = "Purchase failed. Please try again.";
     let statusCode = 500;
 
     if (error.response) {
-      // Don't expose backend errors directly
       statusCode = error.response.status || 500;
     } else if (error.request) {
       errorMessage = "Network error. Please check your connection.";
     }
 
-    return new Response(
-      JSON.stringify({
-        message: errorMessage,
-        ok: false,
-      }),
-      {
-        status: statusCode,
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "https://billzpaddi.com.ng",
-        },
-      }
-    );
+    return new Response(JSON.stringify({ message: errorMessage, ok: false }), {
+      status: statusCode,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "https://billzpaddi.com.ng",
+      },
+    });
   }
 }
