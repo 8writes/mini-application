@@ -39,7 +39,6 @@ export async function POST(request) {
   const allowedDomains = [
     "https://billzpaddi.com.ng",
     "https://www.billzpaddi.com.ng",
-    "http://localhost:3000",
   ];
 
   if (origin && !allowedDomains.includes(origin)) {

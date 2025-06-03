@@ -156,8 +156,8 @@ const PurchaseDialog = ({
       // 2. Deduct from wallet immediately
       const { error: walletError } = await billzpaddi
         .from("wallets")
-        .update({ balance: wallet.balance - totalAmount })
-        .eq("user_id", user.user_id);
+        .update({ balance: wallet?.balance - totalAmount })
+        .eq("user_id", user?.user_id);
 
       if (walletError) throw new Error("Failed to deduct from wallet");
 
