@@ -107,7 +107,7 @@ export default function Page() {
       const { error: userError } = await billzpaddi
         .from("users")
         .delete()
-        .eq("id", userId);
+        .eq("user_id", userId);
 
       if (userError) throw userError;
 
@@ -260,13 +260,13 @@ export default function Page() {
                               View
                             </Link>
                             <button
-                              onClick={() => toggleUserStatus(u.id, u.status)}
+                              onClick={() => toggleUserStatus(u.user_id, u.status)}
                               className="text-yellow-600 hover:underline px-4 cursor-pointer"
                             >
                               {u.status ? "Ban" : "Unban"}
                             </button>
                             <button
-                              onClick={() => handleDelete(u.id)}
+                              onClick={() => handleDelete(u.user_id)}
                               className="text-red-600 hover:underline pl-4 cursor-pointer"
                             >
                               Delete
