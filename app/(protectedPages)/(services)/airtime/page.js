@@ -174,6 +174,7 @@ const PurchaseDialog = ({
         }),
       });
 
+
       const data = await res.json();
 
       // 4. Handle response and update transaction

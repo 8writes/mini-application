@@ -51,12 +51,14 @@ export default function SignupPage() {
         return;
       }
 
-      const { error: errorWallet } = await billzpaddi.from("wallets").insert({
+      await billzpaddi.from("wallets").insert({
         balance: 0,
+        email: formData?.email,
       });
 
-      const { error: errorInvoiceGen } = await billzpaddi.from("invoice_generations").insert({
+      await billzpaddi.from("invoice_generations").insert({
         invoice_count: 0,
+        email: formData?.email,
       });
 
       toast.success("Signup successful!");
@@ -165,7 +167,6 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            
             className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50"
           >
             {isSubmitting ? "Signing up... " : "Sign Up"}
