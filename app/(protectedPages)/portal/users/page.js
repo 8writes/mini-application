@@ -144,6 +144,7 @@ export default function Page() {
     return (
       fullName.includes(searchTerm.toLowerCase()) ||
       u.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (u.status ? "active" : "suspended").includes(searchTerm.toLowerCase()) ||
       u.balance.toString().includes(searchTerm.toLowerCase())
     );

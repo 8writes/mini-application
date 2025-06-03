@@ -45,13 +45,13 @@ export const GlobalProvider = ({ children }) => {
         .single();
 
       if (data.status === false) {
-        router.push("/auth/login");
         const { error } = await billzpaddi.auth.signOut();
         localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
         toast.error("Your account is restricted. Please contact support.", {
           toastId: "account-disabled",
           autoClose: false,
         });
+        router.push("/auth/login");
         return;
       }
 
