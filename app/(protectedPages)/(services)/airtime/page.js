@@ -180,8 +180,6 @@ const PurchaseDialog = ({
 
       const data = await res.json();
 
-      console.log(data)
-
       // 4. Handle response and update transaction
       let newStatus = "failed";
       let toastType = "error";
