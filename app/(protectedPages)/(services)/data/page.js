@@ -567,7 +567,6 @@ export default function Page() {
 
         const variations = res.data.content.variations || [];
 
-        console.log(res.data)
         const cleaned = variations.map((v) => ({
           ...v,
           name: cleanPlanName(v.name),
