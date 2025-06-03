@@ -8,7 +8,7 @@ const RATE_LIMIT_MAX = 10; // 10 requests per minute
 export async function POST(request) {
 
   const apiKey = request.headers.get("x-api-key");
-  if (!apiKey || apiKey !== process.env.BILLZ_PUBLIC_KEY) {
+  if (!apiKey || apiKey !== process.env.NEXT_BILLZ_PUBLIC_KEY) {
     return new Response(
       JSON.stringify({ message: "Unauthorized", ok: false }),
       { status: 401, headers: { "Content-Type": "application/json" } }
