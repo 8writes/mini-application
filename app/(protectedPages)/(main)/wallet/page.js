@@ -1,9 +1,7 @@
 "use client";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
-import {
-  HiRefresh,
-} from "react-icons/hi";
+import { HiRefresh } from "react-icons/hi";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
@@ -11,14 +9,14 @@ import { useGlobalContextData } from "@/context/GlobalContextData";
 
 export default function WalletPage() {
   const [PaystackPop, setPaystackPop] = useState(null);
-  // basically load paystack on client side only
   useEffect(() => {
     if (typeof window !== "undefined") {
       import("@paystack/inline-js").then((module) => {
-        setPaystackPop(() => module.default); // Fix instantiation issue
+        setPaystackPop(() => module.default);
       });
     }
   }, []);
+
   const { user, isLoading } = useGlobalContext();
   const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
   const [isFunding, setIsFunding] = useState(false);
@@ -26,27 +24,25 @@ export default function WalletPage() {
   const [activePreset, setActivePreset] = useState(null);
 
   const presetAmounts = [1000, 2000, 5000, 10000];
-
   const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
-
   const PROCESSING_FEE = 20; // Paystack processing fee in NGN
 
-  const amountToCredit = amount + PROCESSING_FEE;
+  // Calculate amount to credit including fee
+  const amountToCredit = amount ? parseFloat(amount) + PROCESSING_FEE : 0;
 
-  // Function to handle Paystack payment
   const initializePayment = async () => {
     return new Promise((resolve, reject) => {
       const handler = PaystackPop.setup({
         key: paystackKey,
         email: user?.email.trim(),
-        amount: parseFloat(amountToCredit || 0) * 100, // Convert to kobo (multiply by 100)
+        amount: amountToCredit * 100, // Convert to kobo
         currency: "NGN",
         callback: async (response) => {
           if (response.status === "success") {
             await updateWalletBalance(response.reference);
             resolve(response);
           } else {
-            // Create transaction record
+            // Create failed transaction record
             const { error: transactionError } = await billzpaddi
               .from("transactions")
               .insert({
@@ -55,7 +51,7 @@ export default function WalletPage() {
                 type: "credit",
                 description: "Wallet Funding",
                 status: "failed",
-                reference,
+                reference: response.reference || "none",
               });
 
             if (transactionError) throw transactionError;
@@ -102,6 +98,7 @@ export default function WalletPage() {
       fetchTransactions();
 
       setAmount("");
+      setActivePreset(null);
       toast.success(`Wallet funded with ₦${fundingAmount.toLocaleString()}`);
     } catch (error) {
       console.error("Wallet update error:", error);
@@ -119,12 +116,14 @@ export default function WalletPage() {
       return;
     }
 
-    if (amount > wallet?.limit) {
+    const amountValue = parseFloat(amount);
+
+    if (amountValue > wallet?.limit) {
       toast.error(`Max deposit of ₦${wallet?.limit.toLocaleString()}`);
       return;
     }
 
-    // Fetch current wallet balance for user.user_id
+    // Fetch current wallet balance
     const { data: walletData, error: fetchError } = await billzpaddi
       .from("wallets")
       .select("balance")
@@ -132,17 +131,30 @@ export default function WalletPage() {
       .single();
 
     if (fetchError || !walletData) {
-      throw new Error("Failed to fetch wallet balance");
+      toast.error("Failed to fetch wallet balance");
+      return;
     }
 
-    const currentBalance = walletData?.balance;
-
-    if ((currentBalance || wallet?.balance) >= wallet?.limit) {
+    const currentBalance = walletData?.balance || 0;
+    if (currentBalance >= wallet?.limit) {
       toast.error(`Max wallet balance of ₦${wallet?.limit.toLocaleString()}`);
       return;
     }
 
-    await initializePayment();
+    try {
+      await initializePayment();
+    } catch (error) {
+      console.error("Payment error:", error);
+    }
+  };
+
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    // Only allow numbers and one decimal point
+    if (/^\d*\.?\d*$/.test(value) || value === "") {
+      setAmount(value);
+      setActivePreset(null);
+    }
   };
 
   if (!user || isLoading) {
@@ -225,7 +237,7 @@ export default function WalletPage() {
                   key={preset}
                   onClick={() => {
                     setActivePreset(preset);
-                    setAmount(preset);
+                    setAmount(preset.toString());
                   }}
                   className={`py-3 rounded-lg cursor-pointer transition-colors ${
                     activePreset === preset
@@ -245,12 +257,9 @@ export default function WalletPage() {
               <label className="block text-gray-400 mb-2">Enter Amount</label>
               <div className="relative">
                 <input
-                  type="number"
+                  type="tel" // Changed to text to better handle input
                   value={amount}
-                  onChange={(e) => {
-                    setAmount(e.target.value);
-                    setActivePreset(null);
-                  }}
+                  onChange={handleAmountChange}
                   placeholder="(minimum ₦100)"
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pl-12 outline-none"
                   required
@@ -261,11 +270,21 @@ export default function WalletPage() {
                   NGN
                 </span>
               </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Processing fee: ₦{PROCESSING_FEE.toLocaleString()}
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                Total to pay: ₦{amountToCredit.toLocaleString()}
+              </p>
             </div>
             <button
               type="submit"
-              disabled={isFunding}
-              className="w-full bg-gray-900 hover:bg-gray-700 cursor-pointer text-white py-3 rounded-lg transition-colors font-medium"
+              disabled={isFunding || !amount || parseFloat(amount) < 100}
+              className={`w-full py-3 rounded-lg transition-colors font-medium ${
+                isFunding || !amount || parseFloat(amount) < 100
+                  ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+              }`}
             >
               {isFunding ? "Processing..." : "Fund Wallet"}
             </button>

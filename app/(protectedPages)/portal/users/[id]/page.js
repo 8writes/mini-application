@@ -87,21 +87,24 @@ export default function Page() {
   // Toggle user status
   const toggleUserStatus = async () => {
     const confirm = window.confirm(
-      `Are you sure you want to ${userData.status ? "ban" : "unban"} this user?`
+      `Are you sure you want to ${
+        userData?.status ? "ban" : "unban"
+      } this user?`
     );
+
     if (!confirm) return;
 
     try {
       const { error } = await billzpaddi
         .from("users")
-        .update({ status: !userData.status })
+        .update({ status: !userData?.status })
         .eq("user_id", userId);
 
       if (error) throw error;
 
       setUserData((prev) => ({ ...prev, status: !prev.status }));
       toast.success(
-        `User ${userData.status ? "banned" : "unbanned"} successfully!`
+        `User ${userData?.status ? "banned" : "unbanned"} successfully!`
       );
     } catch (err) {
       toast.error("Error updating user status");
@@ -232,9 +235,11 @@ export default function Page() {
 
   return (
     <div className="px-4 py-10 md:p-10 w-full md:max-w-7xl mx-auto">
-      <Link href="/portal/users" className="mb-6 text-white cursor-pointer">
-        ← Back to Users
-      </Link>
+      <div className="pb-6">
+        <Link href="/portal/users" className="p-6 text-white cursor-pointer">
+          ← Back to Users
+        </Link>
+      </div>
 
       <div className="grid grid-cols-1 gap-6 mb-8">
         {/* User Profile Card */}
@@ -277,7 +282,12 @@ export default function Page() {
                     className="bg-gray-700 text-white p-1 mt-2 rounded w-full"
                   />
                 ) : (
-                  <p className="text-gray-300">{userData?.email}</p>
+                  <>
+                    <p className="text-gray-300">{userData?.email}</p>
+                    <p className="text-white text-xs pt-2">
+                      {userData?.user_id}
+                    </p>
+                  </>
                 )}
               </div>
             </div>
