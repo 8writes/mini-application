@@ -175,7 +175,7 @@ export default function DashboardPage() {
                         }`}
                       >
                         {txn.type === "credit" ? "+" : "-"}₦
-                        {txn.amount.toLocaleString()}
+                        {txn.amount?.toLocaleString()}
                       </p>
 
                       <span

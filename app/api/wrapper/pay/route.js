@@ -6,19 +6,28 @@ const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX = 10; // 10 requests per minute
 
 export async function POST(request) {
+  // 1. Verify CSRF Token
+  const csrfToken = request.headers.get("X-CSRF-Token");
+  const cookieToken = request.cookies.get("csrf_token")?.value;
+
+  if (!csrfToken || csrfToken !== cookieToken) {
+    return new Response("Invalid CSRF token", { status: 403 });
+  }
+
   // API Key Authentication
   const apiKey = request.headers.get("authorization")?.split("Bearer ")[1];
   if (!apiKey || apiKey !== process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY) {
-    return new Response(
-      JSON.stringify({ message: "Fuck Off", ok: false }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ message: "Fuck Off", ok: false }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const clientIp = request.headers.get("x-forwarded-for") || request.ip;
+  // Rate limiting by IP
+  const clientIp =
+    request.headers.get("x-forwarded-for") || request.ip || "unknown";
   const currentTime = Date.now();
 
-  // Rate Limiting
   if (rateLimit.has(clientIp)) {
     const { count, firstRequestTime } = rateLimit.get(clientIp);
 
@@ -45,7 +54,7 @@ export async function POST(request) {
   const allowedDomains = [
     "https://billzpaddi.com.ng",
     "https://www.billzpaddi.com.ng",
-    "http://localhost:3000"
+    "http://localhost:3000",
   ];
 
   if (origin && !allowedDomains.includes(origin)) {
@@ -55,7 +64,7 @@ export async function POST(request) {
     );
   }
 
-  // Method Validation
+  // Method Validation (redundant here because Next.js maps POST to this handler, but good for safety)
   if (request.method !== "POST") {
     return new Response(
       JSON.stringify({ message: "Method not allowed", ok: false }),
@@ -76,10 +85,7 @@ export async function POST(request) {
     const body = await request.json();
 
     // Request Body Validation
-    const requiredFields = [
-      "request_id",
-      "amount",
-    ];
+    const requiredFields = ["request_id", "amount"];
     const missingFields = requiredFields.filter((field) => !body[field]);
 
     if (missingFields.length > 0) {
@@ -92,7 +98,7 @@ export async function POST(request) {
       );
     }
 
-    // Phone Number Validation
+    // Phone Number Validation (Nigerian numbers)
     const phoneRegex = /^(\+234|0)[789][01]\d{8}$/;
     if (!phoneRegex.test(body.phone)) {
       return new Response(
@@ -157,7 +163,7 @@ export async function POST(request) {
       headers: responseHeaders,
     });
   } catch (error) {
-    console.error("VTpass API Error:", error.message);
+    console.error("Provider API Error:", error.message);
 
     // Error Handling
     let errorMessage = "Purchase failed. Please try again.";
@@ -165,6 +171,7 @@ export async function POST(request) {
 
     if (error.response) {
       statusCode = error.response.status || 500;
+      errorMessage = error.response.data?.message || errorMessage;
     } else if (error.request) {
       errorMessage = "Network error. Please check your connection.";
     }

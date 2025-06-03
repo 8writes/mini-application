@@ -1,29 +1,17 @@
-import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
-
-// protected routes
-const protectedRoutes = ["/users"];
-
 export async function middleware(request) {
-  const { pathname } = request.nextUrl;
+  // Block non-browser requests
+  if (request.nextUrl.pathname === "/api/wrapper") {
+    const userAgent = request.headers.get("user-agent") || "";
+    if (!/Mozilla|Chrome|Safari|Firefox/i.test(userAgent)) {
+      return new Response("Automation detected", { status: 403 });
+    }
 
-  // protect specific routes
-  if (!protectedRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.next();
+    // Verify origin
+    const origin = request.headers.get("origin");
+    if (origin !== "https://dstvmicgrand.com") {
+      return new Response("Invalid origin", { status: 403 });
+    }
   }
 
-  const token = request.cookies.get("token")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    await jwtVerify(token, secret);
-    return NextResponse.next();
-  } catch (err) {
-    console.error("JWT error:", err.message);
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  return NextResponse.next();
 }

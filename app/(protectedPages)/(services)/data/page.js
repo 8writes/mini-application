@@ -192,13 +192,20 @@ const PurchaseDialog = ({
 
       if (updateError) throw new Error("Failed to update wallet balance");
 
+      
+      const csrfToken = await fetch("/api/wrapper/csrf").then((res) =>
+        res.json()
+      );
+
       // 3. Make the wrapper purchase
       const res = await fetch("/api/wrapper/pay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken.token,
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY}`,
         },
+        credentials: "include",
         body: JSON.stringify({
           serviceID: selectedISP.serviceID,
           variation_code: selectedPlan.variation_code,

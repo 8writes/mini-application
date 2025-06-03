@@ -167,7 +167,7 @@ export default function TransactionsPage() {
                         }`}
                       >
                         {txn.type === "credit" ? "+" : "-"}₦
-                        {txn.amount.toLocaleString()}
+                        {txn.amount?.toLocaleString()}
                       </p>
                       <span
                         className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
@@ -184,7 +184,7 @@ export default function TransactionsPage() {
                     </div>
                   </div>
                   <div className="flex justify-between items-center mt-2 text-sm text-gray-400">
-                    <p>₦{txn.amount.toLocaleString()}</p>
+                    <p>₦{txn.amount?.toLocaleString()}</p>
                     <p className="text-xs">{txn.reference}</p>
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function TransactionsPage() {
                       }`}
                     >
                       {txn.type === "credit" ? "+" : "-"}₦
-                      {txn.amount.toLocaleString()}
+                      {txn.amount?.toLocaleString()}
                     </p>
                   </div>
 
