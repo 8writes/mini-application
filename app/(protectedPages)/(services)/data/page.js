@@ -192,8 +192,8 @@ const PurchaseDialog = ({
 
       if (updateError) throw new Error("Failed to update wallet balance");
 
-      // 3. Make the VTpass purchase
-      const res = await fetch("/api/vtpass/pay", {
+      // 3. Make the wrapper purchase
+      const res = await fetch("/api/wrapper/pay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

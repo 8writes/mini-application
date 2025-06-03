@@ -161,8 +161,8 @@ const PurchaseDialog = ({
 
       if (walletError) throw new Error("Failed to deduct from wallet");
 
-      // 3. Process payment with VTPass
-      const res = await fetch("/api/vtpass/pay", {
+      // 3. Process payment with wrapper
+      const res = await fetch("/api/wrapper/pay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -176,7 +176,6 @@ const PurchaseDialog = ({
           amount: amount,
         }),
       });
-
 
       const data = await res.json();
 

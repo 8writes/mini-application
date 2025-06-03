@@ -204,7 +204,7 @@ const PurchaseDialog = ({
 
       if (updateError) throw new Error("Failed to update wallet balance");
 
-      // 3. Make VTpass purchase
+      // 3. Make wrapper purchase
       const payload = {
         serviceID: selectedService.serviceID,
         billersCode: smartCardNumber,
@@ -219,7 +219,7 @@ const PurchaseDialog = ({
         payload.subscription_type = isRenewal ? "renew" : "change";
       }
 
-      const res = await fetch("/api/vtpass/pay", {
+      const res = await fetch("/api/wrapper/pay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
