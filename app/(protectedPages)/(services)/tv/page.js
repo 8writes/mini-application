@@ -219,15 +219,16 @@ const PurchaseDialog = ({
         payload.subscription_type = isRenewal ? "renew" : "change";
       }
 
-      const csrfToken = await fetch("/api/wrapper/csrf").then((res) =>
+      const { token } = await fetch("/api/wrapper/auth-check").then((res) =>
         res.json()
       );
 
+      // 3. Process payment with wrapper
       const res = await fetch("/api/wrapper/pay", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken.token,
+          "X-CSRF-Token": token,
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY}`,
         },
         credentials: "include",

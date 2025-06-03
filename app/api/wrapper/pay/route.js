@@ -8,10 +8,10 @@ const RATE_LIMIT_MAX = 10; // 10 requests per minute
 export async function POST(request) {
   // 1. Verify CSRF Token
   const csrfToken = request.headers.get("X-CSRF-Token");
-  const cookieToken = request.cookies.get("csrf_token")?.value;
+  const cookieToken = request.cookies.get("token")?.value;
 
   if (!csrfToken || csrfToken !== cookieToken) {
-    return new Response("Invalid CSRF token", { status: 403 });
+    return new Response("Invalid token", { status: 403 });
   }
 
   // API Key Authentication

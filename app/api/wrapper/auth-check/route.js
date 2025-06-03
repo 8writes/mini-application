@@ -4,7 +4,7 @@ export async function GET() {
   const token = crypto.randomUUID(); // Secure CSRF token
 
   const cookieStore = await cookies();
-  cookieStore.set("csrf_token", token, {
+  cookieStore.set("token", token, {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
