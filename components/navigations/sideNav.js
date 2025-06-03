@@ -141,7 +141,7 @@ function NavItem({ href, icon, children }) {
     <Link
       href={href}
       onClick={() => setIsSidebarOpen(false)}
-      className={`flex items-center gap-3 px-6 py-2 hover:bg-gray-700 transition duration-200 ease-in-out ${
+      className={`flex items-center gap-3 px-6 py-2 transition-all  hover:bg-gray-700 duration-150 ease-in-out ${
         isActive ? "bg-gray-700 border-l-4 border-blue-500" : ""
       }`}
     >
