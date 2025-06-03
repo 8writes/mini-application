@@ -8,7 +8,7 @@ export async function GET() {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
-    maxAge: 60 * 5, // 5 minutes
+    maxAge: 10, 
   });
 
   return Response.json({ token });
