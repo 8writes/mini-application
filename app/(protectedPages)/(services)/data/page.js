@@ -195,7 +195,10 @@ const PurchaseDialog = ({
       // 3. Make the VTpass purchase
       const res = await fetch("/api/vtpass/pay", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_BILLZ_KEY,
+        },
         body: JSON.stringify({
           serviceID: selectedISP.serviceID,
           variation_code: selectedPlan.variation_code,
@@ -383,7 +386,7 @@ export default function Page() {
   const [phone, setPhone] = useState("");
   const dropdownRef = useRef(null);
 
-  const tabOrder = ["Daily", "Weekly", "Monthly", "Others",];
+  const tabOrder = ["Daily", "Weekly", "Monthly", "Others"];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -488,7 +491,7 @@ export default function Page() {
   }, [phone, isps]);
 
   const cleanPlanName = (name) => {
-    return name
+    return name;
   };
 
   const categorizePlans = (variations) => {
@@ -532,8 +535,8 @@ export default function Page() {
           "https://vtpass.com/api/services?identifier=data",
           {
             headers: {
-              "api-key": process.env.VTPASS_API_KEY,
-              "public-key": process.env.VTPASS_PUBLIC_KEY,
+              "api-key": process.env.NEXT_BILLZ_API_KEY,
+              "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
             },
           }
         );
@@ -559,8 +562,8 @@ export default function Page() {
           `https://vtpass.com/api/service-variations?serviceID=${selectedISP.serviceID}`,
           {
             headers: {
-              "api-key": process.env.VTPASS_API_KEY,
-              "public-key": process.env.VTPASS_PUBLIC_KEY,
+              "api-key": process.env.NEXT_BILLZ_API_KEY,
+              "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
             },
           }
         );

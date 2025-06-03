@@ -6,6 +6,15 @@ const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 const RATE_LIMIT_MAX = 10; // 10 requests per minute
 
 export async function POST(request) {
+
+  const apiKey = request.headers.get("x-api-key");
+  if (!apiKey || apiKey !== process.env.BILLZ_PUBLIC_KEY) {
+    return new Response(
+      JSON.stringify({ message: "Unauthorized", ok: false }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   const clientIp = request.headers.get("x-forwarded-for") || request.ip;
   const currentTime = Date.now();
 
@@ -128,8 +137,8 @@ export async function POST(request) {
       },
       {
         headers: {
-          "api-key": process.env.VTPASS_API_KEY,
-          "secret-key": process.env.VTPASS_SECRET_KEY,
+          "api-key": process.env.NEXT_BILLZ_API_KEY,
+          "secret-key": process.env.NEXT_BILLZ_SECRET_KEY,
           "Content-Type": "application/json",
         },
         timeout: 10000, // 10 seconds timeout

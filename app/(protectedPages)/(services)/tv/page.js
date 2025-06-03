@@ -7,6 +7,7 @@ import { useGlobalContextData } from "@/context/GlobalContextData";
 import { toast } from "react-toastify";
 import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
+import axios from "axios";
 
 const CustomDropdown = ({
   options,
@@ -220,7 +221,10 @@ const PurchaseDialog = ({
 
       const res = await fetch("/api/vtpass/pay", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_BILLZ_KEY,
+        },
         body: JSON.stringify(payload),
       });
 
@@ -462,15 +466,20 @@ export default function TvSubscriptionPage() {
     }
   }, [user]);
 
-  // Fetch TV services
   useEffect(() => {
     const fetchTvServices = async () => {
       try {
-        const res = await fetch(
-          "https://vtpass.com/api/services?identifier=tv-subscription"
+        const res = await axios.get(
+          "https://vtpass.com/api/services?identifier=tv-subscription",
+          {
+            headers: {
+              "api-key": process.env.NEXT_BILLZ_API_KEY,
+              "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
+            },
+          }
         );
-        const data = await res.json();
-        const filteredServices = (data.content || []).filter(
+        // Axios automatically parses JSON, so data is in res.data
+        const filteredServices = (res.data.content || []).filter(
           (service) => service.serviceID.toLowerCase() !== "showmax"
         );
         setTvServices(filteredServices);
@@ -482,16 +491,20 @@ export default function TvSubscriptionPage() {
     fetchTvServices();
   }, []);
 
-  // Fetch plans when service is selected
   const fetchPlans = async (serviceID) => {
     if (!serviceID) return;
     try {
       setLoadingPlans(true);
-      const res = await fetch(
-        `https://vtpass.com/api/service-variations?serviceID=${serviceID}`
+      const res = await axios.get(
+        `https://vtpass.com/api/service-variations?serviceID=${serviceID}`,
+        {
+          headers: {
+            "api-key": process.env.NEXT_BILLZ_API_KEY,
+            "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
+          },
+        }
       );
-      const data = await res.json();
-      setPlans(data.content?.variations || []);
+      setPlans(res.data.content?.variations || []);
     } catch (err) {
       console.error("Error fetching TV plans:", err);
       toast.error("Failed to load TV packages");

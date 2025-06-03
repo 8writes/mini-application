@@ -164,7 +164,10 @@ const PurchaseDialog = ({
       // 3. Process payment with VTPass
       const res = await fetch("/api/vtpass/pay", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.NEXT_PUBLIC_BILLZ_KEY,
+        },
         body: JSON.stringify({
           serviceID: selectedISP.serviceID,
           billersCode: phoneNumber,
@@ -441,8 +444,8 @@ export default function Page() {
           "https://vtpass.com/api/services?identifier=airtime",
           {
             headers: {
-              "api-key": process.env.NEXT_PUBLIC_VTPASS_API_KEY,
-              "public-key": process.env.NEXT_PUBLIC_VTPASS_PUBLIC_KEY,
+              "api-key": process.env.NEXT_BILLZ_API_KEY,
+              "public-key": process.env.NEXT_BILLZ_PUBLIC_KEY,
             },
           }
         );
