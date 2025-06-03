@@ -18,8 +18,8 @@ export async function POST(req) {
       { serviceID, billersCode },
       {
         headers: {
-          "api-key": process.env.VTPASS_API_KEY,
-          "secret-key": process.env.VTPASS_SECRET_KEY,
+          "api-key": process.env.NEXT_PUBLIC_BILLZ_API_KEY,
+          "secret-key": process.env.BILLZ_SECRET_KEY,
           // "api-key": "a494a966debe749ecafb59b02305d4a0", TEST API Key
           // "secret-key": "SK_309c8d29497aa50254c4595dbab77bafcb3a6b2f7e0",TEST Secret Key
           "Content-Type": "application/json",
