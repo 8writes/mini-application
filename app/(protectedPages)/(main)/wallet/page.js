@@ -486,7 +486,12 @@ export default function WalletPage() {
                         <span className="font-medium text-sm">
                           Amount to send:
                         </span>{" "}
-                        ₦{parseFloat(amount).toLocaleString()}
+                        ₦
+                        {amount ? (
+                          <>{parseFloat(amount).toLocaleString()} </>
+                        ) : (
+                          0
+                        )}
                       </p>
                     </div>
                   </div>
