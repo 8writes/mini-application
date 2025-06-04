@@ -29,7 +29,8 @@ export default function Page() {
       const { data: usersData, error: usersError } = await billzpaddi
         .from("users")
         .select("*")
-        .neq("role", "super_admin");
+        .neq("role", "super_admin")
+        .order("created_at", { ascending: false });
 
       if (usersError) throw usersError;
 
@@ -260,7 +261,9 @@ export default function Page() {
                               View
                             </Link>
                             <button
-                              onClick={() => toggleUserStatus(u.user_id, u.status)}
+                              onClick={() =>
+                                toggleUserStatus(u.user_id, u.status)
+                              }
                               className="text-yellow-600 hover:underline px-4 cursor-pointer"
                             >
                               {u.status ? "Ban" : "Unban"}
