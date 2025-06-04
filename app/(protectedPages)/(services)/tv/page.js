@@ -544,7 +544,7 @@ export default function TvSubscriptionPage() {
       const toastVerify = toast.loading("Verifying smart card...");
 
       try {
-        const res = await fetch("/api/vtpass/verify", {
+        const res = await fetch("/api/wrapper/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
