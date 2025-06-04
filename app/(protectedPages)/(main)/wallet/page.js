@@ -503,7 +503,7 @@ export default function WalletPage() {
                       <br />
                       {!copiedRef && (
                         <span className="text-xs text-yellow-400 pl-4">
-                          Please click the copy button to copy the reference.
+                          Please click the "Copy" button to copy the reference.
                         </span>
                       )}
                     </p>
