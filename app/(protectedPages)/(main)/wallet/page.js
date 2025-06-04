@@ -2,10 +2,11 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
 import { HiRefresh } from "react-icons/hi";
-import { FaMoneyBillWave } from "react-icons/fa";
+import { FaMoneyBillWave, FaBank, FaPiggyBank, FaCopy } from "react-icons/fa";
 import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import { TbTransfer } from "react-icons/tb";
 
 export default function WalletPage() {
   const [PaystackPop, setPaystackPop] = useState(null);
@@ -18,14 +19,25 @@ export default function WalletPage() {
   }, []);
 
   const { user, isLoading } = useGlobalContext();
-  const { wallet, fetchWallet, fetchTransactions } = useGlobalContextData();
+  const {
+    wallet,
+    fetchWallet,
+    getUniqueRequestId,
+    uniqueRequestId,
+    fetchTransactions,
+  } = useGlobalContextData();
   const [isFunding, setIsFunding] = useState(false);
   const [amount, setAmount] = useState("");
   const [activePreset, setActivePreset] = useState(null);
+  const [activeTab, setActiveTab] = useState("instant"); // 'instant' or 'bank'
+  const [bankDetails, setBankDetails] = useState({
+    accountName: "EMMANUEL CHISOM",
+    accountNumber: "9153374542",
+    bankName: "OPay",
+  });
 
   const presetAmounts = [1000, 2000, 5000, 10000];
   const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
-  const PROCESSING_FEE = 20; // Paystack processing fee in NGN
 
   // Calculate amount to credit including fee
   function calculateAmountToCredit(amount) {
@@ -47,6 +59,10 @@ export default function WalletPage() {
   }
 
   const amountToCredit = calculateAmountToCredit(amount);
+
+  useEffect(() => {
+    getUniqueRequestId();
+  }, []);
 
   const initializePayment = async () => {
     return new Promise((resolve, reject) => {
@@ -102,6 +118,7 @@ export default function WalletPage() {
         .from("transactions")
         .insert({
           user_id: user.user_id,
+          email: user?.email,
           amount: fundingAmount,
           type: "credit",
           description: "Wallet Funding",
@@ -126,7 +143,66 @@ export default function WalletPage() {
     }
   };
 
+  const handleBankTransfer = async (e) => {
+    e.preventDefault();
+
+    if (!amount || parseFloat(amount) <= 0) {
+      toast.info("Please enter a valid amount");
+      return;
+    }
+
+    const amountValue = parseFloat(amount);
+
+    if (amountValue > wallet?.limit) {
+      toast.error(`Max deposit of ₦${wallet?.limit.toLocaleString()}`);
+      return;
+    }
+
+    setIsFunding(true);
+    try {
+      const fundingAmount = parseFloat(amount);
+      const reference = `bank${uniqueRequestId}`;
+
+      // Create pending transaction record
+      const { error: transactionError } = await billzpaddi
+        .from("transactions")
+        .insert({
+          user_id: user?.user_id,
+          email: user?.email,
+          amount: fundingAmount,
+          type: "credit",
+          description: "Wallet Funding (Bank Transfer)",
+          status: "pending",
+          reference,
+        });
+
+      if (transactionError) throw transactionError;
+
+      toast.success(`Bank transfer request submitted.`, { autoClose: false });
+      setAmount("");
+      setActivePreset(null);
+    } catch (error) {
+      console.error("Bank transfer error:", error);
+      toast.error("Failed to submit bank transfer request");
+    } finally {
+      setIsFunding(false);
+      getUniqueRequestId();
+      fetchTransactions();
+      fetchWallet();
+    }
+  };
+
   const handleFundWallet = async (e) => {
+    e.preventDefault();
+
+    if (activeTab === "instant") {
+      await handleInstantDeposit(e);
+    } else {
+      await handleBankTransfer(e);
+    }
+  };
+
+  const handleInstantDeposit = async (e) => {
     e.preventDefault();
 
     if (!amount || parseFloat(amount) <= 0) {
@@ -210,7 +286,6 @@ export default function WalletPage() {
               className="bg-gray-700 hover:bg-gray-600 cursor-pointer p-2 rounded-lg"
               onClick={() => {
                 fetchWallet();
-                //fetchData();
               }}
             >
               <HiRefresh className="text-xl" />
@@ -246,6 +321,32 @@ export default function WalletPage() {
             Fund Your Wallet
           </h2>
 
+          {/* Deposit Method Tabs */}
+          <div className="flex border-b border-gray-700 mb-6">
+            <button
+              className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
+                activeTab === "instant"
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-gray-400 hover:text-gray-300"
+              }`}
+              onClick={() => setActiveTab("instant")}
+            >
+              <TbTransfer />
+              Instant Deposit (Paystack - Fees Apply)
+            </button>
+            <button
+              className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
+                activeTab === "bank"
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-gray-400 hover:text-gray-300"
+              }`}
+              onClick={() => setActiveTab("bank")}
+            >
+              <FaPiggyBank />
+              Bank Transfer (0 Fees - Manual Approval)
+            </button>
+          </div>
+
           {/* Quick Top-Up Presets */}
           <div className="mb-6">
             <h3 className="text-gray-400 mb-3">Quick Top-Up (NGN)</h3>
@@ -275,36 +376,165 @@ export default function WalletPage() {
               <label className="block text-gray-400 mb-2">Enter Amount</label>
               <div className="relative">
                 <input
-                  type="tel" // Changed to text to better handle input
+                  type="tel"
                   value={amount}
                   onChange={handleAmountChange}
-                  placeholder="(minimum ₦100)"
+                  placeholder={
+                    activeTab === "instant"
+                      ? "(minimum ₦100)"
+                      : "(minimum ₦500)"
+                  }
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pl-12 outline-none"
                   required
-                  min="100"
+                  min={activeTab === "instant" ? "100" : "500"}
                   disabled={isFunding}
                 />
                 <span className="absolute left-3 top-3.5 text-gray-400">
                   NGN
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Paystack processing fee: 1.5% {amountToCredit >= 2500 && <>+ ₦100</>}
-              </p>
-              <p className="text-sm text-gray-400 mt-1">
-                Total to pay: ₦{amountToCredit.toLocaleString()}
-              </p>
+
+              {activeTab === "instant" ? (
+                <>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Paystack processing fee: 1.5%{" "}
+                    {amountToCredit >= 2500 && <>+ ₦100</>}
+                  </p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Total to pay: ₦{amountToCredit.toLocaleString()}
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-gray-400 mt-1">
+                  No processing fees - manual approval required (may take up to
+                  5 minutes)
+                </p>
+              )}
             </div>
+
+            {activeTab === "bank" && (
+              <div className="bg-gray-700/50 rounded-lg p-4 mb-4">
+                <h3 className="font-medium text-gray-300 mb-2">
+                  Bank Transfer Instructions
+                </h3>
+                <div className="space-y-2 text-sm text-gray-400">
+                  <p>1. Transfer to our bank account:</p>
+                  <div className="bg-gray-800 p-3 rounded-md space-y-2">
+                    {/* Bank Name */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300">
+                        <span className="font-medium">Bank Name:</span>{" "}
+                        {bankDetails.bankName}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(bankDetails.bankName);
+                          toast.success("Bank name copied!");
+                        }}
+                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                        title="Copy bank name"
+                      >
+                        <FaCopy className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {/* Account Name */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300">
+                        <span className="font-medium">Account Name:</span>{" "}
+                        {bankDetails.accountName}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            bankDetails.accountName
+                          );
+                          toast.success("Account name copied!");
+                        }}
+                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                        title="Copy account name"
+                      >
+                        <FaCopy className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {/* Account Number */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300">
+                        <span className="font-medium">Account Number:</span>{" "}
+                        {bankDetails.accountNumber}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            bankDetails.accountNumber
+                          );
+                          toast.success("Account number copied!");
+                        }}
+                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                        title="Copy account number"
+                      >
+                        <FaCopy className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    2. Use this reference in the transfer narration/remark:{" "}
+                    <div className="flex items-center gap-2 bg-gray-800 p-2 rounded-md">
+                      <code className="font-mono bg-gray-900 px-3 py-2 rounded flex-1">
+                        bank{uniqueRequestId}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            `bank${uniqueRequestId}`
+                          );
+                          toast.success("Reference copied!");
+                        }}
+                        className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-2 rounded"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </div>
+                  <p>
+                    3. Click "Confirm Transfer" after completing the transfer
+                  </p>
+                  <p className="text-yellow-400">
+                    Note: Transfers without the correct reference may be delayed
+                  </p>
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isFunding || !amount || parseFloat(amount) < 100}
-              className={`w-full py-3 rounded-lg transition-colors font-medium ${
-                isFunding || !amount || parseFloat(amount) < 100
+              disabled={
+                isFunding ||
+                !amount ||
+                (activeTab === "instant"
+                  ? parseFloat(amount) < 100
+                  : parseFloat(amount) < 500)
+              }
+              className={`w-full py-3 rounded-md transition-colors font-medium ${
+                isFunding ||
+                !amount ||
+                (activeTab === "instant"
+                  ? parseFloat(amount) < 100
+                  : parseFloat(amount) < 500)
                   ? "bg-gray-700 text-gray-400 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
               }`}
             >
-              {isFunding ? "Processing..." : "Fund Wallet"}
+              {isFunding
+                ? "Processing..."
+                : activeTab === "instant"
+                ? "Pay with Paystack"
+                : "Confirm Transfer"}
             </button>
           </form>
         </div>

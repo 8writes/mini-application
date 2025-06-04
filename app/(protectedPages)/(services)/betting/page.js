@@ -334,7 +334,7 @@ export default function BettingServices() {
       const { data: walletData, error: fetchError } = await billzpaddi
         .from("wallets")
         .select("balance")
-        .eq("user_id", user.user_id)
+        .eq("user_id", user?.user_id)
         .single();
 
       if (fetchError || !walletData)
@@ -348,7 +348,8 @@ export default function BettingServices() {
       const { error: createError } = await billzpaddi
         .from("transactions")
         .insert({
-          user_id: user.user_id,
+          user_id: user?.user_id,
+          email: user?.email,
           amount: 70,
           type: "debit",
           description: "Code Conversion",

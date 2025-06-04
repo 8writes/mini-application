@@ -139,6 +139,7 @@ const PurchaseDialog = ({
       // 1. First create a pending transaction record
       const { error: txError } = await billzpaddi.from("transactions").insert({
         user_id: user?.user_id,
+        email: user?.email,
         amount: totalAmount,
         type: "debit",
         description: `Airtime Purchase (${selectedISP.name})`,

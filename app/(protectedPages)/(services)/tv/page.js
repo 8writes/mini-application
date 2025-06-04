@@ -179,9 +179,10 @@ const PurchaseDialog = ({
     try {
       // 1. Create pending transaction
       const { error: createError } = await billzpaddi
-        .from("transactions")
+         .from("transactions")
         .insert({
           user_id: user?.user_id,
+          email: user?.email,
           amount: totalAmount,
           type: "debit",
           description: `TV Subscription (${selectedService.name})`,

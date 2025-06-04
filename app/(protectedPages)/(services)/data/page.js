@@ -173,9 +173,10 @@ const PurchaseDialog = ({
     try {
       // 1. First create a pending transaction record
       const { error: createError } = await billzpaddi
-        .from("transactions")
+         .from("transactions")
         .insert({
           user_id: user?.user_id,
+          email: user?.email,
           amount: totalAmount,
           type: "debit",
           description: `Data Purchase (${selectedISP.name})`,

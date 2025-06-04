@@ -78,6 +78,9 @@ export default function Sidebar() {
               <NavItem href="/portal/users" icon={<HiOutlineUser />}>
                 Users
               </NavItem>
+              <NavItem href="/portal/deposits" icon={<HiOutlineCash />}>
+                Deposits
+              </NavItem>
             </>
           )}
           {/* MAIN */}

@@ -178,6 +178,7 @@ export default function InvoiceGenerator() {
           .from("transactions")
           .insert({
             user_id: user?.user_id,
+            email: user?.email,
             amount: 0,
             type: "debit",
             description: `Invoice generation fee (free)`,
@@ -236,6 +237,7 @@ export default function InvoiceGenerator() {
       // Record transaction with fee
       const { error: txError } = await billzpaddi.from("transactions").insert({
         user_id: user?.user_id,
+        email: user?.email,
         amount: FEE,
         type: "debit",
         description: "Invoice generation fee",
