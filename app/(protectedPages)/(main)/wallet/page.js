@@ -492,7 +492,7 @@ export default function WalletPage() {
                   </div>
                   <div>
                     2. Use this reference in the transfer narration/remark:{" "}
-                    <div className="flex items-center gap-2 bg-gray-800 p-2 rounded-md">
+                    <div className="flex flex-wrap items-center gap-2 bg-gray-800 p-2 rounded-md">
                       <code className="font-mono bg-gray-900 px-3 py-2 rounded flex-1">
                         bank{uniqueRequestId}
                       </code>
@@ -504,7 +504,7 @@ export default function WalletPage() {
                           );
                           toast.success("Reference copied!");
                         }}
-                        className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-3 py-2 rounded"
+                        className="bg-blue-600 cursor-pointer w-full md:w-fit hover:bg-blue-700 text-white px-3 py-2 rounded"
                       >
                         Copy
                       </button>
@@ -513,7 +513,7 @@ export default function WalletPage() {
                   <p>
                     3. Click "Confirm Transfer" after completing the transfer
                   </p>
-                  <p className="text-yellow-400">
+                  <p className="text-yellow-400 text-xs md:text-sm">
                     Note: <br /> 1. Transfers without the correct reference may
                     be delayed. <br /> 2. Incorrect amount will not get
                     approved.
