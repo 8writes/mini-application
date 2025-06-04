@@ -289,7 +289,7 @@ export default function WalletPage() {
                 </span>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Processing fee: 1.5% {amountToCredit >= 2500 && <>+ NGN 100</>}
+                Paystack processing fee: 1.5% {amountToCredit >= 2500 && <>+ ₦100</>}
               </p>
               <p className="text-sm text-gray-400 mt-1">
                 Total to pay: ₦{amountToCredit.toLocaleString()}

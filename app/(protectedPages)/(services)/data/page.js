@@ -153,7 +153,7 @@ const PurchaseDialog = ({
 
   const totalAmount = selectedPlan
     ? Math.round(
-        Number(selectedPlan.variation_amount) * (applyDiscount ? 0.98 : 1.0)
+        Number(selectedPlan.variation_amount) * (applyDiscount ? 0.98 : 0.99)
       )
     : 0;
 
@@ -339,9 +339,13 @@ const PurchaseDialog = ({
               <span className="text-gray-400">Amount:</span>
               <span className="text-white">
                 ₦{totalAmount.toLocaleString()}
-                {!hasDiscount && wallet?.balance >= 5000 && (
+                {!hasDiscount && wallet?.balance >= 5000 ? (
                   <span className="text-green-400 font-semibold ml-1 text-xs">
                     (2% off)
+                  </span>
+                ) : (
+                  <span className="text-green-400 font-semibold ml-1 text-xs">
+                    (1% off)
                   </span>
                 )}
               </span>
@@ -450,7 +454,7 @@ export default function Page() {
   const applyDiscount = wallet?.balance >= 5000 && !hasDiscount;
 
   const addGain = (baseAmount) => {
-    return Math.round(Number(baseAmount) * (applyDiscount ? 0.98 : 1.0));
+    return Math.round(Number(baseAmount) * (applyDiscount ? 0.98 : 0.99));
   };
 
   const detectISPFromPhone = (phone) => {
@@ -728,12 +732,15 @@ export default function Page() {
                   </h3>
                   <p className="text-blue-300 mt-1 ">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
-                    {!hasDiscount &&
-                      wallet.balance >= 5000 && (
-                        <span className="text-green-400 font-semibold ml-1 text-xs">
-                          (2% off)
-                        </span>
-                      )}
+                    {!hasDiscount && wallet?.balance >= 5000 ? (
+                      <span className="text-green-400 font-semibold ml-1 text-xs">
+                        (2% off)
+                      </span>
+                    ) : (
+                      <span className="text-green-400 font-semibold ml-1 text-xs">
+                        (1% off)
+                      </span>
+                    )}
                   </p>
                 </div>
               ))}
