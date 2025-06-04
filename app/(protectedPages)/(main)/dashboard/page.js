@@ -81,6 +81,16 @@ export default function DashboardPage() {
                 </div>
                 <span>Fund Wallet</span>
               </button>
+            </Link> 
+
+            {/* Buy Data Button */}
+            <Link href="/data" passHref>
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-purple-500/20 p-3 rounded-full mb-2">
+                  <HiChartBar className="text-purple-400 text-xl" />
+                </div>
+                <span>Buy Data</span>
+              </button>
             </Link>
 
             {/* Convert Bet Code Button */}
@@ -90,16 +100,6 @@ export default function DashboardPage() {
                   <HiOutlineCash className="text-blue-400 text-xl" />
                 </div>
                 <span>Betting</span>
-              </button>
-            </Link>
-
-            {/* Buy Data Button */}
-            <Link href="/data" passHref>
-              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-                <div className="bg-purple-500/20 p-3 rounded-full mb-2">
-                  <HiChartBar className="text-purple-400 text-xl" />
-                </div>
-                <span>Buy Data</span>
               </button>
             </Link>
 
@@ -157,7 +157,9 @@ export default function DashboardPage() {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium">{txn.description}</p>
+                          <p className="text-sm font-medium">
+                            {txn.description}
+                          </p>
                           <p className="text-sm text-gray-400">
                             {new Date(txn.created_at).toLocaleDateString()}
                           </p>
