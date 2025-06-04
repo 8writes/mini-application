@@ -236,7 +236,10 @@ export default function Page() {
   return (
     <div className="px-4 py-10 md:p-10 w-full md:max-w-7xl mx-auto">
       <div className="pb-6">
-        <Link href="/portal/users" className="p-6 text-white cursor-pointer">
+        <Link
+          href="/portal/users"
+          className="px-6 py-4 text-white bg-gray-700 rounded-md hover:bg-gray-600  cursor-pointer"
+        >
           ← Back to Users
         </Link>
       </div>

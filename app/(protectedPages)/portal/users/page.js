@@ -177,6 +177,15 @@ export default function Page() {
       <section className="px-4 py-10 md:p-10 w-full md:max-w-7xl mx-auto">
         <div className="flex flex-wrap justify-between gap-2 items-center mb-6">
           <h1 className="text-2xl md:text-3xl">All Users</h1>
+          <div className="flex flex-wrap ml-auto items-center gap-4">
+            <button
+              onClick={fetchUsers}
+              className="bg-gray-700 cursor-pointer  hover:bg-gray-600 px-3 py-2 rounded flex items-center gap-2"
+              disabled={loading}
+            >
+              {loading ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
         </div>
 
         {/** users table (paginated) */}
