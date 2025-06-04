@@ -332,7 +332,7 @@ export default function WalletPage() {
               onClick={() => setActiveTab("instant")}
             >
               <TbTransfer />
-              Instant Deposit (Paystack - Fees Apply)
+              Instant Deposit
             </button>
             <button
               className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
@@ -343,7 +343,7 @@ export default function WalletPage() {
               onClick={() => setActiveTab("bank")}
             >
               <FaPiggyBank />
-              Bank Transfer (0 Fees - Manual Approval)
+              Bank Transfer
             </button>
           </div>
 
@@ -396,7 +396,7 @@ export default function WalletPage() {
 
               {activeTab === "instant" ? (
                 <>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-sm text-gray-400 mt-1">
                     Paystack processing fee: 1.5%{" "}
                     {amountToCredit >= 2500 && <>+ ₦100</>}
                   </p>
@@ -480,6 +480,15 @@ export default function WalletPage() {
                         <FaCopy className="h-4 w-4" />
                       </button>
                     </div>
+                    {/* Amount to send */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300 text-base">
+                        <span className="font-medium text-sm">
+                          Amount to send:
+                        </span>{" "}
+                        ₦{parseFloat(amount).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
                   <div>
                     2. Use this reference in the transfer narration/remark:{" "}
@@ -505,7 +514,9 @@ export default function WalletPage() {
                     3. Click "Confirm Transfer" after completing the transfer
                   </p>
                   <p className="text-yellow-400">
-                    Note: Transfers without the correct reference may be delayed
+                    Note: <br /> 1. Transfers without the correct reference may
+                    be delayed. <br /> 2. Incorrect amount will not get
+                    approved.
                   </p>
                 </div>
               </div>
