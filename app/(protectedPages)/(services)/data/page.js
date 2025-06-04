@@ -149,7 +149,7 @@ const PurchaseDialog = ({
     getUniqueRequestId();
   }, []);
 
-  const applyDiscount = walletBalance >= 5000 && !hasDiscount;
+  const applyDiscount = !hasDiscount;
 
   const totalAmount = selectedPlan
     ? Math.round(
@@ -339,7 +339,7 @@ const PurchaseDialog = ({
               <span className="text-gray-400">Amount:</span>
               <span className="text-white">
                 ₦{totalAmount.toLocaleString()}
-                {!hasDiscount && wallet?.balance >= 5000 ? (
+                {!hasDiscount ? (
                   <span className="text-green-400 font-semibold ml-1 text-xs">
                     (2% off)
                   </span>
@@ -451,7 +451,7 @@ export default function Page() {
     fetchDiscount();
   }, [user]);
 
-  const applyDiscount = wallet?.balance >= 5000 && !hasDiscount;
+  const applyDiscount = !hasDiscount;
 
   const addGain = (baseAmount) => {
     return Math.round(Number(baseAmount) * (applyDiscount ? 0.98 : 0.99));
@@ -732,7 +732,7 @@ export default function Page() {
                   </h3>
                   <p className="text-blue-300 mt-1 ">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
-                    {!hasDiscount && wallet?.balance >= 5000 ? (
+                    {!hasDiscount ? (
                       <span className="text-green-400 font-semibold ml-1 text-xs">
                         (2% off)
                       </span>
