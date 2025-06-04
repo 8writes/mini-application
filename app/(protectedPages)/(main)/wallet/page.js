@@ -417,8 +417,8 @@ export default function WalletPage() {
                 <h3 className="font-medium text-gray-300 mb-2">
                   Bank Transfer Instructions
                 </h3>
-                <div className="space-y-2 text-sm text-gray-400">
-                  <p>1. Transfer to our bank account:</p>
+                <div className="space-y-2 text-sm text-gray-200">
+                  <p className="pt-1">1. Transfer to our bank account:</p>
                   <div className="bg-gray-800 p-3 rounded-md space-y-2">
                     {/* Bank Name */}
                     <div className="flex justify-between items-center">
@@ -496,7 +496,9 @@ export default function WalletPage() {
                     </div>
                   </div>
                   <div>
-                    2. Use this reference in the transfer narration/remark:{" "}
+                    <p className="pt-1">
+                      2. Use this reference in the transfer narration/remark:{" "}
+                    </p>
                     <div className="flex flex-wrap items-center gap-2 bg-gray-800 p-2 rounded-md">
                       <code className="font-mono bg-gray-900 px-3 py-2 rounded flex-1">
                         bank{uniqueRequestId}
@@ -515,7 +517,7 @@ export default function WalletPage() {
                       </button>
                     </div>
                   </div>
-                  <p>
+                  <p className="py-1">
                     3. Click "Confirm Transfer" after completing the transfer
                   </p>
                   <p className="text-yellow-400 text-xs md:text-sm">
