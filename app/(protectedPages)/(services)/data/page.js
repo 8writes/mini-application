@@ -102,8 +102,10 @@ const PurchaseDialog = ({
   selectedISP,
   phoneNumber,
   onSuccess,
+  hasDiscount,
+  setHasDiscount,
 }) => {
-  const { user } = useGlobalContext();
+  const { user, fetchData } = useGlobalContext();
   const {
     wallet,
     fetchWallet,
@@ -114,10 +116,6 @@ const PurchaseDialog = ({
   const [walletBalance, setWalletBalance] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
-
-  const totalAmount = selectedPlan
-    ? Math.round(Number(selectedPlan.variation_amount) * 1.0)
-    : 0;
 
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -150,6 +148,14 @@ const PurchaseDialog = ({
   useEffect(() => {
     getUniqueRequestId();
   }, []);
+
+  const applyDiscount = walletBalance >= 5000 && !hasDiscount;
+
+  const totalAmount = selectedPlan
+    ? Math.round(
+        Number(selectedPlan.variation_amount) * (applyDiscount ? 0.98 : 1.0)
+      )
+    : 0;
 
   const handlePurchase = async () => {
     if (!selectedPlan || !phoneNumber || !selectedISP || !uniqueRequestId) {
@@ -192,7 +198,6 @@ const PurchaseDialog = ({
 
       if (updateError) throw new Error("Failed to update wallet balance");
 
-      
       const { token } = await fetch("/api/wrapper/auth-check").then((res) =>
         res.json()
       );
@@ -217,6 +222,16 @@ const PurchaseDialog = ({
       });
 
       const data = await res.json();
+
+      if (data.code === "000" && !user?.has_claimed_data_discount) {
+        // update discount
+        await billzpaddi
+          .from("users")
+          .update({ has_claimed_data_discount: true })
+          .eq("user_id", user?.user_id);
+
+        setHasDiscount(true);
+      }
 
       // 4. Update transaction based on response
       let transactionStatus = "failed";
@@ -324,6 +339,11 @@ const PurchaseDialog = ({
               <span className="text-gray-400">Amount:</span>
               <span className="text-white">
                 ₦{totalAmount.toLocaleString()}
+                {!hasDiscount && wallet?.balance >= 5000 && (
+                  <span className="text-green-400 font-semibold ml-1 text-xs">
+                    (2% off)
+                  </span>
+                )}
               </span>
             </div>
 
@@ -381,7 +401,7 @@ const PurchaseDialog = ({
 
 export default function Page() {
   const { user, isLoading } = useGlobalContext();
-  const { fetchWallet } = useGlobalContextData();
+  const { wallet, fetchWallet } = useGlobalContextData();
   const [selectedISP, setSelectedISP] = useState(null);
   const [plans, setPlans] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
@@ -389,6 +409,7 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState("Daily");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [hasDiscount, setHasDiscount] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [phone, setPhone] = useState("");
   const dropdownRef = useRef(null);
@@ -406,8 +427,30 @@ export default function Page() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const fetchDiscount = async () => {
+      if (!user) return;
+
+      const { data, error } = await billzpaddi
+        .from("users")
+        .select("has_claimed_data_discount")
+        .eq("user_id", user?.user_id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching discount status:", error);
+      } else {
+        setHasDiscount(data?.has_claimed_data_discount);
+      }
+    };
+
+    fetchDiscount();
+  }, [user]);
+
+  const applyDiscount = wallet?.balance >= 5000 && !hasDiscount;
+
   const addGain = (baseAmount) => {
-    return Math.round(Number(baseAmount) * 1.0); // 1% gain
+    return Math.round(Number(baseAmount) * (applyDiscount ? 0.98 : 1.0));
   };
 
   const detectISPFromPhone = (phone) => {
@@ -685,6 +728,12 @@ export default function Page() {
                   </h3>
                   <p className="text-blue-300 mt-1 ">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
+                    {!hasDiscount &&
+                      wallet.balance >= 5000 && (
+                        <span className="text-green-400 font-semibold ml-1 text-xs">
+                          (2% off)
+                        </span>
+                      )}
                   </p>
                 </div>
               ))}
@@ -702,6 +751,8 @@ export default function Page() {
         onOpenChange={setShowDialog}
         selectedPlan={selectedPlan}
         selectedISP={selectedISP}
+        hasDiscount={hasDiscount}
+        setHasDiscount={setHasDiscount}
         phoneNumber={phone || user?.phone}
         onSuccess={() => {
           setSelectedPlan(null);
