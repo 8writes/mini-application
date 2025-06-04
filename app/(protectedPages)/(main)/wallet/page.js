@@ -30,6 +30,7 @@ export default function WalletPage() {
   const [amount, setAmount] = useState("");
   const [activePreset, setActivePreset] = useState(null);
   const [activeTab, setActiveTab] = useState("instant"); // 'instant' or 'bank'
+  const [copiedRef, setCopiedRef] = useState(false);
   const [bankDetails, setBankDetails] = useState({
     accountName: "EMMANUEL CHISOM",
     accountNumber: "9153374542",
@@ -189,6 +190,7 @@ export default function WalletPage() {
       getUniqueRequestId();
       fetchTransactions();
       fetchWallet();
+      setCopiedRef(false);
     }
   };
 
@@ -498,9 +500,23 @@ export default function WalletPage() {
                   <div>
                     <p className="pt-1">
                       2. Use this reference in the transfer narration/remark:{" "}
+                      <br />
+                      {!copiedRef && (
+                        <span className="text-xs text-yellow-400 pl-4">
+                          Please click the copy button to copy the reference.
+                        </span>
+                      )}
                     </p>
                     <div className="flex flex-wrap items-center gap-2 bg-gray-800 p-2 rounded-md">
-                      <code className="font-mono bg-gray-900 px-3 py-2 rounded flex-1">
+                      <code
+                        className="font-mono bg-gray-900 px-3 py-2 rounded flex-1 select-none pointer-events-none"
+                        onCopy={(e) => {
+                          e.preventDefault();
+                          toast.error(
+                            "Please click the copy button to copy the reference."
+                          );
+                        }}
+                      >
                         bank{uniqueRequestId}
                       </code>
                       <button
@@ -510,6 +526,7 @@ export default function WalletPage() {
                             `bank${uniqueRequestId}`
                           );
                           toast.success("Reference copied!");
+                          setCopiedRef(true);
                         }}
                         className="bg-blue-600 cursor-pointer w-full md:w-fit hover:bg-blue-700 text-white px-3 py-2 rounded"
                       >
@@ -532,6 +549,7 @@ export default function WalletPage() {
             <button
               type="submit"
               disabled={
+                !copiedRef ||
                 isFunding ||
                 !amount ||
                 (activeTab === "instant"
@@ -539,6 +557,7 @@ export default function WalletPage() {
                   : parseFloat(amount) < 500)
               }
               className={`w-full py-3 rounded-md transition-colors font-medium ${
+                !copiedRef ||
                 isFunding ||
                 !amount ||
                 (activeTab === "instant"
