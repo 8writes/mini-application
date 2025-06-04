@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 export default function Page() {
   const { user, isLoading } = useGlobalContext();
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 5;
+  const usersPerPage = 10;
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
