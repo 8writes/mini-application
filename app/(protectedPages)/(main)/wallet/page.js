@@ -28,7 +28,25 @@ export default function WalletPage() {
   const PROCESSING_FEE = 20; // Paystack processing fee in NGN
 
   // Calculate amount to credit including fee
-  const amountToCredit = amount ? parseFloat(amount) + PROCESSING_FEE : 0;
+  function calculateAmountToCredit(amount) {
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum)) {
+      return 0;
+    }
+
+    let percentageFee = 0.015 * amountNum;
+    let flatFee = amountNum >= 2500 ? 100 : 0;
+    let totalFee = percentageFee + flatFee;
+
+    // Cap fee at ₦2000
+    if (totalFee > 2000) {
+      totalFee = 2000;
+    }
+
+    return amountNum + totalFee;
+  }
+
+  const amountToCredit = calculateAmountToCredit(amount);
 
   const initializePayment = async () => {
     return new Promise((resolve, reject) => {
@@ -271,7 +289,7 @@ export default function WalletPage() {
                 </span>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Processing fee: ₦{PROCESSING_FEE.toLocaleString()}
+                Processing fee: 1.5% {amountToCredit >= 2500 && <>+ NGN 100</>}
               </p>
               <p className="text-sm text-gray-400 mt-1">
                 Total to pay: ₦{amountToCredit.toLocaleString()}
