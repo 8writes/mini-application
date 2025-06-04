@@ -11,7 +11,7 @@ export async function POST(request) {
   const cookieToken = request.cookies.get("token")?.value;
 
   if (!csrfToken || csrfToken !== cookieToken) {
-    return new Response("Invalid token", { status: 403 });
+    return new Response("Invalid request", { status: 403 });
   }
 
   // API Key Authentication
