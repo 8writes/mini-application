@@ -2,8 +2,9 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
 import { HiSearch, HiFilter, HiArrowDown, HiArrowUp } from "react-icons/hi";
-import { FaExchangeAlt } from "react-icons/fa";
+import { FaCopy, FaExchangeAlt } from "react-icons/fa";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import { toast } from "react-toastify";
 
 export default function TransactionsPage() {
   // All hooks must be called unconditionally at the top
@@ -152,7 +153,7 @@ export default function TransactionsPage() {
                         )}
                       </div>
                       <div>
-                        <p className="font-medium">{txn.description}</p>
+                        <p className="font-medium text-sm">{txn.description}</p>
                         <p className="text-xs text-gray-400">
                           {new Date(txn.created_at).toLocaleDateString()}
                         </p>
@@ -185,7 +186,20 @@ export default function TransactionsPage() {
                   </div>
                   <div className="flex justify-between items-center mt-2 text-sm text-gray-400">
                     <p>₦{txn.amount?.toLocaleString()}</p>
-                    <p className="text-xs">{txn.reference}</p>
+                    <p className="text-xs flex items-center text-gray-400">
+                      {txn.reference}
+                      <span
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(txn.reference);
+                          toast.success("Reference copied!");
+                        }}
+                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                        title="Copy Reference"
+                      >
+                        <FaCopy className="h-3 w-3" />
+                      </span>
+                    </p>
                   </div>
                 </div>
 
@@ -207,7 +221,20 @@ export default function TransactionsPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">{txn.description}</p>
-                      <p className="text-xs text-gray-400">{txn.reference}</p>
+                      <p className="text-xs flex items-center text-gray-400">
+                        {txn.reference}
+                        <span
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(txn.reference);
+                            toast.success("Reference copied!");
+                          }}
+                          className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                          title="Copy Reference"
+                        >
+                          <FaCopy className="h-3 w-3" />
+                        </span>
+                      </p>
                     </div>
                   </div>
 

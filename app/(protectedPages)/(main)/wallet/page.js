@@ -160,6 +160,27 @@ export default function WalletPage() {
     }
 
     setIsFunding(true);
+
+    // Fetch current wallet balance
+    const { data: walletData, error: fetchError } = await billzpaddi
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user?.user_id)
+      .single();
+
+    if (fetchError || !walletData) {
+      toast.error("Failed to fetch wallet balance");
+      setIsFunding(false);
+      return;
+    }
+
+    const currentBalance = walletData?.balance + parseFloat(amount);
+    if (currentBalance > wallet?.limit) {
+      toast.error(`Max wallet balance of ₦${wallet?.limit.toLocaleString()}`);
+      setIsFunding(false);
+      return;
+    }
+
     try {
       const fundingAmount = parseFloat(amount);
       const reference = `bank${uniqueRequestId}`;
@@ -219,6 +240,8 @@ export default function WalletPage() {
       return;
     }
 
+    setIsFunding(true);
+
     // Fetch current wallet balance
     const { data: walletData, error: fetchError } = await billzpaddi
       .from("wallets")
@@ -228,12 +251,16 @@ export default function WalletPage() {
 
     if (fetchError || !walletData) {
       toast.error("Failed to fetch wallet balance");
+
+      setIsFunding(false);
       return;
     }
 
-    const currentBalance = walletData?.balance || 0;
-    if (currentBalance >= wallet?.limit) {
+    const currentBalance = walletData?.balance + parseFloat(amount);
+    if (currentBalance > wallet?.limit) {
       toast.error(`Max wallet balance of ₦${wallet?.limit.toLocaleString()}`);
+
+      setIsFunding(false);
       return;
     }
 
@@ -241,6 +268,8 @@ export default function WalletPage() {
       await initializePayment();
     } catch (error) {
       console.error("Payment error:", error);
+    } finally {
+      setIsFunding(false);
     }
   };
 
@@ -549,7 +578,7 @@ export default function WalletPage() {
             <button
               type="submit"
               disabled={
-                !copiedRef ||
+                (!copiedRef && activeTab === "bank") ||
                 isFunding ||
                 !amount ||
                 (activeTab === "instant"
@@ -557,7 +586,7 @@ export default function WalletPage() {
                   : parseFloat(amount) < 500)
               }
               className={`w-full py-3 rounded-md transition-colors font-medium ${
-                !copiedRef ||
+                (!copiedRef && activeTab === "bank") ||
                 isFunding ||
                 !amount ||
                 (activeTab === "instant"
