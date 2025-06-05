@@ -730,7 +730,7 @@ export default function Page() {
             </div>
           ) : (
             <p className="text-gray-400 text-center pt-4">
-              No {activeTab} plans available.
+              Check "Others" for plans
             </p>
           )}
         </>
