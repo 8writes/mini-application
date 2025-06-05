@@ -29,7 +29,7 @@ export default function WalletPage() {
   const [isFunding, setIsFunding] = useState(false);
   const [amount, setAmount] = useState("");
   const [activePreset, setActivePreset] = useState(null);
-  const [activeTab, setActiveTab] = useState("instant"); // 'instant' or 'bank'
+  const [activeTab, setActiveTab] = useState("bank"); // 'instant' or 'bank'
   const [copiedRef, setCopiedRef] = useState(false);
   const [bankDetails, setBankDetails] = useState({
     accountName: "EMMANUEL CHISOM",
@@ -219,8 +219,8 @@ export default function WalletPage() {
     e.preventDefault();
 
     if (activeTab === "instant") {
-      toast.info("Currently Unavailable.")
-    //  await handleInstantDeposit(e);
+      toast.info("Currently Unavailable.");
+      //  await handleInstantDeposit(e);
     } else {
       await handleBankTransfer(e);
     }
@@ -355,6 +355,7 @@ export default function WalletPage() {
 
           {/* Deposit Method Tabs */}
           <div className="flex border-b border-gray-700 mb-6">
+            {/* 
             <button
               className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
                 activeTab === "instant"
@@ -365,7 +366,7 @@ export default function WalletPage() {
             >
               <TbTransfer />
               Instant Deposit
-            </button>
+            </button>*/}
             <button
               className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
                 activeTab === "bank"
