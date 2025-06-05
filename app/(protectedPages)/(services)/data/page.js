@@ -142,6 +142,11 @@ const PurchaseDialog = ({
       return;
     }
 
+    if (!selectedPlan?.variation_code) {
+      toast.error("Poor internet connection, please refresh page");
+      return;
+    }
+
     if (wallet?.balance < totalAmount) {
       toast.error("Insufficient funds");
       return;

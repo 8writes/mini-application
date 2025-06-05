@@ -116,7 +116,6 @@ const PurchaseDialog = ({
     uniqueRequestId,
     fetchTransactions,
   } = useGlobalContextData();
-  const [walletBalance, setWalletBalance] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
   const [isRenewal, setIsRenewal] = useState(true);
@@ -129,32 +128,13 @@ const PurchaseDialog = ({
   const totalAmount = amount ? Math.round(Number(amount) * 1.0) : 0;
 
   useEffect(() => {
-    const fetchWalletBalance = async () => {
-      try {
-        const { data: walletData, error: fetchError } = await billzpaddi
-          .from("wallets")
-          .select("balance")
-          .eq("user_id", user.user_id)
-          .single();
-
-        if (fetchError || !walletData) {
-          throw new Error("Failed to fetch wallet balance");
-        }
-
-        setWalletBalance(walletData?.balance);
-      } catch (err) {
-        console.error("Failed to fetch wallet balance:", err);
-        toast.error("Failed to load wallet balance");
-      }
-    };
-
     if (open && user) {
-      fetchWalletBalance();
-      setError("");
+      fetchWallet();
     }
   }, [open, user]);
 
   useEffect(() => {
+    fetchWallet();
     getUniqueRequestId();
   }, []);
 
@@ -165,12 +145,17 @@ const PurchaseDialog = ({
       !selectedService ||
       !uniqueRequestId
     ) {
-      setError("Missing required information for purchase");
+      toast.error("Missing required information for purchase");
       return;
     }
 
-    if (walletBalance < totalAmount) {
-      setError("Insufficient funds");
+    if (!selectedPlan?.variation_code) {
+      toast.error("Poor internet connection, please refresh page");
+      return;
+    }
+
+    if (wallet?.balance < totalAmount) {
+      toast.error("Insufficient funds");
       return;
     }
 
@@ -179,7 +164,7 @@ const PurchaseDialog = ({
     try {
       // 1. Create pending transaction
       const { error: createError } = await billzpaddi
-         .from("transactions")
+        .from("transactions")
         .insert({
           user_id: user?.user_id,
           email: user?.email,
@@ -200,7 +185,7 @@ const PurchaseDialog = ({
       // 2. Deduct from wallet
       const { error: updateError } = await billzpaddi
         .from("wallets")
-        .update({ balance: walletBalance - totalAmount })
+        .update({ balance: wallet?.balance - totalAmount })
         .eq("user_id", user?.user_id);
 
       if (updateError) throw new Error("Failed to update wallet balance");
@@ -257,7 +242,7 @@ const PurchaseDialog = ({
           // Refund if failed
           await billzpaddi
             .from("wallets")
-            .update({ balance: walletBalance })
+            .update({ balance: wallet?.balance })
             .eq("user_id", user?.user_id);
           break;
       }
@@ -289,7 +274,7 @@ const PurchaseDialog = ({
       // Refund wallet if error occurs
       await billzpaddi
         .from("wallets")
-        .update({ balance: walletBalance })
+        .update({ balance: wallet?.balance })
         .eq("user_id", user?.user_id);
     } finally {
       fetchWallet();
