@@ -113,39 +113,18 @@ const PurchaseDialog = ({
     uniqueRequestId,
     fetchTransactions,
   } = useGlobalContextData();
-  const [walletBalance, setWalletBalance] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchWalletBalance = async () => {
-      try {
-        // Fetch current wallet balance for user.user_id
-        const { data: walletData, error: fetchError } = await billzpaddi
-          .from("wallets")
-          .select("balance")
-          .eq("user_id", user.user_id)
-          .single();
-
-        if (fetchError || !walletData) {
-          throw new Error("Failed to fetch wallet balance");
-        }
-
-        const currentBalance = walletData?.balance;
-        setWalletBalance(currentBalance);
-      } catch (err) {
-        console.error("Failed to fetch wallet balance:", err);
-        toast.error("Failed to load wallet balance");
-      }
-    };
-
     if (open && user) {
-      fetchWalletBalance();
+      fetchWallet();
       setError("");
     }
   }, [open, user]);
 
   useEffect(() => {
+    fetchWallet();
     getUniqueRequestId();
   }, []);
 
@@ -159,12 +138,12 @@ const PurchaseDialog = ({
 
   const handlePurchase = async () => {
     if (!selectedPlan || !phoneNumber || !selectedISP || !uniqueRequestId) {
-      setError("Missing required information for purchase");
+      toast.error("Missing required information for purchase");
       return;
     }
 
-    if (walletBalance < totalAmount) {
-      setError("Insufficient funds");
+    if (wallet?.balance < totalAmount) {
+      toast.error("Insufficient funds");
       return;
     }
 
@@ -173,7 +152,7 @@ const PurchaseDialog = ({
     try {
       // 1. First create a pending transaction record
       const { error: createError } = await billzpaddi
-         .from("transactions")
+        .from("transactions")
         .insert({
           user_id: user?.user_id,
           email: user?.email,
@@ -194,7 +173,7 @@ const PurchaseDialog = ({
       // 2. Deduct from wallet immediately (for pending transaction)
       const { error: updateError } = await billzpaddi
         .from("wallets")
-        .update({ balance: walletBalance - totalAmount })
+        .update({ balance: wallet?.balance - totalAmount })
         .eq("user_id", user?.user_id);
 
       if (updateError) throw new Error("Failed to update wallet balance");
@@ -257,7 +236,7 @@ const PurchaseDialog = ({
           // Refund if failed
           await billzpaddi
             .from("wallets")
-            .update({ balance: walletBalance })
+            .update({ balance: wallet?.balance })
             .eq("user_id", user?.user_id);
           break;
       }
@@ -290,7 +269,7 @@ const PurchaseDialog = ({
       // Ensure wallet is refunded if error occurs after deduction
       await billzpaddi
         .from("wallets")
-        .update({ balance: walletBalance })
+        .update({ balance: wallet?.balance })
         .eq("user_id", user?.user_id);
     } finally {
       fetchWallet();
@@ -356,7 +335,7 @@ const PurchaseDialog = ({
               <span className="text-gray-400">Available Balance:</span>
               <span
                 className={`${
-                  (walletBalance || wallet?.balance) >= totalAmount
+                  wallet?.balance >= totalAmount
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
@@ -364,7 +343,7 @@ const PurchaseDialog = ({
                 ₦{wallet?.balance.toLocaleString()}
               </span>
             </div>
-            {(walletBalance || wallet?.balance) < totalAmount && (
+            {wallet?.balance < totalAmount && (
               <Link
                 href="/wallet"
                 className="flex justify-end bg-gray-700 w-fit ml-auto px-2 py-1 rounded-sm text-sm"
@@ -386,11 +365,9 @@ const PurchaseDialog = ({
             </button>
             <button
               onClick={handlePurchase}
-              disabled={
-                isProcessing || (walletBalance || wallet?.balance) < totalAmount
-              }
+              disabled={isProcessing || wallet?.balance < totalAmount}
               className={`px-7 py-2 rounded-md text-white cursor-pointer ${
-                (walletBalance || wallet?.balance) >= totalAmount
+                wallet?.balance >= totalAmount
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-gray-600 cursor-not-allowed"
               } disabled:opacity-50`}
