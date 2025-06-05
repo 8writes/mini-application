@@ -219,7 +219,8 @@ export default function WalletPage() {
     e.preventDefault();
 
     if (activeTab === "instant") {
-      await handleInstantDeposit(e);
+      toast.info("Currently Unavailable.")
+    //  await handleInstantDeposit(e);
     } else {
       await handleBankTransfer(e);
     }
