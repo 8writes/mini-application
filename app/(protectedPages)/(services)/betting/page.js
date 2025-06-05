@@ -319,8 +319,8 @@ export default function BettingServices() {
 
   const convertCode = async () => {
     if (bookingCode) {
-      toast.info('Under maintenance')
-      return
+      toast.info("Under maintenance");
+      return;
     }
     if (!bookingCode || !selectedBookie1 || !selectedBookie2) {
       toast.info("Please fill all fields");
@@ -514,17 +514,19 @@ export default function BettingServices() {
             <FaExchangeAlt className="inline mr-2" />
             Code Converter
           </button>
-          <button
-            onClick={() => setActiveTab("topup")}
-            className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
-              activeTab === "topup"
-                ? "text-blue-400 border-b-2 border-blue-400"
-                : "text-gray-400"
-            }`}
-          >
-            <FaCoins className="inline mr-2" />
-            Top Up
-          </button>
+          {false && (
+            <button
+              onClick={() => setActiveTab("topup")}
+              className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
+                activeTab === "topup"
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-gray-400"
+              }`}
+            >
+              <FaCoins className="inline mr-2" />
+              Top Up
+            </button>
+          )}
           <button
             onClick={() => setActiveTab("ai")}
             className={`px-4 py-2 font-medium cursor-pointer whitespace-nowrap ${
