@@ -118,18 +118,25 @@ const PurchaseDialog = ({
   const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
 
   useEffect(() => {
+    if (open && user) {
+      fetchWallet();
+    }
+  }, [open, user]);
+
+  useEffect(() => {
     getUniqueRequestId();
+    fetchWallet();
   }, []);
 
   const handlePurchase = async () => {
     // Validate inputs
     if (!amount || !phoneNumber || !selectedISP || !uniqueRequestId) {
-      setError("Missing required information for purchase");
+      toast.error("Missing required information for purchase");
       return;
     }
 
     if (wallet?.balance < totalAmount) {
-      setError("Insufficient balance");
+      toast.error("Insufficient balance");
       return;
     }
 
@@ -241,7 +248,7 @@ const PurchaseDialog = ({
       try {
         await billzpaddi
           .from("wallets")
-          .update({ balance: wallet.balance })
+          .update({ balance: wallet?.balance })
           .eq("user_id", user.user_id);
       } catch (refundError) {
         console.error("Refund failed:", refundError);

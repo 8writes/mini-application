@@ -36,7 +36,7 @@ export default function Page() {
       description: "Game credits and subscriptions",
     },
     {
-      name: "Betting",
+      name: "Bet Code Conversion",
       icon: <HiOutlineCash className="w-8 h-8" />,
       href: "/betting",
       description: "Convert your betting codes instantly",

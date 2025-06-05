@@ -15,7 +15,10 @@ export default function Page() {
     { name: "Data", icon: <HiChartBar className="w-6 h-6" /> },
     { name: "TV", icon: <HiOutlineDesktopComputer className="w-6 h-6" /> },
     { name: "Gaming", icon: <FaGamepad className="w-6 h-6" /> },
-    { name: "Betting", icon: <HiOutlineCash className="w-6 h-6" /> },
+    {
+      name: "Bet Code Conversion",
+      icon: <HiOutlineCash className="w-6 h-6" />,
+    },
     {
       name: "Bills Payment",
       icon: <HiOutlineClipboardCheck className="w-6 h-6" />,
