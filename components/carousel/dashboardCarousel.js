@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -55,9 +56,11 @@ export default function BillzPaddiCarousel() {
           <div key={index} className="min-w-full h-full relative">
             <Link href={banner.link} passHref>
               <span className="block h-full md:w-[30rem] md:mx-auto">
-                <img
+                <Image
                   src={banner.image}
                   alt={banner.alt}
+                  width={800}
+                  height={800}
                   className="w-full h-full object-fill cursor-pointer"
                 />
               </span>
