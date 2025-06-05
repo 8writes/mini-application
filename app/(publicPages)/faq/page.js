@@ -21,6 +21,13 @@ export default function Page() {
 
   const faqs = [
     {
+      question: "Is bank transfer secure with BillzPaddi?",
+      answer:
+        "Absolutely. You may request assistance if you run into any trouble. Refunds are made if value is not given.",
+      icon: <FaLock className="text-blue-400 mr-3" />,
+      category: "security",
+    },
+    {
       question: "Is my payment information secure with BillzPaddi?",
       answer:
         "Absolutely. We process all transactions through Paystack. Your payment details are never stored on our servers and are processed through Paystack payment gateways.",
