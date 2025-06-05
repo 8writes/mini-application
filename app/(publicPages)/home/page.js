@@ -33,7 +33,7 @@ export default function Page() {
       name: "Games Top Up",
       icon: <FaGamepad className="w-8 h-8" />,
       href: "/gaming",
-      description: "Game credits and subscriptions",
+      description: "Game points top up",
     },
     {
       name: "Bet Code Conversion",
