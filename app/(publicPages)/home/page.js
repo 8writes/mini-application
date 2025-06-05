@@ -30,7 +30,7 @@ export default function Page() {
       description: "Cable TV subscriptions and renewals",
     },
     {
-      name: "Gaming",
+      name: "Games Top Up",
       icon: <FaGamepad className="w-8 h-8" />,
       href: "/gaming",
       description: "Game credits and subscriptions",
