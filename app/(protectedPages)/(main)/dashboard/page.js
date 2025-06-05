@@ -11,6 +11,7 @@ import {
 import { FaHistory, FaGamepad } from "react-icons/fa";
 import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import BillzPaddiCarousel from "@/components/carousel/dashboardCarousel";
 
 export default function DashboardPage() {
   const { user, isLoading } = useGlobalContext();
@@ -29,17 +30,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-4 md:p-6 md:pt-0">
       {/* Welcome Section */}
       <section className="">
-        <div className="flex flex-wrap justify-between gap-4 items-center">
-          {/** <h1 className="text-2xl md:text-3xl font-bold">
-            Welcome, {user?.last_name ?? "User"}
-          </h1>
-           
-          <div className="text-sm text-gray-400">
-            Last login: {new Date().toLocaleDateString()}
-          </div>*/}
+        <div className="max-w-5xl pb-7 mx-auto">
+          <BillzPaddiCarousel />
         </div>
         <h1 className="text-2xl md:text-3xl uppercase pb-5">Dashboard</h1>
       </section>
@@ -81,7 +76,7 @@ export default function DashboardPage() {
                 </div>
                 <span>Fund Wallet</span>
               </button>
-            </Link> 
+            </Link>
 
             {/* Buy Data Button */}
             <Link href="/data" passHref>

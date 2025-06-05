@@ -40,7 +40,8 @@ export default function Page() {
               <h2 className="text-3xl font-bold mb-6">Our Story</h2>
               <p className="text-gray-300 mb-4">
                 Founded in 2025, BillzPaddi is a simple platform for
-                comprehensive digital services powered by Ozmictech Ventures.
+                comprehensive digital services powered by Ozmictech Ventures
+                with BN 7950319.
               </p>
               <p className="text-gray-300">
                 Today, we serve customers across Nigeria, providing seamless
