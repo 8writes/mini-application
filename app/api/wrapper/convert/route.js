@@ -84,7 +84,7 @@ export async function POST(request) {
     const body = await request.json();
 
     // Request Body Validation
-    const requiredFields = ["request_id", "amount"];
+    const requiredFields = ["bookingCode", "bookie1", "bookie2"];
     const missingFields = requiredFields.filter((field) => !body[field]);
 
     if (missingFields.length > 0) {
@@ -97,44 +97,17 @@ export async function POST(request) {
       );
     }
 
-    // Phone Number Validation (Nigerian numbers)
-    const phoneRegex = /^(\+234|0)[789][01]\d{8}$/;
-    if (!phoneRegex.test(body.phone)) {
-      return new Response(
-        JSON.stringify({
-          message: "Invalid Nigerian phone number format",
-          ok: false,
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Amount Validation
-    if (isNaN(body.amount) || body.amount <= 0) {
-      return new Response(
-        JSON.stringify({
-          message: "Invalid amount",
-          ok: false,
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Make the VTpass API call
+    // Make the Betpaddi API call
     const response = await axios.post(
-      "https://vtpass.com/api/pay",
+      "https://betpaddi.com/api/v1/conversion/convert-code",
       {
-        serviceID: body.serviceID,
-        variation_code: body.variation_code,
-        billersCode: body.billersCode,
-        request_id: body.request_id,
-        phone: body.phone,
-        amount: body.amount,
+        code: body.bookingCode,
+        bookie1: body.bookie1,
+        bookie2: body.bookie2,
       },
       {
         headers: {
-          "api-key": process.env.NEXT_PUBLIC_BILLZ_API_KEY,
-          "secret-key": process.env.BILLZ_SECRET_KEY,
+          Authorization: process.env.CONVERSION_SECRET_KEY,
           "Content-Type": "application/json",
         },
         timeout: 10000, // 10 seconds timeout

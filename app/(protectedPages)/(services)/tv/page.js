@@ -441,6 +441,10 @@ export default function TvSubscriptionPage() {
   const [verificationData, setVerificationData] = useState(null);
   const dropdownRef = useRef(null);
 
+  useEffect(() => {
+    fetchWallet();
+  }, []);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {

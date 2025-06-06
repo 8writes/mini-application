@@ -68,6 +68,11 @@ export default function InvoiceGenerator() {
   const [blob, setBlob] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [logoPreview, setLogoPreview] = useState(null);
+  const [processingFee] = useState(25); // processing fee
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   const handleCurrencyChange = (currency) => {
     setInvoice((prev) => ({
@@ -153,7 +158,6 @@ export default function InvoiceGenerator() {
     if (!user) return;
     try {
       const FREE_INVOICE_LIMIT = 100;
-      const FEE = 25;
 
       setIsGenerating(true);
 
@@ -221,7 +225,7 @@ export default function InvoiceGenerator() {
 
       if (walletError) throw walletError;
 
-      if (wallet.balance < FEE) {
+      if (wallet.balance < processingFee) {
         toast.error("Insufficient balance");
         return false;
       }
@@ -229,7 +233,7 @@ export default function InvoiceGenerator() {
       // Deduct fee from wallet
       const { error: updateWalletError } = await billzpaddi
         .from("wallets")
-        .update({ balance: wallet.balance - FEE })
+        .update({ balance: wallet.balance - processingFee })
         .eq("user_id", user?.user_id);
 
       if (updateWalletError) throw updateWalletError;
@@ -238,7 +242,7 @@ export default function InvoiceGenerator() {
       const { error: txError } = await billzpaddi.from("transactions").insert({
         user_id: user?.user_id,
         email: user?.email,
-        amount: FEE,
+        amount: processingFee,
         type: "debit",
         description: "Invoice generation fee",
         status: "completed",
@@ -1094,21 +1098,39 @@ export default function InvoiceGenerator() {
             />
           </div>
 
+          {/* Fee and Total Display */}
+          <div className="bg-gray-800 p-3 rounded-md space-y-1">
+            <p className="text-gray-300 text-sm mb-2">
+              Wallet Balance: ₦
+              {wallet?.balance?.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) ?? "0.00"}
+            </p>
+            <div className="flex justify-between">
+              <span className="text-gray-400 text-sm">Processing Fee:</span>
+              <span className="text-white text-sm">
+                {invoice.currency !== "NGN" ? (
+                  <>₦{processingFee.toFixed(2)}</>
+                ) : (
+                  "₦0"
+                )}
+              </span>
+            </div>
+          </div>
+
           {/* Actions */}
-          <div className="flex flex-wrap gap-4 w-full">
+          <div className="flex pt-7 flex-wrap gap-4 w-full">
             <div className="flex flex-col w-full">
               <button
                 onClick={generatePDF}
                 disabled={isGenerating}
-                className="flex items-center justify-center gap-2 w-full bg-gray-800 hover:bg-gray-900 text-white px-4 py-3 cursor-pointer rounded disabled:opacity-50"
+                className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 cursor-pointer text-white px-4 py-3 rounded disabled:opacity-50"
               >
                 {isGenerating ? (
                   "Generating Invoice..."
                 ) : (
-                  <>
-                    Generate Invoice{" "}
-                    {invoice.currency !== "NGN" ? "₦25" : "Free"}
-                  </>
+                  <>Generate Invoice </>
                 )}
               </button>
             </div>

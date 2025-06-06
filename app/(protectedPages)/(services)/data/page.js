@@ -403,6 +403,10 @@ export default function Page() {
 
   const tabOrder = ["Daily", "Weekly", "Monthly", "Others"];
 
+  useEffect(() => {
+    fetchWallet();
+  }, []);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -624,7 +628,7 @@ export default function Page() {
   }, [selectedISP]);
 
   const handlePlanClick = (plan) => {
-    if (!phone && !user?.phone) {
+    if (!phone) {
       toast.error("Please enter a phone number");
       return;
     }

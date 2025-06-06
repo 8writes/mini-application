@@ -12,10 +12,15 @@ import { FaHistory, FaGamepad } from "react-icons/fa";
 import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import BillzPaddiCarousel from "@/components/carousel/dashboardCarousel";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { user, isLoading } = useGlobalContext();
-  const { wallet, transactions } = useGlobalContextData();
+  const { wallet, transactions, fetchWallet } = useGlobalContextData();
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   if (!user || isLoading) {
     return (

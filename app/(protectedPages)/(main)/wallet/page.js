@@ -2,7 +2,7 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
 import { HiRefresh } from "react-icons/hi";
-import { FaMoneyBillWave, FaBank, FaPiggyBank, FaCopy } from "react-icons/fa";
+import { FaMoneyBillWave, FaBank, FaPiggyBank, FaCopy, FaPaperPlane } from "react-icons/fa";
 import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
 import { useGlobalContextData } from "@/context/GlobalContextData";
@@ -40,6 +40,10 @@ export default function WalletPage() {
 
   const presetAmounts = [1000, 2000, 5000, 10000];
   const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   // Calculate amount to credit including fee
   function calculateAmountToCredit(amount) {
@@ -345,8 +349,9 @@ export default function WalletPage() {
           </div>
           {/* Wallet Info */}
           <Link href="/wallet/send" className="w-full md:w-fit">
-            <div className="bg-gray-900 hover:bg-gray-900/80 w-full md:w-fit rounded-lg p-3 mb-6 text-sm">
-              <div className="flex items-center justify-center flex-wrap gap-2 text-gray-300">
+            <div className="bg-gray-700 hover:bg-gray-900/80 transition-all duration-200 w-full md:w-fit rounded-md p-3 mb-6 text-sm">
+              <div className="flex items-center justify-center flex-wrap gap-2 text-white">
+                <FaPaperPlane className="text-white" />
                 <span>Send Funds</span>
               </div>
             </div>
@@ -543,7 +548,7 @@ export default function WalletPage() {
                       <br />
                       {!copiedRef && (
                         <span className="text-xs text-yellow-400 pl-4">
-                          Please click the "Copy" button to copy the reference.
+                          Please click the "Copy Reference" button to copy the reference.
                         </span>
                       )}
                     </p>
@@ -570,7 +575,7 @@ export default function WalletPage() {
                         }}
                         className="bg-blue-600 cursor-pointer w-full md:w-fit hover:bg-blue-700 text-white px-3 py-2 rounded"
                       >
-                        Copy
+                        Copy Reference
                       </button>
                     </div>
                   </div>
@@ -604,7 +609,7 @@ export default function WalletPage() {
                   ? parseFloat(amount) < 100
                   : parseFloat(amount) < 500)
                   ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+                  : "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
               }`}
             >
               {isFunding

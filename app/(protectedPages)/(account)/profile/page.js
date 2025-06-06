@@ -137,7 +137,7 @@ export default function ProfilePage() {
         <h1 className="text-2xl md:text-3xl uppercase pb-5">Profile</h1>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-4">
-            <div className="bg-gray-600 p-3 rounded-full">
+            <div className="bg-gray-600 p-1 md:p-3 rounded-full">
               {/* User Avatar */}
               <Image
                 src={
@@ -148,11 +148,11 @@ export default function ProfilePage() {
                 alt="User avatar"
                 width={40}
                 height={40}
-                className="rounded-full h-10 w-10 object-cover border cursor-pointer"
+                className="rounded-full object-cover border cursor-pointer"
               />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">
+              <h1 className="text-xl md:text-3xl font-bold">
                 {user?.last_name} {user?.first_name?.[0]}.
               </h1>
               <p className="text-gray-400">@{user?.email || "user"}</p>

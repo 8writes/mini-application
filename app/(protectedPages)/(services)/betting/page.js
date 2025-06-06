@@ -18,10 +18,6 @@ import { billzpaddi } from "@/lib/client";
 import BetTopUp from "@/components/betting/topUp";
 // import Select from "react-select";
 
-// remember to take this out
-const API_KEY =
-  "5vQvjHdN3XXUluU2R2PZvBWXJwdPHkA0Pn24sVAyIpThtxEoansokYuhDIKMWJoF";
-
 const CustomDropdown = ({
   options,
   selected,
@@ -118,6 +114,7 @@ function BetCodeConverter({
   convertCode,
   convertedCode,
   wallet,
+  processingFee,
 }) {
   return (
     <div className="space-y-6">
@@ -170,20 +167,41 @@ function BetCodeConverter({
             </div>
           </div>
 
-          <p className="text-gray-300 text-sm mb-2">
-            Wallet Balance: ₦
-            {wallet?.balance?.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }) ?? "0.00"}
-          </p>
+          {/* Fee and Total Display */}
+          <div className="bg-gray-700 p-3 rounded-md space-y-1">
+            <p className="text-gray-300 text-sm mb-2">
+              Wallet Balance: ₦
+              {wallet?.balance?.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) ?? "0.00"}
+            </p>
+            <div className="flex justify-between">
+              <span className="text-gray-400 text-sm">Processing Fee:</span>
+              <span className="text-white text-sm">
+                ₦{processingFee.toFixed(2)}
+              </span>
+            </div>
+          </div>
           <button
             onClick={convertCode}
-            disabled={isConverting}
-            className={`w-full bg-gray-900 flex justify-center items-center hover:bg-gray-700 
-              cursor-pointer text-white py-3 px-4 rounded-md font-medium`}
+            disabled={
+              isConverting ||
+              !bookingCode ||
+              !selectedBookie1 ||
+              !selectedBookie2
+            }
+            className={`w-full ${
+              isConverting ||
+              !bookingCode ||
+              !selectedBookie1 ||
+              !selectedBookie2
+                ? "bg-gray-600 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700 cursor-pointer"
+            } text-white transition-colors flex justify-center items-center  
+               py-3 px-4 rounded-md `}
           >
-            {isConverting ? <> Converting...</> : "Convert Code ₦70"}
+            {isConverting ? <> Converting Code...</> : "Convert Code"}
           </button>
 
           {convertedCode && (
@@ -237,6 +255,7 @@ export default function BettingServices() {
   const [rate, setRate] = useState("");
   const dropdownRef1 = useRef(null);
   const dropdownRef2 = useRef(null);
+  const [processingFee] = useState(75); // processing fee
 
   // Fetch conversion rate on component mount
   useEffect(() => {
@@ -246,7 +265,7 @@ export default function BettingServices() {
           "https://betpaddi.com/api/v1/conversion/rate",
           {
             headers: {
-              Authorization: `Bearer ${API_KEY}`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_CONVERSION_BILLZ_PUBLIC_KEY}`,
             },
           }
         );
@@ -272,7 +291,7 @@ export default function BettingServices() {
           "https://betpaddi.com/api/v1/conversion/bookies",
           {
             headers: {
-              Authorization: `Bearer ${API_KEY}`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_CONVERSION_BILLZ_PUBLIC_KEY}`,
             },
           }
         );
@@ -314,134 +333,134 @@ export default function BettingServices() {
   }, []);
 
   useEffect(() => {
+    fetchWallet();
     getUniqueRequestId();
   }, []);
 
   const convertCode = async () => {
-    if (bookingCode) {
-      toast.info("Under maintenance");
+    // Validate inputs
+    if (
+      !bookingCode ||
+      !selectedBookie1 ||
+      !selectedBookie2 ||
+      !uniqueRequestId
+    ) {
+      toast.error("Missing required information");
       return;
     }
-    if (!bookingCode || !selectedBookie1 || !selectedBookie2) {
-      toast.info("Please fill all fields");
+
+    if (wallet?.balance < processingFee) {
+      toast.error("Insufficient balance");
       return;
     }
 
     setIsConverting(true);
 
     try {
-      // 1. Check wallet balance first
-      const { data: walletData, error: fetchError } = await billzpaddi
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", user?.user_id)
-        .single();
-
-      if (fetchError || !walletData)
-        throw new Error("Failed to fetch wallet balance");
-      if (walletData.balance < 70) {
-        toast.error("Insufficient balance");
-        return;
-      }
-
-      // 2. Create pending transaction record
-      const { error: createError } = await billzpaddi
-        .from("transactions")
-        .insert({
-          user_id: user?.user_id,
-          email: user?.email,
-          amount: 70,
-          type: "debit",
-          description: "Code Conversion",
-          status: "pending",
-          reference: uniqueRequestId,
-          metadata: {
-            bookie1: selectedBookie1.bookie,
-            bookie2: selectedBookie2.bookie,
-            original_code: bookingCode,
-            created_at: new Date().toISOString(),
-          },
-        });
-
-      if (createError) throw new Error("Failed to record transaction");
-
-      // 3. Attempt conversion
-      const response = await axios.post(
-        "https://betpaddi.com/api/v1/conversion/convert-code",
-        {
-          code: bookingCode,
+      // 1. First create a pending transaction record
+      const { error: txError } = await billzpaddi.from("transactions").insert({
+        user_id: user?.user_id,
+        email: user?.email,
+        amount: processingFee,
+        type: "debit",
+        description: `Code Conversion (${selectedBookie1.bookie} to ${selectedBookie2.bookie})`,
+        status: "pending",
+        reference: uniqueRequestId,
+        metadata: {
           bookie1: selectedBookie1.bookie,
           bookie2: selectedBookie2.bookie,
+          original_code: bookingCode,
+          created_at: new Date().toISOString(),
         },
-        { headers: { Authorization: `Bearer ${API_KEY}` } }
+      });
+
+      if (txError) throw new Error("Failed to record transaction");
+
+      // 2. Deduct from wallet immediately
+      const { error: walletError } = await billzpaddi
+        .from("wallets")
+        .update({ balance: wallet?.balance - processingFee })
+        .eq("user_id", user?.user_id);
+
+      if (walletError) throw new Error("Failed to deduct from wallet");
+
+      const { token } = await fetch("/api/wrapper/auth-check").then((res) =>
+        res.json()
       );
 
-      // 4. Handle conversion result
-      if (response.data.message === "Conversion successful") {
-        const convertedCode =
-          response?.data?.code?.converted_code || response?.data?.code;
+      // 3. Process conversion through secure API route
+      const res = await fetch("/api/wrapper/convert", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": token,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY}`,
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          bookingCode,
+          bookie1: selectedBookie1.bookie,
+          bookie2: selectedBookie2.bookie,
+        }),
+      });
+
+      const data = await res.json();
+
+      // 4. Handle response and update transaction
+      let newStatus = "failed";
+      let toastType = "error";
+      let message = data.message || "Conversion failed";
+      let convertedCode = null;
+
+      if (data.success) {
+        newStatus = "completed";
+        toastType = "success";
+        convertedCode = data.convertedCode;
         setConvertedCode(convertedCode);
-
-        // Update wallet balance
-        const { error: updateError } = await billzpaddi
-          .from("wallets")
-          .update({ balance: walletData.balance - 70 })
-          .eq("user_id", user.user_id);
-        if (updateError) throw updateError;
-
-        // Update transaction as successful
-        await billzpaddi
-          .from("transactions")
-          .update({
-            status: "completed",
-            metadata: {
-              ...response.data,
-              converted_code: convertedCode,
-              updated_at: new Date().toISOString(),
-            },
-          })
-          .eq("reference", uniqueRequestId);
-
-        toast.success("Conversion successful!");
       } else {
-        // Update transaction as failed
+        // Refund wallet if failed
         await billzpaddi
-          .from("transactions")
-          .update({
-            status: "failed",
-            metadata: {
-              ...response.data,
-              updated_at: new Date().toISOString(),
-              error: "Conversion failed",
-            },
-          })
-          .eq("reference", uniqueRequestId);
-
-        toast.error(response.data.message || "Conversion failed");
+          .from("wallets")
+          .update({ balance: wallet.balance })
+          .eq("user_id", user.user_id);
       }
-    } catch (error) {
-      console.log("Error:", error);
 
-      // Ensure transaction is marked failed on any error
+      // Update transaction status
       await billzpaddi
         .from("transactions")
         .update({
-          status: "failed",
+          status: newStatus,
           metadata: {
-            error: error.message,
+            ...data,
+            converted_code: convertedCode,
             updated_at: new Date().toISOString(),
           },
         })
         .eq("reference", uniqueRequestId);
 
-      toast.error(
-        error.response?.data?.message || error.message || "Operation failed"
-      );
+      // Show appropriate notification
+      toast[toastType](message, {
+        autoClose: newStatus === "completed" ? 5000 : false,
+      });
+    } catch (err) {
+      console.error("Conversion error:", err);
+      toast.error(err.message || "Conversion failed");
+
+      // Attempt to refund if error occurred after deduction
+      try {
+        await billzpaddi
+          .from("wallets")
+          .update({ balance: wallet?.balance })
+          .eq("user_id", user.user_id);
+      } catch (refundError) {
+        console.error("Refund failed:", refundError);
+      }
     } finally {
-      setIsConverting(false);
+      // Refresh data
       fetchWallet();
-      getUniqueRequestId();
       fetchTransactions();
+      getUniqueRequestId();
+      setIsConverting(false);
     }
   };
 
@@ -572,6 +591,7 @@ export default function BettingServices() {
               convertCode={convertCode}
               convertedCode={convertedCode}
               wallet={wallet}
+              processingFee={processingFee}
             />
           )}
           {activeTab === "ai" && <AIPrediction />}

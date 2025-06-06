@@ -124,8 +124,8 @@ const PurchaseDialog = ({
   }, [open, user]);
 
   useEffect(() => {
-    getUniqueRequestId();
     fetchWallet();
+    getUniqueRequestId();
   }, []);
 
   const handlePurchase = async () => {
@@ -361,6 +361,10 @@ export default function Page() {
   const [showDialog, setShowDialog] = useState(false);
   const [phone, setPhone] = useState("");
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

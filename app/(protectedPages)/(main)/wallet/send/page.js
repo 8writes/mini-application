@@ -24,7 +24,7 @@ export default function Page() {
   const [filteredRecipients, setFilteredRecipients] = useState([]);
   const [showRecipientDropdown, setShowRecipientDropdown] = useState(false);
   const [recipientInfo, setRecipientInfo] = useState(null);
-  const [processingFee] = useState(25); // ₦25 processing fee
+  const [processingFee] = useState(25); // processing fee
   const [totalAmount, setTotalAmount] = useState(0);
 
   // Calculate total amount whenever amount changes
@@ -233,7 +233,7 @@ export default function Page() {
           ← Back to Wallet
         </Link>
       </div>
-      <h1 className="text-2xl md:text-3xl mb-6">Transfer Funds</h1>
+      <h1 className="text-2xl md:text-3xl mb-6">Send Funds</h1>
 
       <div className="bg-gray-800 rounded-lg shadow p-6 mb-8">
         <div className="space-y-4">
@@ -343,10 +343,10 @@ export default function Page() {
             className={`w-full py-3 px-4 rounded-md font-medium ${
               loading || !recipientInfo || !amount
                 ? "bg-gray-600 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                : "bg-green-600 hover:bg-green-700 cursor-pointer"
             } text-white transition-colors`}
           >
-            {loading ? "Processing..." : "Transfer Funds"}
+            {loading ? "Processing..." : "Send Funds"}
           </button>
         </div>
       </div>
