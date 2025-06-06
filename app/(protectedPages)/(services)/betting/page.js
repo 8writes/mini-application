@@ -474,11 +474,27 @@ export default function BettingServices() {
       <p className="text-gray-400 mb-6">
         Unlock our advanced AI predictions for just ₦250
       </p>
+      {/* Fee and Total Display */}
+      <div className="bg-gray-700 p-3 rounded-md space-y-1">
+        <p className="text-gray-300 text-start text-sm mb-2">
+          Wallet Balance: ₦
+          {wallet?.balance?.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) ?? "0.00"}
+        </p>
+        <div className="flex justify-between">
+          <span className="text-gray-400 text-sm">Processing Fee:</span>
+          <span className="text-white text-sm">
+            ₦250.00
+          </span>
+        </div>
+      </div>
       <button
-        onClick={() => toast.info("Under maintenance")}
-        className="bg-gray-900 cursor-pointer hover:bg-gray-700 text-white py-3 px-6 rounded-md font-medium"
+        onClick={() => toast.info("No predictions available for today")}
+        className="bg-green-600 cursor-pointer mt-7 w-full hover:bg-green-700 text-white py-3 px-6 rounded-md font-medium"
       >
-        Unlock for ₦250
+        Unlock Predictions
       </button>
     </div>
   );
@@ -489,7 +505,7 @@ export default function BettingServices() {
       <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 text-center">
         <h3 className="text-xl font-medium mb-2">Coming Soon!</h3>
         <p className="text-gray-400">
-          We're working on bringing you a seamless top-up experience
+          We're working on bringing you Free Predictions
         </p>
       </div>
     </div>

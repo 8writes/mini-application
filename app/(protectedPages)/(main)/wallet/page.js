@@ -537,7 +537,7 @@ export default function WalletPage() {
                         {amount ? (
                           <>{parseFloat(amount).toLocaleString()} </>
                         ) : (
-                          0
+                          "0.00"
                         )}
                       </p>
                     </div>
