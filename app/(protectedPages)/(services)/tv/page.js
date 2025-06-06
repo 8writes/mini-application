@@ -30,7 +30,6 @@ const CustomDropdown = ({
         className="flex items-center justify-between w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 outline-none"
       >
         <div className="flex items-center gap-2">
-          {/**
           {selected?.image && (
             <Image
               src={selected.image}
@@ -39,7 +38,7 @@ const CustomDropdown = ({
               height={24}
               className="rounded-full"
             />
-          )} */}
+          )}
           <span>{selected ? selected.name : "Select TV Provider"}</span>
         </div>
         <FaChevronDown
@@ -50,7 +49,7 @@ const CustomDropdown = ({
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto custom-scrollbar">
           <div className="sticky top-0 p-2 bg-gray-800">
             <input
               type="text"
@@ -76,7 +75,6 @@ const CustomDropdown = ({
                     : ""
                 }`}
               >
-                {/** 
                 {service.image && (
                   <Image
                     src={service.image}
@@ -85,7 +83,7 @@ const CustomDropdown = ({
                     height={20}
                     className="rounded-full"
                   />
-                )}*/}
+                )}
                 <span>{service.name}</span>
               </div>
             ))

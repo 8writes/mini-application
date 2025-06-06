@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ["vtpass.com"], // Add the domain here
+  },
   async headers() {
     return [
       {
