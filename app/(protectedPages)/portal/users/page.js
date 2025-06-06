@@ -21,6 +21,15 @@ export default function Page() {
 
   const router = useRouter();
 
+  // Calculate total balance
+  const totalBalance = users.reduce(
+    (sum, user) => sum + (user.balance || 0),
+    0
+  );
+  // Count active and suspended users
+  const activeUsers = users.filter((u) => u.status).length;
+  const suspendedUsers = users.filter((u) => !u.status).length;
+
   // fetch users with their wallet balance
   const fetchUsers = async () => {
     setLoading(true);
@@ -187,13 +196,30 @@ export default function Page() {
             </button>
           </div>
         </div>
+        {/* Balance Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="text-gray-400 text-sm font-medium">Total Balance</h3>
+            <p className="text-2xl font-bold text-white">
+              ₦{totalBalance.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="text-gray-400 text-sm font-medium">Active Users</h3>
+            <p className="text-2xl font-bold text-green-500">{activeUsers}</p>
+          </div>
+          <div className="bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="text-gray-400 text-sm font-medium">
+              Suspended Users
+            </h3>
+            <p className="text-2xl font-bold text-red-500">{suspendedUsers}</p>
+          </div>
+        </div>
 
         {/** users table (paginated) */}
         {user?.role !== "user" ? (
           <>
-            <div>
-              <h1 className="text-lg pt-4 pb-2">All Users ({users?.length})</h1>
-
+            <div className="pt-10">
               {/** search */}
               <div className="mb-4">
                 <div className="flex items-center border rounded w-full max-w-md px-2">
