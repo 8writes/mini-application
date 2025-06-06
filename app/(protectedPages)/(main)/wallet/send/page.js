@@ -325,7 +325,7 @@ export default function Page() {
               </span>
             </div>
             <div className="flex justify-between font-medium">
-              <span className="text-gray-300">Amount to send:</span>
+              <span className="text-gray-300">Total:</span>
               <span className="text-white">
                 ₦
                 {totalAmount.toLocaleString("en-NG", {
