@@ -7,6 +7,7 @@ import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { TbTransfer } from "react-icons/tb";
+import Link from "next/link";
 
 export default function WalletPage() {
   const [PaystackPop, setPaystackPop] = useState(null);
@@ -342,6 +343,14 @@ export default function WalletPage() {
               </div>
             </div>
           </div>
+          {/* Wallet Info */}
+          <Link href="/wallet/send" className="w-full md:w-fit">
+            <div className="bg-gray-900 hover:bg-gray-900/80 w-full md:w-fit rounded-lg p-3 mb-6 text-sm">
+              <div className="flex items-center justify-center flex-wrap gap-2 text-gray-300">
+                <span>Send Funds</span>
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 
