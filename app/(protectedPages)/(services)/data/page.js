@@ -735,7 +735,7 @@ export default function Page() {
                         2% cashback
                       </span>
                     ) : (
-                      <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      <span className="inline-flex flex-wrap items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
                         0.9% cashback{" "}
                         {plan?.variation_amount * 0.009 > 150 && (
