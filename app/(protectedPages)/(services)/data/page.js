@@ -129,20 +129,29 @@ const PurchaseDialog = ({
 
   const applyDiscount = !hasDiscount;
 
+  const discountRates = {
+    "mtn-data": 0.005, // 0.5%
+    "glo-data": 0.01, // 1%
+    "airtel-data": 0.007, // 0.7%
+    "etisalat-data": 0.01, // 1%
+  };
+
   const totalAmount = selectedPlan
     ? (() => {
         const amount = Number(selectedPlan.variation_amount);
 
         if (applyDiscount) {
-          // Apply 2% discount
+          // Apply 2% discount across all
           return Math.round(amount * 0.98);
         } else {
-          // Apply 0.9% discount, capped at ₦150
-          const discount = Math.min(amount * 0.009, 150);
+          // Use selectedISP rate or fallback to 1%
+          const rate = discountRates[selectedISP?.serviceID] || 0.01;
+          const discount = Math.min(amount * rate, 150);
           return Math.round(amount - discount);
         }
       })()
     : 0;
+  
 
   const handlePurchase = async () => {
     if (!selectedPlan || !phoneNumber || !selectedISP || !uniqueRequestId) {
@@ -443,11 +452,22 @@ export default function Page() {
     const amount = Number(baseAmount);
 
     if (applyDiscount) {
-      // Apply 2% discount without cap
+      // Flat 2% discount
       return Math.round(amount * 0.98);
     } else {
-      // Calculate 0.9% discount and cap it at ₦150
-      const discount = Math.min(amount * 0.009, 150);
+      // Define discount rates per ISP
+      const discountRates = {
+        "mtn-data": 0.005, // 0.5%
+        "glo-data": 0.01, // 1%
+        "airtel-data": 0.007, // 0.7%
+        "etisalat-data": 0.01, // 1%
+      };
+
+      // Use 1% as default if not found
+      const rate = discountRates[selectedISP?.serviceID] || 0.01;
+
+      // Apply discount with ₦150 cap
+      const discount = Math.min(amount * rate, 150);
       return Math.round(amount - discount);
     }
   };
@@ -645,6 +665,17 @@ export default function Page() {
     setShowDialog(true);
   };
 
+  // Define discount rates per ISP
+  const discountRates = {
+    "mtn-data": 0.005, // 0.5%
+    "glo-data": 0.01, // 1%
+    "airtel-data": 0.007, // 0.7%
+    "etisalat-data": 0.01, // 1%
+  };
+
+  // Use 1% as default if not found
+  const rate = discountRates[selectedISP?.serviceID] || 0.01;
+
   if (!user || isLoading) {
     return (
       <div className="flex items-center justify-center h-[30rem]">
@@ -737,12 +768,7 @@ export default function Page() {
                     ) : (
                       <span className="inline-flex flex-wrap items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
-                        0.9% cashback{" "}
-                        {plan?.variation_amount * 0.009 > 150 && (
-                          <span className="text-blue-500 ml-1">
-                            (capped at ₦150)
-                          </span>
-                        )}
+                        {(rate * 100).toFixed(1)}% cashback
                       </span>
                     )}
                   </p>
