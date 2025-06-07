@@ -151,7 +151,6 @@ const PurchaseDialog = ({
         }
       })()
     : 0;
-  
 
   const handlePurchase = async () => {
     if (!selectedPlan || !phoneNumber || !selectedISP || !uniqueRequestId) {
@@ -769,6 +768,19 @@ export default function Page() {
                       <span className="inline-flex flex-wrap items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
                         {(rate * 100).toFixed(1)}% cashback
+                        {/* Info icon with tooltip */}
+                        {Number(plan?.variation_amount || 0) * rate > 150 && (
+                          <span className="relative ml-1.5 group">
+                            <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-200 text-blue-700 cursor-pointer">
+                              i
+                            </span>
+
+                            {/* Tooltip */}
+                            <span className="absolute hidden group-hover:block bottom-5 z-10 w-20 p-2 mt-1 -ml-1 text-xs text-gray-700 bg-white border border-gray-200 rounded-md shadow-md">
+                              Cashback is capped at ₦150 maximum.
+                            </span>
+                          </span>
+                        )}
                       </span>
                     )}
                   </p>
