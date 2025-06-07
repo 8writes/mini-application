@@ -70,7 +70,7 @@ export default function ReferralPage() {
 
           return {
             ...referredUser,
-            qualified: totalCredits >= 2000,
+            qualified: totalCredits >= 3500,
           };
         })
       );
@@ -263,7 +263,7 @@ export default function ReferralPage() {
               </div>
               <p>
                 Earn <span className="font-semibold">₦150</span> for each friend
-                who signs up using your code and deposits a minimum of ₦2,000
+                who signs up using your code and deposits a minimum of ₦3,500
               </p>
             </div>
 
