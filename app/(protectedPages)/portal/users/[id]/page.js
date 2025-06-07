@@ -7,6 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import NotificationDialog from "@/components/dialogs/notificationDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
 import Link from "next/link";
+import { FaUserFriends, FaWallet } from "react-icons/fa";
 
 export default function Page() {
   const router = useRouter();
@@ -19,6 +20,9 @@ export default function Page() {
   const [userData, setUserData] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [referrals, setReferrals] = useState([]);
+  const [earnings, setEarnings] = useState(0);
+  const [referralCode, setReferralCode] = useState("");
   const [showNotificationDialog, setShowNotificationDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -32,6 +36,15 @@ export default function Page() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const transactionsPerPage = 10;
+
+  // 🔥 Generate referral code from email (without @domain)
+  useEffect(() => {
+    if (userData?.email) {
+      const code = userData.email.split("@")[0];
+      setReferralCode(code);
+      fetchReferralData(code);
+    }
+  }, [userData]);
 
   // Fetch user details and transactions
   useEffect(() => {
@@ -83,6 +96,61 @@ export default function Page() {
       fetchData();
     }
   }, [userId]);
+
+  // 🚀 Fetch referral data
+  const fetchReferralData = async (code) => {
+    try {
+      setLoading(true);
+
+      // 1. Get all users who used this referral code
+      const { data: referredUsers, error: referralError } = await billzpaddi
+        .from("users")
+        .select("user_id, email, created_at")
+        .eq("referral_code", code);
+
+      if (referralError) throw referralError;
+
+      // 2. Check which referrals are qualified (total credit transactions >= 2000)
+      const qualifiedReferrals = await Promise.all(
+        referredUsers.map(async (referredUser) => {
+          // Get sum of all credit transactions for this user
+          const { data: transactionsData, error: txError } = await billzpaddi
+            .from("transactions")
+            .select("amount")
+            .eq("user_id", referredUser.user_id)
+            .eq("type", "credit")
+            .eq("status", "completed");
+
+          if (txError) throw txError;
+
+          const totalCredits = transactionsData.reduce(
+            (sum, tx) => sum + tx.amount,
+            0
+          );
+
+          return {
+            ...referredUser,
+            qualified: totalCredits >= 2000,
+          };
+        })
+      );
+
+      // 3. Calculate earnings (150 per qualified referral, max 10)
+      const qualifiedCount = Math.min(
+        qualifiedReferrals.filter((ref) => ref.qualified).length,
+        10
+      );
+      const totalEarnings = qualifiedCount * 150;
+
+      setReferrals(qualifiedReferrals);
+      setEarnings(totalEarnings);
+    } catch (error) {
+      console.error("Error fetching referrals:", error);
+      toast.error("Failed to load referral data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Toggle user status
   const toggleUserStatus = async () => {
@@ -242,6 +310,37 @@ export default function Page() {
         >
           ← Back to Users
         </Link>
+      </div>
+
+      {/* Referral Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-900/20 p-2 rounded-full">
+              <FaUserFriends className="text-blue-400" />
+            </div>
+            <div>
+              <p className="text-gray-400 text-sm">Total Referrals</p>
+              <p className="text-xl font-semibold">
+                {loading ? "--" : referrals.length}/10
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="bg-green-900/20 p-2 rounded-full">
+              <FaWallet className="text-green-400" />
+            </div>
+            <div>
+              <p className="text-gray-400 text-sm">Earnings</p>
+              <p className="text-xl font-semibold">
+                ₦{loading ? "--" : earnings.toLocaleString()}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 mb-8">

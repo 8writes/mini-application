@@ -303,12 +303,6 @@ export default function Page() {
                             >
                               {u.status ? "Ban" : "Unban"}
                             </button>
-                            <button
-                              onClick={() => handleDelete(u.user_id)}
-                              className="text-red-600 hover:underline pl-4 cursor-pointer"
-                            >
-                              Delete
-                            </button>
                           </td>
                         </tr>
                       ))}
