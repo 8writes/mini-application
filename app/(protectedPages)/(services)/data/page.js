@@ -137,8 +137,8 @@ const PurchaseDialog = ({
           // Apply 2% discount
           return Math.round(amount * 0.98);
         } else {
-          // Apply 0.5% discount, capped at ₦150
-          const discount = Math.min(amount * 0.005, 150);
+          // Apply 0.9% discount, capped at ₦150
+          const discount = Math.min(amount * 0.009, 150);
           return Math.round(amount - discount);
         }
       })()
@@ -446,8 +446,8 @@ export default function Page() {
       // Apply 2% discount without cap
       return Math.round(amount * 0.98);
     } else {
-      // Calculate 0.5% discount and cap it at ₦150
-      const discount = Math.min(amount * 0.005, 150);
+      // Calculate 0.9% discount and cap it at ₦150
+      const discount = Math.min(amount * 0.009, 150);
       return Math.round(amount - discount);
     }
   };
@@ -737,8 +737,8 @@ export default function Page() {
                     ) : (
                       <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
-                        0.5% cashback{" "}
-                        {plan?.variation_amount * 0.005 > 150 && (
+                        0.9% cashback{" "}
+                        {plan?.variation_amount * 0.009 > 150 && (
                           <span className="text-blue-500 ml-1">
                             (capped at ₦150)
                           </span>
