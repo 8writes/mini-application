@@ -88,7 +88,7 @@ export default function SignupPage() {
 
   return (
     <main className="min-h-[100dvh] bg-gradient-to-r from-gray-700 to-gray-800 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
+      <div className="w-full max-w-md bg-white mt-10 p-6 rounded-2xl shadow-lg">
         <div className="text-center mb-6">
           <div className="text-3xl font-bold text-blue-900 mb-2 flex items-center gap-1 justify-center">
             <Image
