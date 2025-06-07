@@ -376,9 +376,14 @@ export default function ProfilePage() {
               Account
             </h2>
             <div className="space-y-4">
-              <button className="w-full text-left cursor-pointer flex items-center gap-3 p-3 hover:bg-gray-700 rounded-lg transition-colors text-red-400">
+              <button
+                onClick={() =>
+                  toast.info("Contact support to deactivate account")
+                }
+                className="w-full text-left cursor-pointer flex items-center gap-3 p-3 hover:bg-gray-700 rounded-lg transition-colors text-red-400"
+              >
                 <HiLogout className="text-xl" />
-                Delete Account
+                Deactivate Account
               </button>
               <button
                 onClick={handleLogout}

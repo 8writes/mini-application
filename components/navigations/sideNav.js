@@ -127,6 +127,9 @@ export default function Sidebar() {
           <NavItem href="/transactions" icon={<HiOutlineCreditCard />}>
             Transactions
           </NavItem>
+          <NavItem href="/referral" icon={<HiOutlineUsers />}>
+            Referral
+          </NavItem>
           <NavItem href="/support" icon={<FaHeadset />}>
             Support
           </NavItem>

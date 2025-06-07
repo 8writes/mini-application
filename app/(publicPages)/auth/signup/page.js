@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { HiEye, HiEyeOff } from "react-icons/hi";
@@ -10,15 +10,28 @@ import Image from "next/image";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     password: "",
     role: "customer",
+    referral_code: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Get referral code from URL if present
+  useEffect(() => {
+    const refCode = searchParams.get("ref");
+    if (refCode) {
+      setFormData((prev) => ({
+        ...prev,
+        referral_code: refCode,
+      }));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const token = localStorage.getItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
@@ -32,6 +45,21 @@ export default function SignupPage() {
     setIsSubmitting(true);
 
     try {
+      // Validate referral code if provided
+      if (false) {
+        const { data: referrer, error } = await billzpaddi
+          .from("users")
+          .select("email")
+          .eq("email", `${formData.referral_code}@gmail.com`)
+          .single();
+
+        if (error || !referrer) {
+          toast.warning("Invalid referral code");
+          setFormData((prev) => ({ ...prev, referral_code: "" }));
+          return
+        }
+      }
+
       const { data, error: signUpError } = await billzpaddi.auth.signUp({
         email: formData?.email,
         password: formData?.password,
@@ -75,7 +103,6 @@ export default function SignupPage() {
     <main className="min-h-[100dvh] bg-gradient-to-r from-gray-700 to-gray-800 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
         <div className="text-center mb-6">
-          {/* Replace with your logo */}
           <div className="text-3xl font-bold text-blue-900 mb-2 flex items-center gap-1 justify-center">
             <Image
               src="/billzpaddi-logo-icon.png"
@@ -89,37 +116,39 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-gray-800">
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-800">
-              First Name
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="First Name"
-              disabled={isSubmitting}
-              value={formData.first_name}
-              onChange={(e) =>
-                setFormData({ ...formData, first_name: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-800">
-              Last Name
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="Last Name"
-              disabled={isSubmitting}
-              value={formData.last_name}
-              onChange={(e) =>
-                setFormData({ ...formData, last_name: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
-            />
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-800">
+                First Name
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="First Name"
+                disabled={isSubmitting}
+                value={formData.first_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, first_name: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-800">
+                Last Name
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Last Name"
+                disabled={isSubmitting}
+                value={formData.last_name}
+                onChange={(e) =>
+                  setFormData({ ...formData, last_name: e.target.value })
+                }
+                className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
+              />
+            </div>
           </div>
 
           <div>
@@ -162,6 +191,22 @@ export default function SignupPage() {
                 {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
               </span>
             </div>
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-800">
+              Referral Code (Optional)
+            </label>
+            <input
+              type="text"
+              placeholder="Enter referral code"
+              disabled={isSubmitting}
+              value={formData.referral_code}
+              onChange={(e) =>
+                setFormData({ ...formData, referral_code: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
+            />
           </div>
 
           <button
