@@ -263,7 +263,7 @@ export default function ReferralPage() {
               </div>
               <p>
                 Earn <span className="font-semibold">₦150</span> for each friend
-                who signs up using your code and deposits at least ₦2,000
+                who signs up using your code and deposits a minimum of ₦2,000
               </p>
             </div>
 
