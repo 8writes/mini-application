@@ -2,7 +2,13 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
 import { HiRefresh } from "react-icons/hi";
-import { FaMoneyBillWave, FaBank, FaPiggyBank, FaCopy, FaPaperPlane } from "react-icons/fa";
+import {
+  FaMoneyBillWave,
+  FaBank,
+  FaPiggyBank,
+  FaCopy,
+  FaPaperPlane,
+} from "react-icons/fa";
 import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
 import { useGlobalContextData } from "@/context/GlobalContextData";
@@ -369,7 +375,7 @@ export default function WalletPage() {
 
           {/* Deposit Method Tabs */}
           <div className="flex border-b border-gray-700 mb-6">
-            {/* 
+            {/* */}
             <button
               className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
                 activeTab === "instant"
@@ -380,7 +386,7 @@ export default function WalletPage() {
             >
               <TbTransfer />
               Instant Deposit
-            </button>*/}
+            </button>
             <button
               className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
                 activeTab === "bank"
@@ -548,7 +554,8 @@ export default function WalletPage() {
                       <br />
                       {!copiedRef && (
                         <span className="text-xs text-yellow-400 pl-4">
-                          Please click the "Copy Reference" button to copy the reference.
+                          Please click the "Copy Reference" button to copy the
+                          reference.
                         </span>
                       )}
                     </p>
