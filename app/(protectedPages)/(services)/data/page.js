@@ -407,12 +407,31 @@ export default function Page() {
   const [showDialog, setShowDialog] = useState(false);
   const [phone, setPhone] = useState("");
   const dropdownRef = useRef(null);
+  const [openTooltipId, setOpenTooltipId] = useState(null);
+  const tooltipRef = useRef(null);
 
   const tabOrder = ["Daily", "Weekly", "Monthly", "Others"];
 
   useEffect(() => {
     fetchWallet();
   }, []);
+
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
+        setOpenTooltipId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleTooltip = (id, e) => {
+    e.stopPropagation();
+    setOpenTooltipId(openTooltipId === id ? null : id);
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -755,7 +774,7 @@ export default function Page() {
                   <h3 className="text-white font-semibold text-sm md:text-base">
                     {plan.name}
                   </h3>
-                  <p className="text-blue-200 mt-1 ">
+                  <p className="text-blue-200 mt-1">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
                   </p>
                   <p className="mt-1">
@@ -765,19 +784,34 @@ export default function Page() {
                         2% cashback
                       </span>
                     ) : (
-                      <span className="inline-flex flex-wrap items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
                         {(rate * 100).toFixed(1)}% cashback
-                        {/* Info icon with tooltip */}
                         {Number(plan?.variation_amount || 0) * rate > 150 && (
-                          <span className="relative ml-1.5 group">
-                            <span className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-200 text-blue-700 cursor-pointer">
+                          <span className="relative ml-1.5" ref={tooltipRef}>
+                            <span
+                              onClick={(e) =>
+                                toggleTooltip(plan.variation_code, e)
+                              }
+                              className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-200 text-blue-700 cursor-pointer select-none"
+                            >
                               i
                             </span>
 
-                            {/* Tooltip */}
-                            <span className="absolute hidden group-hover:block bottom-5 z-10 w-20 p-2 mt-1 -ml-1 text-xs text-gray-700 bg-white border border-gray-200 rounded-md shadow-md">
-                              Cashback is capped at ₦150 maximum.
+                            <span
+                              id={`tooltip-${plan.variation_code}`}
+                              className={`absolute z-50 w-20 p-2 text-xs text-gray-700 bg-white border border-gray-200 rounded-md shadow-md
+                              left-1/2 -translate-x-1/2
+                              bottom-5 mb-2
+                               sm:mt-2
+                              ${
+                                openTooltipId === plan.variation_code
+                                  ? "block"
+                                  : "hidden"
+                              }`}
+                            >
+                              Cashback capped at ₦150.
+                              <span className="absolute w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></span>
                             </span>
                           </span>
                         )}
