@@ -130,9 +130,18 @@ const PurchaseDialog = ({
   const applyDiscount = !hasDiscount;
 
   const totalAmount = selectedPlan
-    ? Math.round(
-        Number(selectedPlan.variation_amount) * (applyDiscount ? 0.98 : 0.99)
-      )
+    ? (() => {
+        const amount = Number(selectedPlan.variation_amount);
+
+        if (applyDiscount) {
+          // Apply 2% discount
+          return Math.round(amount * 0.98);
+        } else {
+          // Apply 0.5% discount, capped at ₦150
+          const discount = Math.min(amount * 0.005, 150);
+          return Math.round(amount - discount);
+        }
+      })()
     : 0;
 
   const handlePurchase = async () => {
@@ -323,15 +332,6 @@ const PurchaseDialog = ({
               <span className="text-gray-400">Amount:</span>
               <span className="text-white">
                 ₦{totalAmount.toLocaleString()}
-                {!hasDiscount ? (
-                  <span className="text-green-400 font-semibold ml-1 text-xs">
-                    (2% off)
-                  </span>
-                ) : (
-                  <span className="text-green-400 font-semibold ml-1 text-xs">
-                    (1% off)
-                  </span>
-                )}
               </span>
             </div>
 
@@ -440,7 +440,16 @@ export default function Page() {
   const applyDiscount = !hasDiscount;
 
   const addGain = (baseAmount) => {
-    return Math.round(Number(baseAmount) * (applyDiscount ? 0.98 : 0.99));
+    const amount = Number(baseAmount);
+
+    if (applyDiscount) {
+      // Apply 2% discount without cap
+      return Math.round(amount * 0.98);
+    } else {
+      // Calculate 0.5% discount and cap it at ₦150
+      const discount = Math.min(amount * 0.005, 150);
+      return Math.round(amount - discount);
+    }
   };
 
   const detectISPFromPhone = (phone) => {
@@ -716,15 +725,24 @@ export default function Page() {
                   <h3 className="text-white font-semibold text-sm md:text-base">
                     {plan.name}
                   </h3>
-                  <p className="text-blue-300 mt-1 ">
+                  <p className="text-blue-200 mt-1 ">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
+                  </p>
+                  <p className="mt-1">
                     {!hasDiscount ? (
-                      <span className="text-green-400 font-semibold ml-1 text-xs">
-                        (2% off)
+                      <span className="inline-flex items-center bg-green-50 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                        2% cashback
                       </span>
                     ) : (
-                      <span className="text-green-400 font-semibold ml-1 text-xs">
-                        (1% off)
+                      <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
+                        0.5% cashback{" "}
+                        {plan?.variation_amount * 0.005 > 150 && (
+                          <span className="text-blue-500 ml-1">
+                            (capped at ₦150)
+                          </span>
+                        )}
                       </span>
                     )}
                   </p>
