@@ -2,7 +2,16 @@
 import { useState, useEffect } from "react";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
-import { FaUserFriends, FaWallet, FaCopy, FaGift, FaCheckCircle, FaSpinner } from "react-icons/fa";
+import {
+  FaUserFriends,
+  FaWallet,
+  FaCopy,
+  FaGift,
+  FaCheckCircle,
+  FaSpinner,
+  FaChevronRight,
+  FaChevronLeft,
+} from "react-icons/fa";
 import { HiOutlineArrowRight } from "react-icons/hi";
 import { billzpaddi } from "@/lib/client";
 import { toast } from "react-toastify";
@@ -21,6 +30,8 @@ export default function ReferralPage() {
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   // 🔥 Generate referral code from email (without @domain)
   useEffect(() => {
@@ -153,6 +164,15 @@ export default function ReferralPage() {
       setClaiming(false);
     }
   };
+
+  // Calculate pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentReferrals = referrals.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(referrals.length / itemsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (!user || isLoading) {
     return (
@@ -330,7 +350,7 @@ export default function ReferralPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {referrals.map((ref) => (
+                    {currentReferrals.map((ref) => (
                       <tr
                         key={ref.user_id}
                         className="border-b border-gray-700"
@@ -353,6 +373,34 @@ export default function ReferralPage() {
                   </tbody>
                 </table>
               </div>
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-6 text-sm">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    className="px-3 py-1 border border-gray-500 rounded hover:bg-gray-500 cursor-pointer disabled:opacity-30"
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+
+                  <span className="text-gray-400">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    className="px-3 py-1 border border-gray-500 rounded hover:bg-gray-500 cursor-pointer disabled:opacity-30"
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
