@@ -143,7 +143,7 @@ export default function WalletPage() {
     };
   }, []);
 
-  const initializePayment = () => {
+  const initializePayment = async () => {
     if (!window.Squad) {
       console.error("Squad script not loaded");
       return;

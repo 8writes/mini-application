@@ -201,7 +201,7 @@ export default function ReferralPage() {
               <div>
                 <p className="text-gray-400 text-sm">Total Referrals</p>
                 <p className="text-xl font-semibold">
-                  {loading ? "--" : referrals.length}/10
+                  {loading ? "0" : referrals.length}/10
                 </p>
               </div>
             </div>
@@ -215,7 +215,7 @@ export default function ReferralPage() {
               <div>
                 <p className="text-gray-400 text-sm">Your Earnings</p>
                 <p className="text-xl font-semibold">
-                  ₦{loading ? "--" : earnings.toLocaleString()}
+                  ₦{loading ? "0" : earnings.toLocaleString()}
                 </p>
               </div>
             </div>
