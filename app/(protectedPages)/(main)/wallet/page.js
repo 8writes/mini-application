@@ -458,7 +458,7 @@ export default function WalletPage() {
                   </p>
                 </>
               ) : (
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-gray-200 mt-1">
                   No processing fees - manual approval required (may take up to
                   1-2 minutes)
                 </p>
