@@ -36,7 +36,7 @@ export default function WalletPage() {
   const [isFunding, setIsFunding] = useState(false);
   const [amount, setAmount] = useState("");
   const [activePreset, setActivePreset] = useState(null);
-  const [activeTab, setActiveTab] = useState("bank"); // 'instant' or 'bank'
+  const [activeTab, setActiveTab] = useState("instant"); // 'instant' or 'bank'
   const [copiedRef, setCopiedRef] = useState(false);
   const [bankDetails, setBankDetails] = useState({
     accountName: "EMMANUEL CHISOM",
