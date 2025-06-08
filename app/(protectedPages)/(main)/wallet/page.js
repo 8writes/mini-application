@@ -46,13 +46,14 @@ export default function WalletPage() {
 
   const presetAmounts = [1000, 2000, 5000, 10000];
   const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+  const squadKey = process.env.NEXT_PUBLIC_SQUAD_PUBLIC_KEY;
 
   useEffect(() => {
     fetchWallet();
   }, []);
 
-  // Calculate amount to credit including fee
-  function calculateAmountToCredit(amount) {
+  // Calculate amount to credit including fee Paystack
+  function calculateAmountToCreditPaystack(amount) {
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum)) {
       return 0;
@@ -70,13 +71,31 @@ export default function WalletPage() {
     return amountNum + totalFee;
   }
 
-  const amountToCredit = calculateAmountToCredit(amount);
+  // Calculate amount to credit including fee Squad
+  function calculateAmountToCreditSquad(amount) {
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum)) {
+      return 0;
+    }
+
+    // Calculate 1.5% fee
+    let percentageFee = 0.012 * amountNum;
+
+    // Cap fee at ₦1,500
+    if (percentageFee > 1500) {
+      percentageFee = 1500;
+    }
+
+    return amountNum + percentageFee;
+  }
+
+  const amountToCredit = parseFloat(amount); // calculateAmountToCreditPaystack(amount);
 
   useEffect(() => {
     getUniqueRequestId();
   }, []);
 
-  const initializePayment = async () => {
+  const initializePaymentInactive = async () => {
     return new Promise((resolve, reject) => {
       const handler = PaystackPop.setup({
         key: paystackKey,
@@ -108,6 +127,45 @@ export default function WalletPage() {
       });
       handler.openIframe();
     });
+  };
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.squadco.com/widget/squad.min.js";
+    script.async = true;
+
+    script.onload = () => console.log("Squad script loaded successfully");
+    script.onerror = () => console.error("Failed to load Squad script");
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const initializePayment = () => {
+    if (!window.Squad) {
+      console.error("Squad script not loaded");
+      return;
+    }
+
+    const squadInstance = new window.Squad({
+      onClose: () => console.log("Widget closed"),
+      onLoad: () => console.log("Widget loaded successfully"),
+      onSuccess: async (response) => {
+        await updateWalletBalance(response.transaction_ref);
+      },
+      key: squadKey,
+      email: user?.email.trim(),
+      amount: amountToCredit * 100,
+      customer_name: user?.last_name + " " + user?.first_name,
+      pass_charge: true,
+      currency_code: "NGN",
+      initiate_type: "inline",
+    });
+
+    squadInstance.setup();
+    squadInstance.open();
   };
 
   const updateWalletBalance = async (reference) => {
@@ -230,8 +288,8 @@ export default function WalletPage() {
     e.preventDefault();
 
     if (activeTab === "instant") {
-      toast.info("Currently Unavailable.");
-     // await handleInstantDeposit(e);
+      //toast.info("Currently Unavailable.");
+      await handleInstantDeposit(e);
     } else {
       await handleBankTransfer(e);
     }
@@ -449,12 +507,11 @@ export default function WalletPage() {
 
               {activeTab === "instant" ? (
                 <>
-                  <p className="text-sm text-gray-200 mt-1">
-                    Paystack processing fee: 1.5%{" "}
-                    {amountToCredit >= 2500 && <>+ ₦100</>}
+                  <p className="text-sm text-gray-400 mt-1">
+                    Processing fee applies
                   </p>
                   <p className="text-base text-gray-300 mt-1">
-                    Total to pay: ₦{amountToCredit.toLocaleString()}
+                    Amount: ₦{(amountToCredit || 0).toLocaleString()}
                   </p>
                 </>
               ) : (
@@ -586,7 +643,11 @@ export default function WalletPage() {
                     </div>
                   </div>
                   <p className="py-5">
-                    3. Click <span className="text-base bg-green-800 text-white">" Confirm Transfer "</span>  after completing the transfer.
+                    3. Click{" "}
+                    <span className="text-base bg-green-800 text-white">
+                      " Confirm Transfer "
+                    </span>{" "}
+                    after completing the transfer.
                   </p>
                   {false && (
                     <p className="text-yellow-400 text-xs md:text-sm">
@@ -644,7 +705,7 @@ export default function WalletPage() {
               {isFunding
                 ? "Processing..."
                 : activeTab === "instant"
-                ? "Pay with Paystack"
+                ? "Fund Wallet (Instant)"
                 : "Confirm Transfer"}
             </button>
           </form>
