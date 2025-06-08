@@ -591,9 +591,29 @@ export default function WalletPage() {
                   </p>
                   <p className="text-yellow-400 text-xs md:text-sm">
                     Note: <br /> 1. Transfers without the correct reference may
-                    be delayed. <br /> 2. Incorrect amount will not get
-                    approved.
+                    be delayed. <br /> 2. Incorrect amount will be refunded.
                   </p>
+                  <div className="mt-6 text-center">
+                    <p className="text-gray-200 text-sm">
+                      Confused or stuck? <br/>{" "}
+                      <Link
+                        href="/faq"
+                        className="text-blue-400 hover:underline"
+                      >
+                        FAQs
+                      </Link>{" "}
+                      or{" "}
+                      <Link
+                        href="https://wa.me/2349163366286"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-400 hover:underline"
+                      >
+                        WhatsApp Support
+                      </Link>
+                      .
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
