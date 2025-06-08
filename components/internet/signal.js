@@ -6,7 +6,7 @@ const NetworkIndicator = () => {
   const [status, setStatus] = useState({
     icon: <FaWifi />,
     color: "text-gray-500",
-    label: "Loading...",
+    label: "Offline",
   });
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const NetworkIndicator = () => {
             downlinkSpeed > 0 ? `${downlinkSpeed.toFixed(1)} Mbps` : "Online";
           setStatus({
             icon: <FaWifi />,
-            color: "text-gray-500",
+            color: "text-green-500",
             label,
           });
       }
