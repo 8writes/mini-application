@@ -54,21 +54,6 @@ const nextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: "/api/v1/req/:path*",
-        destination: "/api/wrapper/:path*",
-        has: [
-          {
-            type: "header",
-            key: "origin",
-            value: "https://dstvmicgrand.com",
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;
