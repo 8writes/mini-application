@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { billzpaddi } from "@/lib/client";
 import { FaHeadset } from "react-icons/fa";
+import NetworkIndicator from "../internet/signal";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -70,7 +71,8 @@ export default function NavBar() {
             </Link>
           </div>
         </div>
-        <div className="relative flex items-center">
+        <div className="relative flex gap-2 items-center">
+          <NetworkIndicator />
           {/* User Avatar */}
           <Image
             src={
