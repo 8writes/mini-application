@@ -16,6 +16,7 @@
   import { useGlobalContextData } from "@/context/GlobalContextData";
   import { billzpaddi } from "@/lib/client";
   import BetTopUp from "@/components/betting/topUp";
+import CountUpTimer from "@/components/count/countUpTimer";
   // import Select from "react-select";
 
   const CustomDropdown = ({
@@ -137,7 +138,9 @@
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 md:mb-10">
               {/* Convert From */}
               <div className="w-full md:w-72 flex flex-col">
-                <label className="text-sm text-gray-400 mb-2">Convert From</label>
+                <label className="text-sm text-gray-400 mb-2">
+                  Convert From
+                </label>
                 <CustomDropdown
                   options={bookies}
                   selected={selectedBookie1}
@@ -201,14 +204,21 @@
               } text-white transition-colors flex justify-center items-center  
                 py-3 px-4 rounded-md `}
             >
-              {isConverting ? <> Converting Code...</> : "Convert Code"}
+              {isConverting ? (
+                <>
+                  Processing...
+                  <CountUpTimer end={100} />
+                </>
+              ) : (
+                "Convert Code"
+              )}
             </button>
 
             {convertedCode && (
               <div className="mt-4 p-3 bg-gray-700/50 rounded-lg relative">
                 <p className="text-yellow-400 text-sm mb-2">
-                  ⚠️ If you leave or refresh this page, the converted code will be
-                  lost.
+                  ⚠️ If you leave or refresh this page, the converted code will
+                  be lost.
                 </p>
                 <p className="text-gray-400 mb-1">Converted Code:</p>
                 <div className="relative">

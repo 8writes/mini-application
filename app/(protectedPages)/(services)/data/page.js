@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import CountUpTimer from "@/components/count/countUpTimer";
 
 const CustomDropdown = ({
   options,
@@ -153,6 +154,11 @@ const PurchaseDialog = ({
     : 0;
 
   const handlePurchase = async () => {
+    if (isNaN(totalAmount)) {
+      toast.error("Invalid amount format");
+      return;
+    }
+
     if (!selectedPlan || !phoneNumber || !selectedISP || !uniqueRequestId) {
       toast.error("Missing required information for purchase");
       return;
@@ -382,9 +388,16 @@ const PurchaseDialog = ({
                 wallet?.balance >= totalAmount
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-gray-600 cursor-not-allowed"
-              } disabled:opacity-50`}
+              } disabled:opacity-80`}
             >
-              {isProcessing ? "Processing..." : "Pay Now"}
+              {isProcessing ? (
+                <>
+                  Processing...
+                  <CountUpTimer end={100} />
+                </>
+              ) : (
+                "Pay Now"
+              )}
             </button>
           </div>
         </div>

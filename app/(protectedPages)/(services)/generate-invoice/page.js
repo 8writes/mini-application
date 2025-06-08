@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { billzpaddi } from "@/lib/client";
 import { HiDocumentText } from "react-icons/hi";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import CountUpTimer from "@/components/count/countUpTimer";
 
 const CurrencySelector = ({ selectedCurrency, onSelect }) => {
   const currencies = [
@@ -1125,10 +1126,13 @@ export default function InvoiceGenerator() {
               <button
                 onClick={generatePDF}
                 disabled={isGenerating}
-                className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 cursor-pointer text-white px-4 py-3 rounded disabled:opacity-50"
+                className="flex items-center justify-center w-full bg-green-600 hover:bg-green-700 cursor-pointer text-white px-4 py-3 rounded disabled:opacity-80"
               >
                 {isGenerating ? (
-                  "Generating Invoice..."
+                  <>
+                    Processing...
+                    <CountUpTimer end={100} />
+                  </>
                 ) : (
                   <>Generate Invoice </>
                 )}

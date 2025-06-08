@@ -8,6 +8,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
+import CountUpTimer from "@/components/count/countUpTimer";
 
 // Custom dropdown
 const CustomDropdown = ({
@@ -129,8 +130,13 @@ const PurchaseDialog = ({
   }, []);
 
   const handlePurchase = async () => {
-    // Validate inputs
-    if (!amount || !phoneNumber || !selectedISP || !uniqueRequestId) {
+    if (isNaN(amount)) {
+      toast.error("Invalid amount format");
+      return;
+    }
+
+    if (!isNaN(amount) || !phoneNumber || !selectedISP || !uniqueRequestId) {
+      // Validate inputs
       toast.error("Missing required information for purchase");
       return;
     }
@@ -340,9 +346,16 @@ const PurchaseDialog = ({
                 wallet?.balance >= totalAmount
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-gray-600 cursor-not-allowed"
-              } disabled:opacity-50`}
+              } disabled:opacity-80`}
             >
-              {isProcessing ? "Processing..." : "Pay Now"}
+              {isProcessing ? (
+                <>
+                  Processing...
+                  <CountUpTimer end={100} />
+                </>
+              ) : (
+                "Pay Now"
+              )}
             </button>
           </div>
         </div>

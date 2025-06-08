@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
 import axios from "axios";
+import CountUpTimer from "@/components/count/countUpTimer";
 
 const CustomDropdown = ({
   options,
@@ -409,10 +410,13 @@ const PurchaseDialog = ({
                 wallet?.balance >= totalAmount && isRenewal !== null
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-gray-600 cursor-not-allowed"
-              } disabled:opacity-50`}
+              } disabled:opacity-80`}
             >
               {isProcessing ? (
-                "Processing..."
+                <>
+                  Processing...
+                  <CountUpTimer end={100} />
+                </>
               ) : (
                 <>{isRenewal ? "Renew Bouquet" : "Change Bouquet"}</>
               )}
