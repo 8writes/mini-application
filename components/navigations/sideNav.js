@@ -111,7 +111,7 @@ export default function Sidebar() {
             Gaming
           </NavItem>
           <NavItem href="/betting" icon={<HiOutlineCash />}>
-            Betting
+            Bet Services
           </NavItem>
           <NavItem href="/generate-invoice" icon={<HiDocumentText />}>
             Generate Invoice

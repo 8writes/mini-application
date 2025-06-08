@@ -5,61 +5,100 @@ import {
   HiOutlineDesktopComputer,
   HiOutlineCash,
   HiOutlineClipboardCheck,
+  HiOutlineShieldCheck,
+  HiOutlineLightningBolt,
+  HiOutlineCurrencyDollar,
 } from "react-icons/hi";
-import { FaGamepad } from "react-icons/fa";
+import { FaGamepad, FaHandHoldingUsd } from "react-icons/fa";
+import { FiClock } from "react-icons/fi";
 import Image from "next/image";
 
-export default function Page() {
+export default function ServicesPage() {
   const services = [
     {
-      name: "Airtime",
-      icon: <HiOutlinePhone className="w-8 h-8" />,
+      name: "Airtime Top-Up",
+      icon: <HiOutlinePhone className="w-6 h-6" />,
       href: "/airtime",
-      description: "Instant airtime top-up for all networks",
+      description: "Instant airtime recharge",
+      features: ["Instant delivery", "All networks supported", "24/7 service"],
     },
     {
-      name: "Data",
-      icon: <HiChartBar className="w-8 h-8" />,
+      name: "Data Bundles",
+      icon: <HiChartBar className="w-6 h-6" />,
       href: "/data",
-      description: "Affordable data bundles for all devices",
+      description: "Discounted data plans",
+      features: [
+        "Instant delivery",
+        "All major providers",
+        "Flexible validity",
+      ],
     },
     {
-      name: "TV",
-      icon: <HiOutlineDesktopComputer className="w-8 h-8" />,
+      name: "TV Subscriptions",
+      icon: <HiOutlineDesktopComputer className="w-6 h-6" />,
       href: "/tv",
-      description: "Cable TV subscriptions and renewals",
+      description: "TV subscriptions and renewals",
+      features: [
+        "Instant delivery",
+        "DSTV, GOTV, Startimes",
+        "Guided activation",
+      ],
     },
     {
-      name: "Games Top Up",
-      icon: <FaGamepad className="w-8 h-8" />,
+      name: "Gaming Credits",
+      icon: <FaGamepad className="w-6 h-6" />,
       href: "/gaming",
-      description: "Game points top up",
+      description: "Top up your games instantly",
+      features: ["Instant delivery", "Mobile gaming", "Game vouchers"],
     },
     {
-      name: "Bet Code Conversion",
-      icon: <HiOutlineCash className="w-8 h-8" />,
+      name: "Bet Related Services",
+      icon: <HiOutlineCash className="w-6 h-6" />,
       href: "/betting",
-      description: "Convert your betting codes instantly",
+      description: "Code conversion and AI predictions",
+      features: ["Instant delivery", "Major bookies", "AI predictions"],
     },
     {
-      name: "Business Tools",
-      icon: <HiOutlineClipboardCheck className="w-8 h-8" />,
+      name: "Business Solutions",
+      icon: <HiOutlineClipboardCheck className="w-6 h-6" />,
       href: "/generate-invoice",
-      description: "Generate free invoices with ease",
+      description: "Professional invoice generation",
+      features: ["Instant delivery", "Invoice generation", "Email delivery"],
+    },
+  ];
+
+  const trustFactors = [
+    {
+      icon: <HiOutlineShieldCheck className="w-5 h-5" />,
+      title: "Secure Transactions",
+      description: "Powered by trusted payment providers",
+    },
+    {
+      icon: <HiOutlineLightningBolt className="w-5 h-5" />,
+      title: "Instant Delivery",
+      description: "99.9% of transactions complete within 30 seconds",
+    },
+    {
+      icon: <FaHandHoldingUsd className="w-5 h-5" />,
+      title: "Best Rates",
+      description: "Competitive pricing with no hidden charges",
+    },
+    {
+      icon: <FiClock className="w-5 h-5" />,
+      title: "24/7 Support",
+      description: "Dedicated customer support anytime you need",
     },
   ];
 
   return (
     <div className="min-h-[80dvh] text-white bg-gray-800">
       {/** Hero section */}
-      <section className="pt-20 pb-12 text-center px-2">
+      <section className="pt-40 pb-12 text-center px-2">
         <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
           Explore Our Services
         </h2>
         <p className="text-base sm:text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
-          Buy Airtime, Affordable Data Bundles, Game Top-ups, Bet Code
-          Conversions & more — Fast, secure, and reliable solutions tailored for
-          your everyday digital needs.
+          Airtime, Data, Top-ups & More — Fast, affordable, and always reliable.
         </p>
         <div className="mb-12">
           <Link href="/auth/signup">
@@ -70,22 +109,73 @@ export default function Page() {
         </div>
       </section>
 
-      {/** Services section */}
-      <section className="pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {services.map((service) => (
-            <Link key={service.name} href={service.href} className="group">
-              <div className="bg-gray-700 hover:bg-gray-600 rounded-lg p-6 h-full transition-all duration-300 border border-gray-600 hover:border-gray-500">
+      {/** Trust indicators */}
+      <section className="py-12 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {trustFactors.map((factor, index) => (
+              <div
+                key={index}
+                className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 hover:border-blue-500 transition-all duration-300"
+              >
                 <div className="flex items-center mb-4">
-                  <div className="p-3 rounded-full bg-gray-600 group-hover:bg-gray-500 mr-4 transition-all duration-300">
-                    {service.icon}
+                  <div className="p-2 rounded-lg bg-blue-900/20 mr-4 text-blue-400">
+                    {factor.icon}
                   </div>
-                  <h3 className="text-xl font-semibold">{service.name}</h3>
+                  <h3 className="text-lg font-semibold">{factor.title}</h3>
                 </div>
-                <p className="text-gray-300">{service.description}</p>
+                <p className="text-gray-400">{factor.description}</p>
               </div>
-            </Link>
-          ))}
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/** Services section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Our Services</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Comprehensive digital solutions designed to simplify your life and
+              business operations
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service) => (
+              <Link
+                key={service.name}
+                href={service.href}
+                className="group transform hover:-translate-y-2 transition-all duration-300"
+              >
+                <div className="bg-gray-800 hover:bg-gray-700 rounded-xl p-6 h-full border border-gray-700 hover:border-blue-500 transition-all duration-300 shadow-lg">
+                  <div className="flex items-start mb-4">
+                    <div className="p-3 rounded-xl bg-blue-900/20 text-blue-400 mr-4 group-hover:bg-blue-900/30 transition-all duration-300">
+                      {service.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold mb-1">
+                        {service.name}
+                      </h3>
+                      <p className="text-gray-400">{service.description}</p>
+                    </div>
+                  </div>
+                  <ul className="mt-4 space-y-2">
+                    {service.features.map((feature, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center text-sm text-gray-400"
+                      >
+                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-2"></span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
