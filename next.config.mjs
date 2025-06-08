@@ -1,34 +1,39 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["vtpass.com"], // Add the domain here
+    domains: ["vtpass.com"],
   },
   async headers() {
     return [
       {
-        // 🔒 API-specific security headers
         source: "/api/:path*",
         headers: [
-          // Core security
+          // Security headers
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
 
-          // Strict CORS policy
+          // CORS headers
           {
             key: "Access-Control-Allow-Origin",
             value: "https://dstvmicgrand.com",
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "POST",
+            value: "GET, POST, OPTIONS",
           },
           {
             key: "Access-Control-Allow-Headers",
-            value: "Content-Type, X-CSRF-Token, X-Request-Signature",
+            value:
+              "Content-Type, X-CSRF-Token, X-Request-Signature, Authorization",
           },
           {
             key: "Access-Control-Allow-Credentials",
             value: "true",
+          },
+          {
+            key: "Access-Control-Max-Age",
+            value: "86400", // 24 hours
           },
           {
             key: "Strict-Transport-Security",
@@ -37,13 +42,13 @@ const nextConfig = {
         ],
       },
       {
-        // 🎯 Extra hardening for payment endpoint
-        source: "/api/wrapper/pay",
+        source: "/api/wrapper/verify",
         headers: [
-          { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
+          // Special headers for verify endpoint
+          { key: "Vary", value: "Origin" },
           {
-            key: "Permissions-Policy",
-            value: "geolocation=(), microphone=(), camera=()",
+            key: "Access-Control-Allow-Origin",
+            value: "https://dstvmicgrand.com",
           },
         ],
       },
@@ -52,9 +57,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        // 🛡️ Obfuscate real endpoint
-        source: "/api/v1/req/:path*", // public route
-        destination: "/api/wrapper/:path*", // real internal route
+        source: "/api/v1/req/:path*",
+        destination: "/api/wrapper/:path*",
         has: [
           {
             type: "header",
