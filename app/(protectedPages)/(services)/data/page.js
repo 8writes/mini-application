@@ -781,7 +781,7 @@ export default function Page() {
                     {!hasDiscount ? (
                       <span className="inline-flex items-center bg-green-50 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
-                        2% cashback
+                        2% discount
                       </span>
                     ) : (
                       <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
