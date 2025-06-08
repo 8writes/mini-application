@@ -607,14 +607,12 @@ export default function WalletPage() {
                   <div>
                     <p className="pt-5">
                       2. Add this reference in the transfer narration/remark:{" "}
-                      <br />
-                      {!copiedRef && (
-                        <span className="text-xs text-yellow-400 pl-4">
-                          Click the "Copy Reference" button to copy the
-                          reference.
-                        </span>
-                      )}
                     </p>
+                    {!copiedRef && (
+                      <p className="text-xs flex justify-center text-yellow-400 pl-4">
+                        Click the "Copy Reference" button to copy the reference.
+                      </p>
+                    )}
                     <div className="flex flex-wrap items-center gap-2 bg-gray-800 p-2 rounded-md">
                       <code
                         className="font-mono bg-gray-900 px-3 py-2 rounded flex-1 select-none pointer-events-none"

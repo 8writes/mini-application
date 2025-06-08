@@ -93,7 +93,7 @@ export default function ServicesPage() {
   return (
     <div className="min-h-[80dvh] text-white bg-gray-800">
       {/** Hero section */}
-      <section className="pt-40 pb-12 text-center px-2">
+      <section className="pt-40 pb-7 text-center px-2">
         <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4">
           Explore Our Services
         </h2>
