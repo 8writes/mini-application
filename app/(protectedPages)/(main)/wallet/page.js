@@ -449,29 +449,28 @@ export default function WalletPage() {
 
               {activeTab === "instant" ? (
                 <>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-sm text-gray-200 mt-1">
                     Paystack processing fee: 1.5%{" "}
                     {amountToCredit >= 2500 && <>+ ₦100</>}
                   </p>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-base text-gray-300 mt-1">
                     Total to pay: ₦{amountToCredit.toLocaleString()}
                   </p>
                 </>
               ) : (
                 <p className="text-sm text-gray-200 mt-1">
-                  No processing fees - manual approval required (may take up to
-                  1-2 minutes)
+                  No processing fees - (may take up to 1-2 minutes)
                 </p>
               )}
             </div>
 
             {activeTab === "bank" && (
               <div className="bg-gray-700/50 rounded-lg p-4 mb-4">
-                <h3 className="font-medium text-gray-300 mb-2">
+                <h3 className="font-medium text-lg text-gray-200 mb-2">
                   Bank Transfer Instructions
                 </h3>
                 <div className="space-y-2 text-sm text-gray-200">
-                  <p className="pt-1">1. Transfer to our bank account:</p>
+                  <p className="pt-5">1. Transfer to our bank account:</p>
                   <div className="bg-gray-800 p-3 rounded-md space-y-2">
                     {/* Bank Name */}
                     <div className="flex justify-between items-center">
@@ -549,7 +548,7 @@ export default function WalletPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="pt-1">
+                    <p className="pt-5">
                       2. Use this reference in the transfer narration/remark:{" "}
                       <br />
                       {!copiedRef && (
@@ -586,16 +585,19 @@ export default function WalletPage() {
                       </button>
                     </div>
                   </div>
-                  <p className="py-1">
-                    3. Click "Confirm Transfer" after completing the transfer
+                  <p className="py-5">
+                    3. Click <span className="text-base bg-green-800 text-white">" Confirm Transfer "</span>  after completing the transfer.
                   </p>
-                  <p className="text-yellow-400 text-xs md:text-sm">
-                    Note: <br /> 1. Transfers without the correct reference may
-                    be delayed. <br /> 2. Incorrect amount will be refunded.
-                  </p>
+                  {false && (
+                    <p className="text-yellow-400 text-xs md:text-sm">
+                      Note: <br /> 1. Transfers without the correct reference
+                      may be delayed. <br /> 2. Incorrect amount will be
+                      refunded.
+                    </p>
+                  )}
                   <div className="mt-6 text-center">
                     <p className="text-gray-200 text-sm">
-                      Confused or stuck? <br/>{" "}
+                      Confused or stuck? <br />{" "}
                       <Link
                         href="/faq"
                         className="text-blue-400 hover:underline"
