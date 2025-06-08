@@ -1,0 +1,14 @@
+{
+    "headers": [
+      {
+        "source": "/api/(.*)",
+        "headers": [
+          { "key": "Access-Control-Allow-Origin", "value": "https://dstvmicgrand.com" },
+          { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+          { "key": "Access-Control-Allow-Headers", "value": "Content-Type, X-CSRF-Token, X-Request-Signature, Authorization" },
+          { "key": "Access-Control-Allow-Credentials", "value": "true" },
+          { "key": "Access-Control-Max-Age", "value": "86400" }
+        ]
+      }
+    ]
+  }

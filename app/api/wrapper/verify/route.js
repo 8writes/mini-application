@@ -1,17 +1,5 @@
 import axios from "axios";
 
-export async function OPTIONS() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "https://dstvmicgrand.com",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Credentials": "true",
-    },
-  });
-}
-
 export async function POST(req) {
   try {
     const body = await req.json();
