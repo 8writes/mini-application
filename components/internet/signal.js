@@ -6,22 +6,23 @@ const NetworkIndicator = () => {
   const [status, setStatus] = useState({
     icon: <FaWifi />,
     color: "text-gray-500",
-    label: "Offline",
+    label: "Loading...",
   });
 
   useEffect(() => {
-    // Only run on client side
     const updateStatus = () => {
       const isOnline =
         typeof navigator !== "undefined" ? navigator.onLine : true;
-      let networkQuality = "unknown";
+      let networkType = "unknown";
+      let downlinkSpeed = 0;
 
       if (typeof navigator !== "undefined" && "connection" in navigator) {
         const conn =
           navigator.connection ||
           navigator.mozConnection ||
           navigator.webkitConnection;
-        networkQuality = conn?.effectiveType || "unknown";
+        networkType = conn?.effectiveType || "unknown";
+        downlinkSpeed = conn?.downlink || 0;
       }
 
       if (!isOnline) {
@@ -33,7 +34,15 @@ const NetworkIndicator = () => {
         return;
       }
 
-      switch (networkQuality) {
+      // Improved detection that works on mobile and desktop
+      if (networkType === "unknown" && downlinkSpeed > 0) {
+        // Estimate network type based on speed if effectiveType isn't available
+        if (downlinkSpeed > 10) networkType = "4g";
+        else if (downlinkSpeed > 5) networkType = "3g";
+        else if (downlinkSpeed > 0.5) networkType = "2g";
+      }
+
+      switch (networkType) {
         case "slow-2g":
         case "2g":
           setStatus({
@@ -64,17 +73,20 @@ const NetworkIndicator = () => {
           });
           break;
         default:
+          // For unknown types, show speed if available
+          const label =
+            downlinkSpeed > 0 ? `${downlinkSpeed.toFixed(1)} Mbps` : "Online";
           setStatus({
             icon: <FaWifi />,
             color: "text-gray-500",
-            label: "Online",
+            label,
           });
       }
     };
 
     updateStatus();
 
-    // Set up event listeners
+    // Event listeners
     if (typeof window !== "undefined") {
       window.addEventListener("online", updateStatus);
       window.addEventListener("offline", updateStatus);
