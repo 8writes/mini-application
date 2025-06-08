@@ -57,7 +57,8 @@ export default function ReferralPage() {
       const { data: referredUsers, error: referralError } = await billzpaddi
         .from("users")
         .select("user_id, email, created_at")
-        .eq("referral_code", code);
+        .eq("referral_code", code)
+        .order("created_at", { ascending: false });
 
       if (referralError) throw referralError;
 
@@ -170,9 +171,6 @@ export default function ReferralPage() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentReferrals = referrals.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(referrals.length / itemsPerPage);
-
-  // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (!user || isLoading) {
     return (

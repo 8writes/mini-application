@@ -11,13 +11,13 @@ import { toast } from "react-toastify";
 
 export default function Page() {
   const { user, isLoading } = useGlobalContext();
-  const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const router = useRouter();
 
@@ -160,10 +160,11 @@ export default function Page() {
     );
   });
 
-  // pagination
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  // Calculate pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(users.length / itemsPerPage);
 
   if (user?.role !== "super_admin") {
     return (
@@ -326,20 +327,26 @@ export default function Page() {
         )}
 
         {/** pagination */}
-        {user?.role !== "user" && filteredUsers.length > usersPerPage && (
-          <div className="flex justify-center gap-2 mt-4">
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-6 text-sm">
             <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              className="px-3 py-1 border border-gray-500 rounded hover:bg-gray-500 cursor-pointer disabled:opacity-30"
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
               Previous
             </button>
-            <span className="px-4 py-2">{currentPage}</span>
+
+            <span className="text-gray-400">
+              Page {currentPage} of {totalPages}
+            </span>
+
             <button
-              disabled={indexOfLastUser >= filteredUsers.length}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              className="px-3 py-1 border border-gray-500 rounded hover:bg-gray-500 cursor-pointer disabled:opacity-30"
+              disabled={currentPage === totalPages}
             >
               Next
             </button>
