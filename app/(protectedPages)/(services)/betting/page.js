@@ -533,8 +533,8 @@
       <div className="p-4 md:p-6">
         <section className="md:px-4">
           <div className="flex flex-wrap justify-between gap-2 items-center mb-6">
-            <h1 className="text-2xl md:text-3xl uppercase">Betting</h1>
-          </div>
+            <h1 className="text-2xl md:text-3xl uppercase">Bet Services</h1>
+          </div>  
 
           {/* Tab Navigation */}
           <div className="grid grid-cols-2 md:grid-cols-4 border-b border-gray-700 mb-6 overflow-x-auto">
