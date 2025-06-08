@@ -78,7 +78,7 @@ export default function DashboardPage() {
                 <div className="bg-green-500/20 p-3 rounded-full mb-2">
                   <HiArrowDown className="text-green-400 text-xl" />
                 </div>
-                <span>Fund Wallet</span>
+                <span className="text-sm md:text-base">Fund Wallet</span>
               </button>
             </Link>
 
@@ -88,7 +88,7 @@ export default function DashboardPage() {
                 <div className="bg-purple-500/20 p-3 rounded-full mb-2">
                   <HiChartBar className="text-purple-400 text-xl" />
                 </div>
-                <span>Buy Data</span>
+                <span className="text-sm md:text-base">Buy Data</span>
               </button>
             </Link>
 
@@ -98,7 +98,7 @@ export default function DashboardPage() {
                 <div className="bg-blue-500/20 p-3 rounded-full mb-2">
                   <HiOutlineCash className="text-blue-400 text-xl" />
                 </div>
-                <span>Bet Services</span>
+                <span className="text-sm md:text-base">Bet Services</span>
               </button>
             </Link>
 
@@ -108,7 +108,7 @@ export default function DashboardPage() {
                 <div className="bg-yellow-500/20 p-3 rounded-full mb-2">
                   <FaGamepad className="text-yellow-400 text-xl" />
                 </div>
-                <span>Gaming</span>
+                <span className="text-sm md:text-base">Gaming</span>
               </button>
             </Link>
           </div>
