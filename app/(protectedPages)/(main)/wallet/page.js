@@ -606,11 +606,11 @@ export default function WalletPage() {
                   </div>
                   <div>
                     <p className="pt-5">
-                      2. Use this reference in the transfer narration/remark:{" "}
+                      2. Add this reference in the transfer narration/remark:{" "}
                       <br />
                       {!copiedRef && (
                         <span className="text-xs text-yellow-400 pl-4">
-                          Please click the "Copy Reference" button to copy the
+                          Click the "Copy Reference" button to copy the
                           reference.
                         </span>
                       )}
@@ -621,7 +621,7 @@ export default function WalletPage() {
                         onCopy={(e) => {
                           e.preventDefault();
                           toast.error(
-                            "Please click the copy button to copy the reference."
+                            "Click the Copy Reference button to copy the reference."
                           );
                         }}
                       >
