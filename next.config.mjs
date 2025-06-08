@@ -41,17 +41,6 @@ const nextConfig = {
           },
         ],
       },
-      {
-        source: "/api/wrapper/verify",
-        headers: [
-          // Special headers for verify endpoint
-          { key: "Vary", value: "Origin" },
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "https://dstvmicgrand.com",
-          },
-        ],
-      },
     ];
   },
 };
