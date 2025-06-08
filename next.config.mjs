@@ -16,7 +16,7 @@ const nextConfig = {
           // CORS headers
           {
             key: "Access-Control-Allow-Origin",
-            value: "https://dstvmicgrand.com", // http://localhost:3000
+            value: "https://dstvmicgrand.com", //
           },
           {
             key: "Access-Control-Allow-Methods",
