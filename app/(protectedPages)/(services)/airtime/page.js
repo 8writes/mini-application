@@ -130,12 +130,12 @@ const PurchaseDialog = ({
   }, []);
 
   const handlePurchase = async () => {
-    if (isNaN(amount)) {
-      toast.error("Invalid amount format");
+    if (isNaN(amount) || isNaN(phoneNumber)) {
+      toast.error("Invalid input format");
       return;
     }
 
-    if (!isNaN(amount) || !phoneNumber || !selectedISP || !uniqueRequestId) {
+    if (!amount || !phoneNumber || !selectedISP || !uniqueRequestId) {
       // Validate inputs
       toast.error("Missing required information for purchase");
       return;

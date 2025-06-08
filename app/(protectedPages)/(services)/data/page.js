@@ -154,8 +154,8 @@ const PurchaseDialog = ({
     : 0;
 
   const handlePurchase = async () => {
-    if (isNaN(totalAmount)) {
-      toast.error("Invalid amount format");
+    if (isNaN(totalAmount) || isNaN(phoneNumber)) {
+      toast.error("Invalid input format");
       return;
     }
 
