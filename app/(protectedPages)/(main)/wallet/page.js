@@ -36,6 +36,7 @@ export default function WalletPage() {
   const [isFunding, setIsFunding] = useState(false);
   const [amount, setAmount] = useState("");
   const [activePreset, setActivePreset] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [activeTab, setActiveTab] = useState("instant"); // 'instant' or 'bank'
   const [copiedRef, setCopiedRef] = useState(false);
   const [bankDetails, setBankDetails] = useState({
@@ -51,6 +52,26 @@ export default function WalletPage() {
   useEffect(() => {
     fetchWallet();
   }, []);
+
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile(); // Initial check
+    window.addEventListener("resize", checkMobile); // Update on resize
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const handleBankTabClick = () => {
+    if (isMobile) {
+      setActiveTab("bank");
+    } else {
+      toast.info("Bank Transfer is only available on mobile.");
+    }
+  };
 
   // Calculate amount to credit including fee Paystack
   function calculateAmountToCreditPaystack(amount) {
@@ -451,7 +472,7 @@ export default function WalletPage() {
                   ? "text-blue-400 border-b-2 border-blue-400"
                   : "text-gray-400 hover:text-gray-300"
               }`}
-              onClick={() => setActiveTab("bank")}
+              onClick={handleBankTabClick}
             >
               <FaPiggyBank className="hidden md:block" />
               Bank Transfer
@@ -523,7 +544,7 @@ export default function WalletPage() {
 
             {activeTab === "bank" && (
               <div className="bg-gray-700/50 rounded-lg p-4 mb-4">
-                <h3 className="font-medium text-lg text-gray-200 mb-2">
+                <h3 className="font-medium text-lg text-gray-200">
                   Bank Transfer Instructions
                 </h3>
                 <div className="space-y-2 text-sm text-gray-200">
