@@ -57,10 +57,7 @@ export default function NavBar() {
             {isSidebarOpen ? <HiX size={30} /> : <HiMenu size={30} />}
           </button>
           <div className="header__logo">
-            <Link
-              href="/home"
-              className="text-2xl font-bold flex items-center gap-1"
-            >
+            <span className="text-2xl font-bold flex items-center gap-1">
               <Image
                 src="/billzpaddi-logo-icon.png"
                 alt="BillzPaddi Logo"
@@ -68,7 +65,7 @@ export default function NavBar() {
                 height={20}
               />{" "}
               𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
-            </Link>
+            </span>
           </div>
         </div>
         <div className="relative flex gap-2 items-center">
@@ -107,9 +104,7 @@ export default function NavBar() {
               <Link href="/profile" onClick={() => setIsDropdownOpen(false)}>
                 <li
                   className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
-                    pathname === "/profile"
-                      ? "bg-gray-700 w-full"
-                      : ""
+                    pathname === "/profile" ? "bg-gray-700 w-full" : ""
                   }`}
                 >
                   <HiOutlineUser className="text-xl" />
@@ -120,9 +115,7 @@ export default function NavBar() {
               <Link href="/support" onClick={() => setIsDropdownOpen(false)}>
                 <li
                   className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
-                    pathname === "/support"
-                      ? "bg-gray-700 w-full"
-                      : ""
+                    pathname === "/support" ? "bg-gray-700 w-full" : ""
                   }`}
                 >
                   <FaHeadset className="text-xl" />
