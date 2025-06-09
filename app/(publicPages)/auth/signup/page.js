@@ -46,10 +46,18 @@ export default function SignupPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const trimmedData = {
+      ...formData,
+      first_name: formData.first_name.trim(),
+      last_name: formData.last_name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      referral_code: formData.referral_code.trim(),
+    };
+
     try {
       const { data, error: signUpError } = await billzpaddi.auth.signUp({
-        email: formData?.email,
-        password: formData?.password,
+        email: trimmedData?.email,
+        password: trimmedData?.password,
       });
 
       if (signUpError) {
@@ -57,7 +65,7 @@ export default function SignupPage() {
         return;
       }
 
-      const { password, ...dataToSave } = formData;
+      const { password, ...dataToSave } = trimmedData;
 
       const { error } = await billzpaddi.from("users").insert(dataToSave);
 
@@ -68,12 +76,12 @@ export default function SignupPage() {
 
       await billzpaddi.from("wallets").insert({
         balance: 0,
-        email: formData?.email,
+        email: trimmedData?.email,
       });
 
       await billzpaddi.from("invoice_generations").insert({
         invoice_count: 0,
-        email: formData?.email,
+        email: trimmedData?.email,
       });
 
       toast.success("Signup successful!");
