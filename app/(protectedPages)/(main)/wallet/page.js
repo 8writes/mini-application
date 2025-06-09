@@ -442,7 +442,7 @@ export default function WalletPage() {
               }`}
               onClick={() => setActiveTab("instant")}
             >
-              <TbTransfer />
+              <TbTransfer className="hidden md:block" />
               Instant Deposit
             </button>
             <button
@@ -453,7 +453,7 @@ export default function WalletPage() {
               }`}
               onClick={() => setActiveTab("bank")}
             >
-              <FaPiggyBank />
+              <FaPiggyBank className="hidden md:block" />
               Bank Transfer
             </button>
           </div>
@@ -527,92 +527,14 @@ export default function WalletPage() {
                   Bank Transfer Instructions
                 </h3>
                 <div className="space-y-2 text-sm text-gray-200">
-                  <p className="pt-5">1. Transfer to our bank account:</p>
-                  <div className="bg-gray-800 p-3 rounded-md space-y-2">
-                    {/* Bank Name */}
-                    <div className="flex justify-between items-center">
-                      <p className="text-gray-300">
-                        <span className="font-medium">Bank Name:</span>{" "}
-                        {bankDetails.bankName}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(bankDetails.bankName);
-                          toast.success("Bank name copied!");
-                        }}
-                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
-                        title="Copy bank name"
-                      >
-                        <FaCopy className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    {/* Account Name */}
-                    <div className="flex justify-between items-center">
-                      <p className="text-gray-300">
-                        <span className="font-medium">Account Name:</span>{" "}
-                        {bankDetails.accountName}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(
-                            bankDetails.accountName
-                          );
-                          toast.success("Account name copied!");
-                        }}
-                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
-                        title="Copy account name"
-                      >
-                        <FaCopy className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    {/* Account Number */}
-                    <div className="flex justify-between items-center">
-                      <p className="text-gray-300">
-                        <span className="font-medium">Account Number:</span>{" "}
-                        {bankDetails.accountNumber}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(
-                            bankDetails.accountNumber
-                          );
-                          toast.success("Account number copied!");
-                        }}
-                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
-                        title="Copy account number"
-                      >
-                        <FaCopy className="h-4 w-4" />
-                      </button>
-                    </div>
-                    {/* Amount to send */}
-                    <div className="flex justify-between items-center">
-                      <p className="text-gray-300 text-base">
-                        <span className="font-medium text-sm">
-                          Amount to send:
-                        </span>{" "}
-                        ₦
-                        {amount ? (
-                          <>{parseFloat(amount).toLocaleString()} </>
-                        ) : (
-                          "0.00"
-                        )}
-                      </p>
-                    </div>
-                  </div>
                   <div>
                     <p className="pt-5">
-                      2. Add this reference in the transfer narration/remark:{" "}
+                      1. Click{" "}
+                      <span className="text-base bg-green-800 text-white">
+                        "Copy Reference"
+                      </span>{" "}
+                      and add it to transfer narration or remark.{" "}
                     </p>
-                    {!copiedRef && (
-                      <p className="text-xs flex justify-center text-yellow-400 pl-4">
-                        Click the "Copy Reference" button to copy the reference.
-                      </p>
-                    )}
                     <div className="flex flex-wrap items-center gap-2 bg-gray-800 p-2 rounded-md">
                       <code
                         className="font-mono bg-gray-900 px-3 py-2 rounded flex-1 select-none pointer-events-none"
@@ -640,6 +562,96 @@ export default function WalletPage() {
                       </button>
                     </div>
                   </div>
+                  <p className="pt-5">2. Transfer to our bank account:</p>
+                  <div className="bg-gray-800 p-3 rounded-md space-y-2">
+                    {/* Bank Name */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300">
+                        <span className="font-medium">Bank Name:</span>{" "}
+                        <br className="md:hidden" />
+                        <span className="text-base bg-green-800 text-white px-2">
+                          {bankDetails.bankName}
+                        </span>
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(bankDetails.bankName);
+                          toast.success("Bank name copied!");
+                        }}
+                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                        title="Copy bank name"
+                      >
+                        <FaCopy className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {/* Account Name */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300">
+                        <span className="font-medium">Account Name:</span>{" "}
+                        <br className="md:hidden" />
+                        <span className="text-base bg-green-800 text-white px-2">
+                          {bankDetails.accountName}
+                        </span>
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            bankDetails.accountName
+                          );
+                          toast.success("Account name copied!");
+                        }}
+                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                        title="Copy account name"
+                      >
+                        <FaCopy className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {/* Account Number */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300">
+                        <span className="font-medium">Account Number:</span>{" "}
+                        <br className="md:hidden" />
+                        <span className="text-base bg-green-800 text-white px-2">
+                          {bankDetails.accountNumber}
+                        </span>
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            bankDetails.accountNumber
+                          );
+                          toast.success("Account number copied!");
+                        }}
+                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                        title="Copy account number"
+                      >
+                        <FaCopy className="h-4 w-4" />
+                      </button>
+                    </div>
+                    {/* Amount to send */}
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-300 text-base">
+                        <span className="font-medium text-sm">
+                          Amount to send:
+                        </span>{" "}
+                        <br className="md:hidden" />
+                        <span className="text-base bg-green-800 text-white px-2">
+                          ₦
+                          {amount ? (
+                            <>{parseFloat(amount).toLocaleString()} </>
+                          ) : (
+                            "0.00"
+                          )}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
                   <p className="py-5">
                     3. Click{" "}
                     <span className="text-base bg-green-800 text-white">
