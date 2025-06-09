@@ -53,7 +53,7 @@ export default function ProfilePage() {
     try {
       const { data, error } = await billzpaddi
         .from("users")
-        .update({ phone: formData?.phone })
+        .update({ phone: formData?.phone.trim() })
         .eq("user_id", user?.user_id)
         .select();
 
