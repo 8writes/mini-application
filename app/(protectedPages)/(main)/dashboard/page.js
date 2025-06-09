@@ -104,7 +104,7 @@ export default function DashboardPage() {
             </Link>
 
             {/* Pay Bills Button */}
-            <Link href="/gaming" passHref>
+            <Link href="/airtime" passHref>
               <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
                 <div className="bg-yellow-500/20 p-3 rounded-full mb-2">
                   <HiOutlinePhone className="text-yellow-400 text-xl" />
