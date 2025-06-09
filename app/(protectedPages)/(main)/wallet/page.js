@@ -1,6 +1,6 @@
 "use client";
 import { useGlobalContext } from "@/context/GlobalContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, act } from "react";
 import { HiRefresh } from "react-icons/hi";
 import {
   FaMoneyBillWave,
@@ -548,8 +548,12 @@ export default function WalletPage() {
                         bank{uniqueRequestId}
                       </code>
                       <button
-                        type="button"
+                        type="submit"
                         onClick={() => {
+                          if (!amount) {
+                            toast.info("Please enter an amount first.");
+                            return;
+                          }
                           navigator.clipboard.writeText(
                             `bank${uniqueRequestId}`
                           );
@@ -651,14 +655,15 @@ export default function WalletPage() {
                       </p>
                     </div>
                   </div>
-
-                  <p className="py-5">
-                    3. Click{" "}
-                    <span className="text-base bg-green-800 text-white">
-                      " Confirm Transfer "
-                    </span>{" "}
-                    after completing the transfer.
-                  </p>
+                  {false && (
+                    <p className="py-5">
+                      3. Click{" "}
+                      <span className="text-base bg-green-800 text-white">
+                        " Confirm Transfer "
+                      </span>{" "}
+                      after completing the transfer.
+                    </p>
+                  )}
                   {false && (
                     <p className="text-yellow-400 text-xs md:text-sm">
                       Note: <br /> 1. Transfers without the correct reference
@@ -690,34 +695,35 @@ export default function WalletPage() {
                 </div>
               </div>
             )}
-
-            <button
-              type="submit"
-              disabled={
-                (!copiedRef && activeTab === "bank") ||
-                isFunding ||
-                !amount ||
-                (activeTab === "instant"
-                  ? parseFloat(amount) < 100
-                  : parseFloat(amount) < 500)
-              }
-              className={`w-full py-3 rounded-md transition-colors font-medium ${
-                (!copiedRef && activeTab === "bank") ||
-                isFunding ||
-                !amount ||
-                (activeTab === "instant"
-                  ? parseFloat(amount) < 100
-                  : parseFloat(amount) < 500)
-                  ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                  : "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
-              }`}
-            >
-              {isFunding
-                ? "Processing..."
-                : activeTab === "instant"
-                ? "Fund Wallet (Instant)"
-                : "Confirm Transfer"}
-            </button>
+            {activeTab === "instant" && (
+              <button
+                type="submit"
+                disabled={
+                  (!copiedRef && activeTab === "bank") ||
+                  isFunding ||
+                  !amount ||
+                  (activeTab === "instant"
+                    ? parseFloat(amount) < 100
+                    : parseFloat(amount) < 500)
+                }
+                className={`w-full py-3 rounded-md transition-colors font-medium ${
+                  (!copiedRef && activeTab === "bank") ||
+                  isFunding ||
+                  !amount ||
+                  (activeTab === "instant"
+                    ? parseFloat(amount) < 100
+                    : parseFloat(amount) < 500)
+                    ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
+                }`}
+              >
+                {isFunding
+                  ? "Processing..."
+                  : activeTab === "instant"
+                  ? "Fund Wallet (Instant)"
+                  : "Confirm Transfer"}
+              </button>
+            )}
           </form>
         </div>
       </section>
