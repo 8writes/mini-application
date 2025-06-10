@@ -1,18 +1,24 @@
 import axios from "axios";
+import { LRUCache } from "lru-cache";
 
-// Rate limiting setup
-const rateLimit = new Map();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+// Optimized rate limiting with LRU cache
+const rateLimitCache = new LRUCache({
+  max: 1000, // Max IPs to track
+  ttl: 60 * 1000, // 1 minute TTL
+});
+
 const RATE_LIMIT_MAX = 10; // 10 requests per minute
 
 // Request configuration
-const INITIAL_REQUEST_TIMEOUT = 10000; // 10 seconds for initial request
-const REQUERY_TIMEOUT = 5000; // 5 seconds for requery
-const MAX_REQUERY_ATTEMPTS = 3;
-const REQUERY_DELAY = 3000; // 3 seconds between requeries
+const REQUEST_TIMEOUTS = {
+  initial: 10000, // 10 seconds for initial request
+  retry: 5000, // 5 seconds for retry
+};
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY = 3000; // 3 seconds between retries
 
-// Security headers template
-const getSecurityHeaders = () => ({
+// Predefined security headers (static for optimization)
+const SECURITY_HEADERS = Object.freeze({
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "https://billzpaddi.com.ng",
   "Access-Control-Allow-Methods": "POST",
@@ -26,82 +32,103 @@ const getSecurityHeaders = () => ({
   "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
 });
 
+// Precompiled regex for phone validation
+const PHONE_REGEX = /^(\+234|0)[789][01]\d{8}$/;
+
+// Predefined allowed domains
+const ALLOWED_DOMAINS = new Set([
+  "https://billzpaddi.com.ng",
+  "https://www.billzpaddi.com.ng",
+]);
+
+// Error response templates
+const ERROR_RESPONSES = {
+  invalidRequest: new Response("Invalid request", { status: 403 }),
+  unauthorized: new Response(
+    JSON.stringify({ message: "Unauthorized", ok: false }),
+    { status: 401, headers: SECURITY_HEADERS }
+  ),
+  tooManyRequests: new Response(
+    JSON.stringify({
+      message: "Too many requests. Please try again later.",
+      ok: false,
+    }),
+    { status: 429, headers: SECURITY_HEADERS }
+  ),
+  unauthorizedDomain: new Response(
+    JSON.stringify({ message: "Unauthorized domain", ok: false }),
+    { status: 403, headers: SECURITY_HEADERS }
+  ),
+  methodNotAllowed: new Response(
+    JSON.stringify({ message: "Method not allowed", ok: false }),
+    { status: 405, headers: SECURITY_HEADERS }
+  ),
+  invalidContentType: new Response(
+    JSON.stringify({ message: "Invalid content type", ok: false }),
+    { status: 400, headers: SECURITY_HEADERS }
+  ),
+  invalidPhone: new Response(
+    JSON.stringify({
+      message: "Invalid Nigerian phone number format",
+      ok: false,
+    }),
+    { status: 400, headers: SECURITY_HEADERS }
+  ),
+  invalidAmount: new Response(
+    JSON.stringify({
+      message: "Invalid amount",
+      ok: false,
+    }),
+    { status: 400, headers: SECURITY_HEADERS }
+  ),
+  serverError: (message = "An unexpected error occurred") =>
+    new Response(JSON.stringify({ message, ok: false }), {
+      status: 500,
+      headers: SECURITY_HEADERS,
+    }),
+};
+
 export async function POST(request) {
-  // 1. Verify CSRF Token
+  // 1. CSRF Token Verification
   const csrfToken = request.headers.get("X-CSRF-Token");
   const cookieToken = request.cookies.get("token")?.value;
-
   if (!csrfToken || csrfToken !== cookieToken) {
-    return new Response("Invalid request", { status: 403 });
+    return ERROR_RESPONSES.invalidRequest;
   }
 
   // 2. API Key Authentication
   const apiKey = request.headers.get("authorization")?.split("Bearer ")[1];
   if (!apiKey || apiKey !== process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY) {
-    return new Response(
-      JSON.stringify({ message: "Unauthorized", ok: false }),
-      {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return ERROR_RESPONSES.unauthorized;
   }
 
-  // 3. Rate limiting by IP
+  // 3. Optimized Rate Limiting
   const clientIp =
-    request.headers.get("x-forwarded-for") || request.ip || "unknown";
-  const currentTime = Date.now();
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() || // Get first IP if multiple
+    request.ip ||
+    "unknown";
 
-  if (rateLimit.has(clientIp)) {
-    const { count, firstRequestTime } = rateLimit.get(clientIp);
-
-    if (currentTime - firstRequestTime < RATE_LIMIT_WINDOW) {
-      if (count >= RATE_LIMIT_MAX) {
-        return new Response(
-          JSON.stringify({
-            message: "Too many requests. Please try again later.",
-            ok: false,
-          }),
-          { status: 429, headers: { "Content-Type": "application/json" } }
-        );
-      }
-      rateLimit.set(clientIp, { count: count + 1, firstRequestTime });
-    } else {
-      rateLimit.set(clientIp, { count: 1, firstRequestTime: currentTime });
-    }
-  } else {
-    rateLimit.set(clientIp, { count: 1, firstRequestTime: currentTime });
+  const currentCount = rateLimitCache.get(clientIp) || 0;
+  if (currentCount >= RATE_LIMIT_MAX) {
+    return ERROR_RESPONSES.tooManyRequests;
   }
+  rateLimitCache.set(clientIp, currentCount + 1);
 
   // 4. Strict Origin Checking
   const origin = request.headers.get("origin");
-  const allowedDomains = [
-    "https://billzpaddi.com.ng",
-    "https://www.billzpaddi.com.ng",
-  ];
-
-  if (origin && !allowedDomains.includes(origin)) {
-    return new Response(
-      JSON.stringify({ message: "Unauthorized domain", ok: false }),
-      { status: 403, headers: { "Content-Type": "application/json" } }
-    );
+  if (origin && !ALLOWED_DOMAINS.has(origin)) {
+    return ERROR_RESPONSES.unauthorizedDomain;
   }
 
   // 5. Method Validation
   if (request.method !== "POST") {
-    return new Response(
-      JSON.stringify({ message: "Method not allowed", ok: false }),
-      { status: 405, headers: { "Content-Type": "application/json" } }
-    );
+    return ERROR_RESPONSES.methodNotAllowed;
   }
 
   // 6. Content-Type Validation
   const contentType = request.headers.get("content-type");
-  if (!contentType || !contentType.includes("application/json")) {
-    return new Response(
-      JSON.stringify({ message: "Invalid content type", ok: false }),
-      { status: 400, headers: { "Content-Type": "application/json" } }
-    );
+  if (!contentType?.includes("application/json")) {
+    return ERROR_RESPONSES.invalidContentType;
   }
 
   try {
@@ -110,48 +137,30 @@ export async function POST(request) {
     // 7. Request Body Validation
     const requiredFields = ["request_id", "amount"];
     const missingFields = requiredFields.filter((field) => !body[field]);
-
     if (missingFields.length > 0) {
       return new Response(
         JSON.stringify({
           message: `Missing required fields: ${missingFields.join(", ")}`,
           ok: false,
         }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { status: 400, headers: SECURITY_HEADERS }
       );
     }
 
-    // 8. Phone Number Validation (Nigerian numbers)
-    const phoneRegex = /^(\+234|0)[789][01]\d{8}$/;
-    if (!phoneRegex.test(body.phone)) {
-      return new Response(
-        JSON.stringify({
-          message: "Invalid Nigerian phone number format",
-          ok: false,
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    // 8. Phone Number Validation
+    if (!PHONE_REGEX.test(body.phone)) {
+      return ERROR_RESPONSES.invalidPhone;
     }
 
     // 9. Amount Validation
     if (isNaN(body.amount) || body.amount <= 0) {
-      return new Response(
-        JSON.stringify({
-          message: "Invalid amount",
-          ok: false,
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return ERROR_RESPONSES.invalidAmount;
     }
 
-    // 10. Make the VTpass API call with requery logic
-    let response;
-    let attempts = 0;
-    let lastError;
-
-    while (attempts <= MAX_REQUERY_ATTEMPTS) {
+    // 10. Optimized VTpass API call with retry logic
+    const makeVtpassRequest = async (attempt = 0) => {
       try {
-        response = await axios.post(
+        const response = await axios.post(
           "https://vtpass.com/api/pay",
           {
             serviceID: body.serviceID,
@@ -167,76 +176,49 @@ export async function POST(request) {
               "secret-key": process.env.BILLZ_SECRET_KEY,
               "Content-Type": "application/json",
             },
-            timeout: attempts === 0 ? INITIAL_REQUEST_TIMEOUT : REQUERY_TIMEOUT,
+            timeout:
+              attempt === 0 ? REQUEST_TIMEOUTS.initial : REQUEST_TIMEOUTS.retry,
           }
         );
 
-        // Check transaction status for requery
         const transactionStatus = response.data?.content?.transactions?.status;
-        if (transactionStatus === "pending") {
-          if (attempts < MAX_REQUERY_ATTEMPTS) {
-            await new Promise((resolve) => setTimeout(resolve, REQUERY_DELAY));
-            attempts++;
-            continue;
-          } else {
-            return new Response(JSON.stringify(response.data), {
-              status: 200,
-              headers: getSecurityHeaders(),
-            });
-          }
+
+        if (transactionStatus === "pending" && attempt < MAX_RETRY_ATTEMPTS) {
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+          return makeVtpassRequest(attempt + 1);
         }
 
-        // Successful response
-        return new Response(JSON.stringify(response.data), {
-          status: 200,
-          headers: getSecurityHeaders(),
-        });
+        return response;
       } catch (error) {
-        lastError = error;
-        attempts++;
-
-        // Don't requery on client errors
         if (
-          error.response?.status &&
-          [400, 401, 403].includes(error.response.status)
+          attempt < MAX_RETRY_ATTEMPTS &&
+          ![400, 401, 403].includes(error.response?.status)
         ) {
-          break;
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+          return makeVtpassRequest(attempt + 1);
         }
-
-        if (attempts <= MAX_REQUERY_ATTEMPTS) {
-          await new Promise((resolve) => setTimeout(resolve, REQUERY_DELAY));
-        }
+        throw error;
       }
-    }
+    };
 
-    // All requery attempts failed
-    console.error("Transaction failed after retries:", lastError.message);
-    return new Response(
-      JSON.stringify({
-        message:
-          lastError.response?.data?.message ||
-          "Transaction failed after multiple attempts",
-        ok: false,
-      }),
-      {
-        status: lastError.response?.status || 500,
-        headers: getSecurityHeaders(),
-      }
-    );
+    const response = await makeVtpassRequest();
+    return new Response(JSON.stringify(response.data), {
+      status: 200,
+      headers: SECURITY_HEADERS,
+    });
   } catch (error) {
-    console.error("Server error:", error.message);
-
-    let errorMessage = "An unexpected error occurred";
-    let statusCode = 500;
+    console.error("API Error:", error.message);
 
     if (error instanceof SyntaxError) {
-      errorMessage = "Invalid JSON payload";
-      statusCode = 400;
+      return new Response(
+        JSON.stringify({ message: "Invalid JSON payload", ok: false }),
+        { status: 400, headers: SECURITY_HEADERS }
+      );
     }
 
-    return new Response(JSON.stringify({ message: errorMessage, ok: false }), {
-      status: statusCode,
-      headers: getSecurityHeaders(),
-    });
+    return ERROR_RESPONSES.serverError(
+      error.response?.data?.message ||
+        "Transaction failed after multiple attempts"
+    );
   }
 }
