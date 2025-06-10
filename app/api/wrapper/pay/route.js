@@ -179,18 +179,10 @@ export async function POST(request) {
             attempts++;
             continue;
           } else {
-            return new Response(
-              JSON.stringify({
-                message:
-                  "Transaction is still processing. Please check back later.",
-                ok: false,
-                pending: true,
-              }),
-              {
-                status: 202,
-                headers: getSecurityHeaders(),
-              }
-            );
+            return new Response(JSON.stringify(response.data), {
+              status: 200,
+              headers: getSecurityHeaders(),
+            });
           }
         }
 
