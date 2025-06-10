@@ -512,12 +512,12 @@ export default function WalletPage() {
                   onChange={handleAmountChange}
                   placeholder={
                     activeTab === "instant"
-                      ? "(minimum ₦100)"
+                      ? "(minimum ₦500)"
                       : "(minimum ₦500)"
                   }
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pl-12 outline-none"
                   required
-                  min={activeTab === "instant" ? "100" : "500"}
+                  min={activeTab === "instant" ? "500" : "500"}
                   disabled={isFunding}
                 />
                 <span className="absolute left-3 top-3.5 text-gray-400">
