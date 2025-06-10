@@ -17,10 +17,12 @@ import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { user, isLoading } = useGlobalContext();
-  const { wallet, transactions, fetchWallet } = useGlobalContextData();
+  const { wallet, transactions, fetchTransactions, fetchWallet } =
+    useGlobalContextData();
 
   useEffect(() => {
     fetchWallet();
+    fetchTransactions();
   }, []);
 
   if (!user || isLoading) {

@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 export default function TransactionsPage() {
   // All hooks must be called unconditionally at the top
   const { user, isLoading } = useGlobalContext();
-  const { transactions } = useGlobalContextData();
+  const { transactions, fetchTransactions } = useGlobalContextData();
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -17,6 +17,10 @@ export default function TransactionsPage() {
   const [conversionRate] = useState(50);
   const transactionsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
   useEffect(() => {
     let result = [...transactions];
