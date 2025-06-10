@@ -53,7 +53,6 @@ export default function WalletPage() {
     fetchWallet();
   }, []);
 
-
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -537,7 +536,10 @@ export default function WalletPage() {
                 </>
               ) : (
                 <p className="text-sm text-gray-200 mt-1">
-                  No processing fees - (may take up to 1-2 minutes)
+                  No processing fee -{" "}
+                  <span className="text-gray-400">
+                    (may take up to 1 minute){" "}
+                  </span>
                 </p>
               )}
             </div>
