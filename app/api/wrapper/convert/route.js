@@ -17,10 +17,13 @@ export async function POST(request) {
   // API Key Authentication
   const apiKey = request.headers.get("authorization")?.split("Bearer ")[1];
   if (!apiKey || apiKey !== process.env.NEXT_PUBLIC_BILLZ_AUTH_KEY) {
-    return new Response(JSON.stringify({ message: "Fuck Off", ok: false }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ message: "Invalid request", ok: false }),
+      {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   // Rate limiting by IP
