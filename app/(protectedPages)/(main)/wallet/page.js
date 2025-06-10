@@ -325,6 +325,11 @@ export default function WalletPage() {
 
     const amountValue = parseFloat(amount);
 
+    if (amountValue < 500) {
+      toast.error(`Minimum deposit is ₦500`);
+      return;
+    }
+
     if (amountValue > wallet?.limit) {
       toast.error(`Max deposit of ₦${wallet?.limit.toLocaleString()}`);
       return;
