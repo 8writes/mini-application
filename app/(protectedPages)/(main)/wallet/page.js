@@ -476,15 +476,23 @@ export default function WalletPage() {
               Instant Deposit
             </button>
             <button
-              className={`py-2 px-4 font-medium cursor-pointer flex items-center gap-2 ${
+              className={`py-2 px-4 relative font-medium cursor-pointer flex items-center gap-2 transition-all duration-200 group ${
                 activeTab === "bank"
-                  ? "text-blue-400 border-b-2 border-blue-400"
+                  ? "text-blue-400"
                   : "text-gray-400 hover:text-gray-300"
               }`}
               onClick={handleBankTabClick}
             >
               <FaPiggyBank className="hidden md:block" />
-              Bank Transfer
+              <span className="relative">
+                <span className="relative z-10">Bank Transfer</span>
+                {/* 0 Fee badge */}
+                <span className="absolute -top-4 -right-4 md:-right-5 text-xs bg-green-500 text-white px-1.5 py-0.5 rounded-full whitespace-nowrap flex items-center justify-center">
+                  0 Fee
+                  {/* Small triangle pointer for badge */}
+                  <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 rotate-45 bg-green-500"></span>
+                </span>
+              </span>
             </button>
           </div>
 
