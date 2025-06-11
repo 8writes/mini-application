@@ -131,9 +131,9 @@ const PurchaseDialog = ({
   const applyDiscount = !hasDiscount;
 
   const discountRates = {
-    "mtn-data": 0.005, // 0.5%
+    "mtn-data": 0.01, // 0.5%
     "glo-data": 0.01, // 1%
-    "airtel-data": 0.007, // 0.7%
+    "airtel-data": 0.01, // 0.7%
     "etisalat-data": 0.01, // 1%
   };
 
@@ -147,7 +147,7 @@ const PurchaseDialog = ({
         } else {
           // Use selectedISP rate or fallback to 1%
           const rate = discountRates[selectedISP?.serviceID] || 0.01;
-          const discount = Math.min(amount * rate, 150);
+          const discount = Math.min(amount * rate, 250);
           return Math.round(amount - discount);
         }
       })()
@@ -488,9 +488,9 @@ export default function Page() {
     } else {
       // Define discount rates per ISP
       const discountRates = {
-        "mtn-data": 0.005, // 0.5%
+        "mtn-data": 0.01, // 1%
         "glo-data": 0.01, // 1%
-        "airtel-data": 0.007, // 0.7%
+        "airtel-data": 0.01, // 1%
         "etisalat-data": 0.01, // 1%
       };
 
@@ -498,7 +498,7 @@ export default function Page() {
       const rate = discountRates[selectedISP?.serviceID] || 0.01;
 
       // Apply discount with ₦150 cap
-      const discount = Math.min(amount * rate, 150);
+      const discount = Math.min(amount * rate, 250);
       return Math.round(amount - discount);
     }
   };
@@ -698,9 +698,9 @@ export default function Page() {
 
   // Define discount rates per ISP
   const discountRates = {
-    "mtn-data": 0.005, // 0.5%
+    "mtn-data": 0.01, // 0.5%
     "glo-data": 0.01, // 1%
-    "airtel-data": 0.007, // 0.7%
+    "airtel-data": 0.01, // 0.7%
     "etisalat-data": 0.01, // 1%
   };
 
@@ -800,7 +800,7 @@ export default function Page() {
                       <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
                         {(rate * 100).toFixed(1)}% discount
-                        {Number(plan?.variation_amount || 0) * rate > 150 && (
+                        {Number(plan?.variation_amount || 0) * rate > 250 && (
                           <span className="relative ml-1.5" ref={tooltipRef}>
                             <span
                               onClick={(e) =>
@@ -823,7 +823,7 @@ export default function Page() {
                                   : "hidden"
                               }`}
                             >
-                              Discount capped at ₦150.
+                              Discount capped at ₦250.
                               <span className="absolute w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></span>
                             </span>
                           </span>
