@@ -57,6 +57,7 @@ export async function POST(request) {
   const allowedDomains = [
     "https://billzpaddi.com.ng",
     "https://www.billzpaddi.com.ng",
+    "http://localhost:3001",
   ];
 
   if (origin && !allowedDomains.includes(origin)) {
@@ -110,7 +111,7 @@ export async function POST(request) {
       },
       {
         headers: {
-          Authorization: process.env.CONVERSION_SECRET_KEY,
+          Authorization: `Bearer ${process.env.CONVERSION_SECRET_KEY}`,
           "Content-Type": "application/json",
         },
         timeout: 10000, // 10 seconds timeout
