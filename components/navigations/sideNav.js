@@ -12,6 +12,8 @@ import {
   HiDocumentText,
   HiOutlineUsers,
   HiChartBar,
+  HiOutlineShoppingBag,
+  HiOutlineShoppingCart,
 } from "react-icons/hi";
 import { FaGamepad, FaHeadset } from "react-icons/fa";
 
@@ -107,11 +109,8 @@ export default function Sidebar() {
           <NavItem href="/tv" icon={<HiOutlineDesktopComputer />}>
             TV Subscription
           </NavItem>
-          <NavItem href="/gaming" icon={<FaGamepad />}>
-            Gaming
-          </NavItem>
-          <NavItem href="/betting" icon={<HiOutlineCash />}>
-            Bet Services
+          <NavItem href="/store" icon={<HiOutlineShoppingCart />}>
+            BillzPaddi Store
           </NavItem>
           <NavItem href="/generate-invoice" icon={<HiDocumentText />}>
             Generate Invoice

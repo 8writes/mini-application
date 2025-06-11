@@ -8,6 +8,8 @@ import {
   HiOutlineShieldCheck,
   HiOutlineLightningBolt,
   HiOutlineCurrencyDollar,
+  HiOutlineShoppingBag,
+  HiOutlineShoppingCart,
 } from "react-icons/hi";
 import { FaGamepad, FaHandHoldingUsd } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
@@ -45,18 +47,18 @@ export default function ServicesPage() {
       ],
     },
     {
-      name: "Gaming Credits",
-      icon: <FaGamepad className="w-6 h-6" />,
-      href: "/gaming",
-      description: "Top up your games instantly",
-      features: ["Instant delivery", "Mobile gaming", "Game vouchers"],
+      name: "",
+      //  icon: <FaGamepad className="w-6 h-6" />,
+      href: "/",
+      description: "",
+      features: [],
     },
     {
-      name: "Bet Related Services",
-      icon: <HiOutlineCash className="w-6 h-6" />,
-      href: "/betting",
-      description: "Code conversion and AI predictions",
-      features: ["Instant delivery", "Major bookies", "AI predictions"],
+      name: "BillzPaddi Store",
+      icon: <HiOutlineShoppingCart className="w-6 h-6" />,
+      href: "/store",
+      description: "Shop for products",
+      features: ["Wide range of products", "Secure payments", "Fast delivery"],
     },
     {
       name: "Business Solutions",
