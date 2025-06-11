@@ -128,7 +128,7 @@ export default function Page() {
       return;
     }
 
-    if (amountNumber < 50) {
+    if (amountNumber < 500) {
       toast.info("Minimum amount of ₦500");
       return;
     }
