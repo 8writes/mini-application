@@ -545,7 +545,7 @@ export default function WalletPage() {
 
               {activeTab === "instant" ? (
                 <>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-sm text-gray-300 mt-1">
                     Processing fee applies
                   </p>
                   <p className="text-base text-gray-300 mt-1">
