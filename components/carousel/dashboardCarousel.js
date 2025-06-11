@@ -4,15 +4,11 @@ import { useEffect, useRef, useState } from "react";
 
 const banners = [
   {
-    image: "/banners/banner1.png",
+    image: "/banners/banner-discount.png",
     link: "/data", // Link to data page
     alt: "Buy Affordable Data Plans",
   },
-  {
-    image: "/banners/banner2.png",
-    link: "/wallet", // Link to wallet page
-    alt: "Top Up Your Wallet",
-  },
+  
 ];
 
 export default function BillzPaddiCarousel() {
@@ -43,7 +39,7 @@ export default function BillzPaddiCarousel() {
 
   return (
     <div
-      className="relative overflow-hidden w-full h-28 bg-white shadow-md rounded-sm"
+      className="relative overflow-hidden w-full h-28 bg-transparent"
       onMouseEnter={stopInterval}
       onMouseLeave={startInterval}
     >

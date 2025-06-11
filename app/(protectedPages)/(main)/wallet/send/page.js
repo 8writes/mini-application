@@ -186,7 +186,7 @@ export default function Page() {
             type: "debit",
             status: "completed",
             reference: `out${uniqueRequestId}`,
-            description: `Transfer to ${recipientEmail}`,
+            description: `Transfer to ${recipientEmail.split("@")[0]}`,
             unique_req_email: recipientEmail,
           },
           // receiver's credit transaction
@@ -196,7 +196,7 @@ export default function Page() {
             type: "credit",
             status: "completed",
             reference: `in${uniqueRequestId}`,
-            description: `Transfer from ${user?.email}`,
+            description: `Transfer from ${user?.email.split("@")[0]}`,
             unique_req_email: user?.email,
           },
         ]);
