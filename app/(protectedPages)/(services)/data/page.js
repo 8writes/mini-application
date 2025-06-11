@@ -799,7 +799,7 @@ export default function Page() {
                     ) : (
                       <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
-                        {(rate * 100).toFixed(1)}% cashback
+                        {(rate * 100).toFixed(1)}% discount
                         {Number(plan?.variation_amount || 0) * rate > 150 && (
                           <span className="relative ml-1.5" ref={tooltipRef}>
                             <span
@@ -823,7 +823,7 @@ export default function Page() {
                                   : "hidden"
                               }`}
                             >
-                              Cashback capped at ₦150.
+                              Discount capped at ₦150.
                               <span className="absolute w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></span>
                             </span>
                           </span>
