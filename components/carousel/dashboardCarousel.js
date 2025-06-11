@@ -8,7 +8,11 @@ const banners = [
     link: "/data", // Link to data page
     alt: "Buy Affordable Data Plans",
   },
-  
+  {
+    image: "/banners/banner-funding.png",
+    link: "/wallet", // Link to data page
+    alt: "Easy Wallet Funding",
+  },
 ];
 
 export default function BillzPaddiCarousel() {
@@ -23,7 +27,7 @@ export default function BillzPaddiCarousel() {
   };
 
   const startInterval = () => {
-    intervalRef.current = setInterval(goToNext, 3000);
+    intervalRef.current = setInterval(goToNext, 5000);
   };
 
   const stopInterval = () => {
