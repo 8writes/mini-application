@@ -9,6 +9,7 @@ import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import CountUpTimer from "@/components/count/countUpTimer";
+import { set } from "zod";
 
 const CustomDropdown = ({
   options,
@@ -103,7 +104,9 @@ const PurchaseDialog = ({
   phoneNumber,
   onSuccess,
   hasDiscount,
+  hasFridayDiscount,
   setHasDiscount,
+  setHasFridayDiscount,
 }) => {
   const { user, fetchData } = useGlobalContext();
   const {
@@ -128,13 +131,13 @@ const PurchaseDialog = ({
     getUniqueRequestId();
   }, []);
 
-  const applyDiscount = !hasDiscount;
+  const applyDiscount = !hasDiscount || hasFridayDiscount;
 
   const discountRates = {
-    "mtn-data": 0.01, // 0.5%
-    "glo-data": 0.01, // 1%
-    "airtel-data": 0.01, // 0.7%
-    "etisalat-data": 0.01, // 1%
+    "mtn-data": 0.007, // 0.5%
+    "glo-data": 0.007, // 1%
+    "airtel-data": 0.007, // 0.7%
+    "etisalat-data": 0.007, // 1%
   };
 
   const totalAmount = selectedPlan
@@ -146,8 +149,8 @@ const PurchaseDialog = ({
           return Math.round(amount * 0.98);
         } else {
           // Use selectedISP rate or fallback to 1%
-          const rate = discountRates[selectedISP?.serviceID] || 0.01;
-          const discount = Math.min(amount * rate, 250);
+          const rate = discountRates[selectedISP?.serviceID] || 0.007;
+          const discount = Math.min(amount * rate, 300);
           return Math.round(amount - discount);
         }
       })()
@@ -230,7 +233,7 @@ const PurchaseDialog = ({
 
       const data = await res.json();
 
-      if (data.code === "000" && !user?.has_claimed_data_discount) {
+      if (data.code === "000" && !hasDiscount) {
         // update discount
         await billzpaddi
           .from("users")
@@ -238,6 +241,16 @@ const PurchaseDialog = ({
           .eq("user_id", user?.user_id);
 
         setHasDiscount(true);
+      }
+
+      if (data.code === "000" && hasFridayDiscount) {
+        // update discount
+        await billzpaddi
+          .from("users")
+          .update({ friday_data_discount: true })
+          .eq("user_id", user?.user_id);
+
+        setHasFridayDiscount(true);
       }
 
       // 4. Update transaction based on response
@@ -416,7 +429,8 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState("Daily");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [hasDiscount, setHasDiscount] = useState(true);
+  const [hasDiscount, setHasDiscount] = useState(null);
+  const [hasFridayDiscount, setHasFridayDiscount] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [phone, setPhone] = useState("");
   const dropdownRef = useRef(null);
@@ -463,7 +477,7 @@ export default function Page() {
 
       const { data, error } = await billzpaddi
         .from("users")
-        .select("has_claimed_data_discount")
+        .select("has_claimed_data_discount, friday_data_discount")
         .eq("user_id", user?.user_id)
         .single();
 
@@ -471,13 +485,14 @@ export default function Page() {
         console.error("Error fetching discount status:", error);
       } else {
         setHasDiscount(data?.has_claimed_data_discount);
+        setHasFridayDiscount(data?.friday_data_discount);
       }
     };
 
     fetchDiscount();
   }, [user]);
 
-  const applyDiscount = !hasDiscount;
+  const applyDiscount = !hasDiscount || hasFridayDiscount;
 
   const addGain = (baseAmount) => {
     const amount = Number(baseAmount);
@@ -488,17 +503,17 @@ export default function Page() {
     } else {
       // Define discount rates per ISP
       const discountRates = {
-        "mtn-data": 0.01, // 1%
-        "glo-data": 0.01, // 1%
-        "airtel-data": 0.01, // 1%
-        "etisalat-data": 0.01, // 1%
+        "mtn-data": 0.007, // 1%
+        "glo-data": 0.007, // 1%
+        "airtel-data": 0.007, // 1%
+        "etisalat-data": 0.007, // 1%
       };
 
       // Use 1% as default if not found
-      const rate = discountRates[selectedISP?.serviceID] || 0.01;
+      const rate = discountRates[selectedISP?.serviceID] || 0.007;
 
       // Apply discount with ₦150 cap
-      const discount = Math.min(amount * rate, 250);
+      const discount = Math.min(amount * rate, 300);
       return Math.round(amount - discount);
     }
   };
@@ -698,10 +713,10 @@ export default function Page() {
 
   // Define discount rates per ISP
   const discountRates = {
-    "mtn-data": 0.01, // 0.5%
-    "glo-data": 0.01, // 1%
-    "airtel-data": 0.01, // 0.7%
-    "etisalat-data": 0.01, // 1%
+    "mtn-data": 0.007, // 0.5%
+    "glo-data": 0.007, // 1%
+    "airtel-data": 0.007, // 0.7%
+    "etisalat-data": 0.007, // 1%
   };
 
   // Use 1% as default if not found
@@ -791,7 +806,7 @@ export default function Page() {
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
                   </p>
                   <p className="mt-1">
-                    {!hasDiscount ? (
+                    {!hasDiscount || hasFridayDiscount ? (
                       <span className="inline-flex items-center bg-green-50 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
                         2% discount
@@ -800,7 +815,7 @@ export default function Page() {
                       <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
                         {(rate * 100).toFixed(1)}% discount
-                        {Number(plan?.variation_amount || 0) * rate > 250 && (
+                        {Number(plan?.variation_amount || 0) * rate > 300 && (
                           <span className="relative ml-1.5" ref={tooltipRef}>
                             <span
                               onClick={(e) =>
@@ -848,6 +863,8 @@ export default function Page() {
         selectedPlan={selectedPlan}
         selectedISP={selectedISP}
         hasDiscount={hasDiscount}
+        hasFridayDiscount={hasFridayDiscount}
+        setHasFridayDiscount={setHasFridayDiscount}
         setHasDiscount={setHasDiscount}
         phoneNumber={phone || user?.phone}
         onSuccess={() => {

@@ -39,7 +39,7 @@ export default function BillzPaddiCarousel() {
 
   return (
     <div
-      className="relative overflow-hidden w-full h-28 bg-transparent"
+      className="relative overflow-hidden w-full bg-transparent"
       onMouseEnter={stopInterval}
       onMouseLeave={startInterval}
     >
@@ -57,7 +57,7 @@ export default function BillzPaddiCarousel() {
                   alt={banner.alt}
                   width={800}
                   height={800}
-                  className="w-full h-full object-fill cursor-pointer"
+                  className="w-full h-32 object-fill cursor-pointer"
                 />
               </span>
             </Link>

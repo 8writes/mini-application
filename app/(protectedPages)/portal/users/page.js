@@ -18,6 +18,7 @@ export default function Page() {
   const [editingUser, setEditingUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [updatingDiscount, setUpdatingDiscount] = useState(false);
 
   const router = useRouter();
 
@@ -94,6 +95,39 @@ export default function Page() {
     } catch (err) {
       toast.error("Error updating user status");
       console.error("Error updating user status:", err);
+    }
+  };
+
+  // toggle friday data discount for all users
+  const toggleFridayDataDiscount = async () => {
+    const currentDiscountStatus = users[0]?.friday_data_discount || false;
+    const confirm = window.confirm(
+      `Are you sure you want to ${
+        currentDiscountStatus ? "disable" : "enable"
+      } Friday data discount for ALL users?`
+    );
+    if (!confirm) return;
+
+    setUpdatingDiscount(true);
+    try {
+      const { error } = await billzpaddi
+        .from("users")
+        .update({ friday_data_discount: !currentDiscountStatus })
+        .neq("role", "admin");
+
+      if (error) throw error;
+
+      fetchUsers();
+      toast.success(
+        `Friday data discount ${
+          currentDiscountStatus ? "disabled" : "enabled"
+        } for all users!`
+      );
+    } catch (err) {
+      toast.error("Error updating discount status");
+      console.error("Error updating discount status:", err);
+    } finally {
+      setUpdatingDiscount(false);
     }
   };
 
@@ -189,8 +223,23 @@ export default function Page() {
           <h1 className="text-2xl md:text-3xl">All Users</h1>
           <div className="flex flex-wrap ml-auto items-center gap-4">
             <button
+              onClick={toggleFridayDataDiscount}
+              className={`${
+                users[0]?.friday_data_discount
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-green-600 hover:bg-green-700"
+              } px-3 py-2 rounded flex items-center text-sm cursor-pointer gap-2`}
+              disabled={updatingDiscount || loading}
+            >
+              {updatingDiscount
+                ? "Updating..."
+                : users[0]?.friday_data_discount
+                ? "Disable Friday Discount"
+                : "Enable Friday Discount"}
+            </button>
+            <button
               onClick={fetchUsers}
-              className="bg-gray-700 cursor-pointer  hover:bg-gray-600 px-3 py-2 rounded flex items-center gap-2"
+              className=" cursor-pointer bg-gray-600 px-3 py-2 rounded flex items-center gap-2"
               disabled={loading}
             >
               {loading ? "Refreshing..." : "Refresh"}
@@ -263,6 +312,7 @@ export default function Page() {
                         <th className="p-3 border">Role</th>
                         <th className="p-3 border">Balance</th>
                         <th className="p-3 border">Status</th>
+                        <th className="p-3 border">Friday Discount</th>
                         <th className="p-3 border text-center rounded-r-md">
                           Actions
                         </th>
@@ -289,6 +339,17 @@ export default function Page() {
                               {u.status ? "Active" : "Suspended"}
                             </span>
                           </td>
+                          <td className="p-3 border">
+                            <span
+                              className={`px-3 py-1 rounded-full ${
+                                u.friday_data_discount
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-red-100 text-red-700"
+                              }`}
+                            >
+                              {u.friday_data_discount ? "Enabled" : "Disabled"}
+                            </span>
+                          </td>
                           <td className="p-3 border text-center whitespace-nowrap">
                             <Link
                               href={`/portal/users/${u.user_id}`}
@@ -309,7 +370,7 @@ export default function Page() {
                       ))}
                       {filteredUsers.length === 0 && !loading && (
                         <tr>
-                          <td colSpan="7" className="text-center p-5">
+                          <td colSpan="8" className="text-center p-5">
                             No users found.
                           </td>
                         </tr>
