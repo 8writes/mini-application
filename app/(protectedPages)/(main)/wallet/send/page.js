@@ -24,14 +24,14 @@ export default function Page() {
   const [filteredRecipients, setFilteredRecipients] = useState([]);
   const [showRecipientDropdown, setShowRecipientDropdown] = useState(false);
   const [recipientInfo, setRecipientInfo] = useState(null);
-  const [processingFee] = useState(25); // processing fee
   const [totalAmount, setTotalAmount] = useState(0);
 
   // Calculate total amount whenever amount changes
   useEffect(() => {
     const amountNum = parseFloat(amount) || 0;
-    setTotalAmount(amountNum + processingFee);
-  }, [amount, processingFee]);
+    const fee = amountNum ? (amountNum < 2500 ? 25 : 50) : 0;
+    setTotalAmount(amountNum + fee);
+  }, [amount]);
 
   useEffect(() => {
     getUniqueRequestId();
@@ -321,7 +321,10 @@ export default function Page() {
             <div className="flex justify-between">
               <span className="text-gray-400 text-sm">Processing Fee:</span>
               <span className="text-white text-sm">
-                ₦{processingFee.toFixed(2)}
+                ₦
+                {parseFloat(amount)
+                  ? (parseFloat(amount) < 2500 ? 25 : 50).toFixed(2)
+                  : "0.00"}
               </span>
             </div>
             <div className="flex justify-between font-medium">
