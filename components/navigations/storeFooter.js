@@ -4,11 +4,43 @@ export default function StoreFooter() {
   return (
     <div className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
       <section className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-8">
+          {/* About Store Column */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">About BillzPaddi Store</h3>
+            <p className="text-gray-300 text-sm">
+              BillzPaddi Store is your trusted platform for seamless purchase of
+              products from verified existing businesses.
+              We are committed to providing a secure and user-friendly shopping
+              experience. <br/> Read More about us{" "}
+              <Link
+                href="/about"
+                className="text-blue-400 hover:underline transition-colors">
+                here
+                </Link>
+            </p>
+          </div>
+
           {/* Legal Column */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Legal</h3>
+            <h3 className="text-lg font-semibold">Resources</h3>
             <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/shipping"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  Shipping & Delivery
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/refund"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  Refund Policy
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/terms"
@@ -28,7 +60,7 @@ export default function StoreFooter() {
             </ul>
           </div>
 
-          {/* Services Column */}
+          {/* Company Column */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Company</h3>
             <ul className="space-y-2">
@@ -37,23 +69,23 @@ export default function StoreFooter() {
                   href="/about"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  About
+                  About Us
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/coming-soon"
+                  href="/contact"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  Careers
+                  Contact Us
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/coming-soon"
+                  href="/faq"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  Developers
+                  FAQs
                 </Link>
               </li>
             </ul>
@@ -82,6 +114,10 @@ export default function StoreFooter() {
                 >
                   support@billzpaddi.com.ng
                 </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <span>Hours:</span>
+                <span className="text-gray-300">Mon-Sun, 8AM-10PM</span>
               </li>
             </ul>
           </div>
