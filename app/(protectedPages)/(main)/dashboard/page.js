@@ -8,6 +8,7 @@ import {
   HiOutlineCash,
   HiChartBar,
   HiOutlinePhone,
+  HiDocumentText,
 } from "react-icons/hi";
 import { FaHistory, FaGamepad } from "react-icons/fa";
 import Link from "next/link";
@@ -40,7 +41,8 @@ export default function DashboardPage() {
   return (
     <div className="p-4 md:p-6 md:pt-0">
       <section className="">
-        {/* Welcome Section */} <div className="max-w-5xl pb-7 mx-auto">
+        {/* Welcome Section */}{" "}
+        <div className="max-w-5xl pb-7 mx-auto">
           <BillzPaddiCarousel />
         </div>
         <h1 className="text-2xl md:text-3xl uppercase pb-5">Dashboard</h1>
@@ -96,12 +98,12 @@ export default function DashboardPage() {
             </Link>
 
             {/* Convert Bet Code Button */}
-            <Link href="/betting" passHref>
+            <Link href="/generate-invoice" passHref>
               <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
                 <div className="bg-blue-500/20 p-3 rounded-full mb-2">
-                  <HiOutlineCash className="text-blue-400 text-xl" />
+                  <HiDocumentText className="text-blue-400 text-xl" />
                 </div>
-                <span className="text-sm md:text-base">Bet Services</span>
+                <span className="text-sm md:text-base">Generate Invoice</span>
               </button>
             </Link>
 
