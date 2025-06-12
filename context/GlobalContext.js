@@ -4,87 +4,88 @@ import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-// context for global data
 const GlobalContext = createContext();
 
-// custom hook to use the GlobalContext
-export const useGlobalContext = () => {
-  return useContext(GlobalContext);
-};
+export const useGlobalContext = () => useContext(GlobalContext);
 
 export const GlobalProvider = ({ children }) => {
-  const [user, setUser] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
-  // Fetch data
-  const fetchData = async () => {
+  // Check and maintain user session
+  const checkSession = async () => {
     setIsLoading(true);
-
-    // check for token
-    const tokenString = localStorage.getItem(
-      "sb-xwgqadrwygwhwvqcwsde-auth-token"
-    );
-    const token = tokenString ? JSON.parse(tokenString) : null;
-
-    if (!token) {
-      toast.error("User not authenticated", {
-        toastId: "auth",
-      });
-      router.push("/auth/login");
-
-      return;
-    }
-
     try {
-      const { data, error } = await billzpaddi
+      const {
+        data: { session },
+        error,
+      } = await billzpaddi.auth.getSession();
+
+      if (!session || error) {
+        await handleLogout();
+        return;
+      }
+
+      const { data: userData, error: userError } = await billzpaddi
         .from("users")
         .select()
-        .eq("user_id", token?.user?.id)
+        .eq("user_id", session.user.id)
         .single();
 
-      if (data.status === false) {
-        const { error } = await billzpaddi.auth.signOut();
-        localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+      if (userError || !userData)
+        throw userError || new Error("User data not found");
+      if (userData.status === false) {
         toast.error("Your account is restricted. Please contact support.", {
           toastId: "account-disabled",
           autoClose: false,
         });
-        router.push("/auth/login");
+        await handleLogout();
         return;
       }
 
-      // set the user data in the context
-      setUser(data);
+      setUser(userData);
     } catch (err) {
-      console.error("Error fetching data:", err);
+      console.error("Session check failed:", err);
+      await handleLogout();
     } finally {
       setIsLoading(false);
     }
   };
-  // Fetch data
-  useEffect(() => {
-    fetchData();
-  }, [router]);
 
-  // handle logout
+  // Handle logout
   const handleLogout = async () => {
     try {
-      const { error } = await billzpaddi.auth.signOut();
-
-      if (!error) {
-        // check for token
-        localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
-        router.push("/auth/login");
-      } else {
-        localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
-        router.push("/auth/login");
-      }
+      await billzpaddi.auth.signOut();
+      localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+      setUser(null);
+      router.push("/auth/login");
     } catch (err) {
-      console.error("Error during logout:", err);
+      console.error("Logout error:", err);
+      // Force cleanup if Supabase logout fails
+      localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+      router.push("/auth/login");
     }
   };
+
+  // Set up auth state listener
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = billzpaddi.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_OUT") {
+        await handleLogout();
+      } else if (session) {
+        await checkSession();
+      }
+    });
+
+    // Initial session check
+    checkSession();
+
+    return () => subscription?.unsubscribe();
+  }, []);
 
   return (
     <GlobalContext.Provider
@@ -93,8 +94,8 @@ export const GlobalProvider = ({ children }) => {
         isLoading,
         isSidebarOpen,
         setIsSidebarOpen,
-        fetchData,
         handleLogout,
+        checkSession,
       }}
     >
       {children}
