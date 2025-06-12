@@ -3,6 +3,7 @@
 import UserDialog from "@/components/dialogs/userDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { billzpaddi } from "@/lib/client";
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ export default function Page() {
   const [users, setUsers] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [balance, setBalance] = useState("");
   const [loading, setLoading] = useState(true);
   const [txnLoading, setTxnLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
@@ -115,8 +117,26 @@ export default function Page() {
     }
   };
 
+  const fetchWalletBalance = async () => {
+    try {
+      const res = await axios.get("https://vtpass.com/api/balance", {
+        headers: {
+          "api-key": process.env.NEXT_PUBLIC_BILLZ_API_KEY,
+          "public-key": process.env.NEXT_PUBLIC_BILLZ_PUBLIC_KEY,
+        },
+      });
+      if (res.status !== 200) throw new Error("Failed to fetch wallet balance");
+      const balance = res.data.contents.balance || 0;
+      setBalance(balance);
+    } catch (err) {
+      console.error("Error fetching networks:", err);
+      toast.error("Failed to load networks");
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
+    fetchWalletBalance();
     fetchTransactions();
   }, []);
 
@@ -267,7 +287,7 @@ export default function Page() {
     <div>
       <section className="px-4 py-10 md:p-10 w-full md:max-w-7xl mx-auto">
         <div className="flex flex-wrap justify-between gap-2 items-center mb-6">
-          <h1 className="text-2xl md:text-3xl">All Users</h1>
+          <h1 className="text-2xl md:text-3xl">Users</h1>
           <div className="flex flex-wrap ml-auto items-center gap-4">
             <button
               onClick={toggleFridayDataDiscount}
@@ -281,8 +301,8 @@ export default function Page() {
               {updatingDiscount
                 ? "Updating..."
                 : users[0]?.friday_data_discount
-                ? "Disable Friday Discount"
-                : "Enable Friday Discount"}
+                ? "Disable Discount"
+                : "Enable Discount"}
             </button>
             <button
               onClick={() => {
@@ -298,44 +318,48 @@ export default function Page() {
         </div>
 
         {/* Enhanced Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-gray-800 p-4 rounded-lg shadow">
             <h3 className="text-gray-400 text-sm font-medium">Total Balance</h3>
             <p className="text-2xl font-bold text-white">
               ₦{totalBalance.toLocaleString()}
             </p>
+            <p className="text-sm text-gray-300 pt-2">
+              API(bills):{" "}
+              {Number(balance).toLocaleString("en-NG", {
+                style: "currency",
+                currency: "NGN",
+              })}
+            </p>
           </div>
           <div className="bg-gray-800 p-4 rounded-lg shadow">
             <h3 className="text-gray-400 text-sm font-medium">Active Users</h3>
             <p className="text-2xl font-bold text-green-500">{activeUsers}</p>
-          </div>
-          <div className="bg-gray-800 p-4 rounded-lg shadow">
-            <h3 className="text-gray-400 text-sm font-medium">
-              Suspended Users
-            </h3>
-            <p className="text-2xl font-bold text-red-500">{suspendedUsers}</p>
+            <p className="text-sm text-red-400 pt-1">
+              Suspended: {suspendedUsers}
+            </p>
           </div>
           {/* Sales Summary Cards */}
           <div className="bg-gray-800 p-4 rounded-lg shadow">
             <h3 className="text-gray-400 text-sm font-medium">
-              Total Sales (Airtime/Data)
+              Total Sales (Bills)
             </h3>
             <p className="text-2xl font-bold text-blue-400">
               ₦{totalSales.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-300 pt-1">
               {transactionCount} transactions
             </p>
           </div>
 
           <div className="bg-gray-800 p-4 rounded-lg shadow">
             <h3 className="text-gray-400 text-sm font-medium">
-              Earnings (Airtime/Data)
+              Earnings (Bills)
             </h3>
             <p className="text-2xl font-bold text-purple-400">
               ₦{totalCommission.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-300 pt-1">
               Net: ₦{netAmount.toLocaleString()}
             </p>
           </div>
@@ -387,7 +411,7 @@ export default function Page() {
                         <th className="p-3 border">Role</th>
                         <th className="p-3 border">Balance</th>
                         <th className="p-3 border">Status</th>
-                        <th className="p-3 border">Friday Discount</th>
+                        <th className="p-3 border">Discount</th>
                         <th className="p-3 border text-center rounded-r-md">
                           Actions
                         </th>
