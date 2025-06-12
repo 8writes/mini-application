@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <div className="">
       {" "}
-      <div className="min-h-[100dvh] text-white flex flex-col items-center justify-center p-6 text-center">
+      <div className="text-white flex flex-col items-center justify-center px-6 text-center">
         <div className="max-w-2xl mx-auto">
           <div className="inline-flex items-center justify-center bg-blue-900/20 p-6 rounded-full mb-8">
             <FaTools className="text-4xl text-blue-400" />
