@@ -12,8 +12,10 @@ import { toast } from "react-toastify";
 export default function Page() {
   const { user, isLoading } = useGlobalContext();
   const [users, setUsers] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [txnLoading, setTxnLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,15 +29,41 @@ export default function Page() {
     (sum, user) => sum + (user.balance || 0),
     0
   );
+
   // Count active and suspended users
   const activeUsers = users.filter((u) => u.status).length;
   const suspendedUsers = users.filter((u) => !u.status).length;
+
+  // Calculate sales statistics from metadata
+  const { totalSales, totalCommission, transactionCount, netAmount } =
+    transactions.reduce(
+      (acc, txn) => {
+        try {
+          const meta = txn.metadata || {};
+          const txnData = meta.content?.transactions || {};
+
+          const amount = parseFloat(txnData.amount) || 0;
+          const commission = parseFloat(txnData.commission) || 0;
+          const net = parseFloat(txnData.total_amount) || 0;
+
+          return {
+            totalSales: acc.totalSales + amount,
+            totalCommission: acc.totalCommission + commission,
+            netAmount: acc.netAmount + net,
+            transactionCount: acc.transactionCount + 1,
+          };
+        } catch (error) {
+          console.error("Error parsing transaction:", txn.id, error);
+          return acc;
+        }
+      },
+      { totalSales: 0, totalCommission: 0, netAmount: 0, transactionCount: 0 }
+    );
 
   // fetch users with their wallet balance
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      // First fetch all users (except super_admin)
       const { data: usersData, error: usersError } = await billzpaddi
         .from("users")
         .select("*")
@@ -44,14 +72,12 @@ export default function Page() {
 
       if (usersError) throw usersError;
 
-      // Then fetch all wallets
       const { data: walletsData, error: walletsError } = await billzpaddi
         .from("wallets")
         .select("*");
 
       if (walletsError) throw walletsError;
 
-      // Combine users with their wallet balance
       const usersWithBalance = usersData.map((user) => {
         const wallet = walletsData.find((w) => w.user_id === user.user_id);
         return {
@@ -69,8 +95,29 @@ export default function Page() {
     }
   };
 
+  // Fetch transactions with metadata
+  const fetchTransactions = async () => {
+    setTxnLoading(true);
+    try {
+      const { data, error } = await billzpaddi
+        .from("transactions")
+        .select("id, created_at, metadata")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setTransactions(data || []);
+    } catch (error) {
+      toast.error("Error fetching transactions");
+      console.error("Error fetching transactions:", error);
+    } finally {
+      setTxnLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
+    fetchTransactions();
   }, []);
 
   // toggle user status (ban/unban)
@@ -238,16 +285,20 @@ export default function Page() {
                 : "Enable Friday Discount"}
             </button>
             <button
-              onClick={fetchUsers}
+              onClick={() => {
+                fetchUsers();
+                fetchTransactions();
+              }}
               className=" cursor-pointer bg-gray-600 px-3 py-2 rounded flex items-center gap-2"
-              disabled={loading}
+              disabled={loading || txnLoading}
             >
-              {loading ? "Refreshing..." : "Refresh"}
+              {loading || txnLoading ? "Refreshing..." : "Refresh"}
             </button>
           </div>
         </div>
-        {/* Balance Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+        {/* Enhanced Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
           <div className="bg-gray-800 p-4 rounded-lg shadow">
             <h3 className="text-gray-400 text-sm font-medium">Total Balance</h3>
             <p className="text-2xl font-bold text-white">
@@ -263,6 +314,30 @@ export default function Page() {
               Suspended Users
             </h3>
             <p className="text-2xl font-bold text-red-500">{suspendedUsers}</p>
+          </div>
+          {/* Sales Summary Cards */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="text-gray-400 text-sm font-medium">
+              Total Sales (Airtime/Data)
+            </h3>
+            <p className="text-2xl font-bold text-blue-400">
+              ₦{totalSales.toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-400">
+              {transactionCount} transactions
+            </p>
+          </div>
+
+          <div className="bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="text-gray-400 text-sm font-medium">
+              Earnings (Airtime/Data)
+            </h3>
+            <p className="text-2xl font-bold text-purple-400">
+              ₦{totalCommission.toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-400">
+              Net: ₦{netAmount.toLocaleString()}
+            </p>
           </div>
         </div>
 
