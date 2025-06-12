@@ -57,8 +57,8 @@ export const GlobalProvider = ({ children }) => {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await billzpaddi.auth.signOut();
       localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+      await billzpaddi.auth.signOut();
       setUser(null);
       router.push("/auth/login");
     } catch (err) {
