@@ -365,7 +365,8 @@ export default function WalletPage() {
     }
 
     try {
-      await initializePayment();
+      toast.info("Currently Unavailable.");
+      // await initializePayment();
     } catch (error) {
       console.error("Payment error:", error);
     } finally {
