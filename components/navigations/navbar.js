@@ -99,7 +99,7 @@ export default function NavBar() {
           >
             <ul className="py-2 text-sm text-gray-700">
               <li className="text-base px-4 py-2 text-white border-b mb-2 border-gray-700">
-                {user?.last_name ?? "User"} {user?.first_name?.charAt(0)}.
+                {user?.last_name ?? "Fetching..."} {user?.first_name?.charAt(0)}.
               </li>
               <Link href="/profile" onClick={() => setIsDropdownOpen(false)}>
                 <li
