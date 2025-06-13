@@ -103,7 +103,7 @@ export default function DashboardPage() {
                 <div className="bg-blue-500/20 p-3 rounded-full mb-2">
                   <HiDocumentText className="text-blue-400 text-xl" />
                 </div>
-                <span className="text-sm md:text-base">Generate Invoice</span>
+                <span className="text-sm md:text-base">Invoice</span>
               </button>
             </Link>
 
