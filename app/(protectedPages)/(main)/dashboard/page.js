@@ -42,9 +42,7 @@ export default function DashboardPage() {
     <div className="p-4 md:p-6 md:pt-0">
       <section className="">
         {/* Welcome Section */}{" "}
-        <div className="max-w-5xl pb-7 mx-auto">
-          <BillzPaddiCarousel />
-        </div>
+     
         <h1 className="text-2xl md:text-3xl uppercase pb-5">Dashboard</h1>
       </section>
 

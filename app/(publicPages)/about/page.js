@@ -20,10 +20,6 @@ export default function Page() {
       name: "Business Tools",
       icon: <HiOutlineClipboardCheck className="w-6 h-6" />,
     },
-    {
-      name: "BillzPaddi Store",
-      icon: <HiOutlineShoppingCart className="w-6 h-6" />,
-    },
   ];
 
   return (
@@ -72,7 +68,7 @@ export default function Page() {
         {/* Services Overview */}
         <section className="mb-20">
           <h2 className="text-3xl font-bold mb-8 text-center">Our Services</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {services.map((service, index) => (
               <div
                 key={index}
