@@ -29,7 +29,7 @@ export const GlobalProvider = ({ children }) => {
         data: { session },
         error,
       } = await billzpaddi.auth.getSession();
-      return !error && session;
+      return true;
     } catch (err) {
       console.error("Auth check failed:", err);
       return false;
@@ -68,6 +68,7 @@ export const GlobalProvider = ({ children }) => {
     } catch (err) {
       console.error("User fetch error:", err);
       await handleLogout();
+      localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
     } finally {
       setIsLoading(false);
     }
@@ -77,6 +78,8 @@ export const GlobalProvider = ({ children }) => {
   const handleLogout = async () => {
     try {
       await billzpaddi.auth.signOut();
+      localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+      router.push("/auth/login");
     } catch (err) {
       console.error("Signout error:", err);
     } finally {
@@ -86,32 +89,18 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
+  const initialize = async () => {
+    const isAuthenticated = await checkAuthStatus();
+    if (!isAuthenticated) {
+      await handleLogout();
+      localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+      return;
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
-  }, []);
-
-  // Initialize auth and user data
-  useEffect(() => {
-    const initialize = async () => {
-      const isAuthenticated = await checkAuthStatus();
-      if (!isAuthenticated) {
-        await handleLogout();
-        return;
-      }
-    };
-
     initialize();
-
-    // Auth state listener only for signouts
-    const {
-      data: { subscription },
-    } = billzpaddi.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") {
-        handleLogout();
-      }
-    });
-
-    return () => subscription?.unsubscribe();
   }, []);
 
   return (
