@@ -332,13 +332,7 @@ export default function Page() {
               })}
             </p>
           </div>
-          <div className="bg-gray-800 p-4 rounded-lg shadow">
-            <h3 className="text-gray-400 text-sm font-medium">Active Users</h3>
-            <p className="text-2xl font-bold text-green-500">{activeUsers}</p>
-            <p className="text-sm text-red-400 pt-1">
-              Suspended: {suspendedUsers}
-            </p>
-          </div>
+
           {/* Sales Summary Cards */}
           <div className="bg-gray-800 p-4 rounded-lg shadow">
             <h3 className="text-gray-400 text-sm font-medium">
@@ -361,6 +355,14 @@ export default function Page() {
             </p>
             <p className="text-sm text-gray-300 pt-1">
               Net: ₦{netAmount.toLocaleString()}
+            </p>
+          </div>
+
+          <div className="bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="text-gray-400 text-sm font-medium">Active Users</h3>
+            <p className="text-2xl font-bold text-green-500">{activeUsers}</p>
+            <p className="text-sm text-red-400 pt-1">
+              Suspended: {suspendedUsers}
             </p>
           </div>
         </div>
