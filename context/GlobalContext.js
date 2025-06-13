@@ -14,30 +14,49 @@ export const GlobalProvider = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
-  // Check and maintain user session
-  const checkSession = async () => {
-    setIsLoading(true);
+  // Get user ID from stored token
+  const getUserIdFromToken = () => {
+    const token = JSON.parse(
+      localStorage.getItem("sb-xwgqadrwygwhwvqcwsde-auth-token") || "null"
+    );
+    return token?.user?.id || null;
+  };
+
+  // Check authentication status only (no user fetching)
+  const checkAuthStatus = async () => {
     try {
       const {
         data: { session },
         error,
       } = await billzpaddi.auth.getSession();
+      return !error && session;
+    } catch (err) {
+      console.error("Auth check failed:", err);
+      return false;
+    }
+  };
 
-      if (!session || error) {
-        await handleLogout();
-        return;
-      }
+  // Fetch user data using token's user ID
+  const fetchUserData = async () => {
+    setIsLoading(true);
+    const userId = getUserIdFromToken();
 
-      const { data: userData, error: userError } = await billzpaddi
+    if (!userId) {
+      await handleLogout();
+      return;
+    }
+
+    try {
+      const { data: userData, error } = await billzpaddi
         .from("users")
         .select()
-        .eq("user_id", session.user.id)
+        .eq("user_id", userId)
         .single();
 
-      if (userError || !userData)
-        throw userError || new Error("User data not found");
+      if (error || !userData) throw error || new Error("User not found");
+
       if (userData.status === false) {
-        toast.error("Your account is restricted. Please contact support.", {
+        toast.error("Account restricted. Contact support.", {
           toastId: "account-disabled",
           autoClose: false,
         });
@@ -47,7 +66,7 @@ export const GlobalProvider = ({ children }) => {
 
       setUser(userData);
     } catch (err) {
-      console.error("Session check failed:", err);
+      console.error("User fetch error:", err);
       await handleLogout();
     } finally {
       setIsLoading(false);
@@ -57,32 +76,40 @@ export const GlobalProvider = ({ children }) => {
   // Handle logout
   const handleLogout = async () => {
     try {
-      localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
       await billzpaddi.auth.signOut();
-      setUser(null);
-      router.push("/auth/login");
     } catch (err) {
-      console.error("Logout error:", err);
-      // Force cleanup if Supabase logout fails
+      console.error("Signout error:", err);
+    } finally {
       localStorage.removeItem("sb-xwgqadrwygwhwvqcwsde-auth-token");
+      setUser(null);
       router.push("/auth/login");
     }
   };
 
-  // Set up auth state listener
   useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  // Initialize auth and user data
+  useEffect(() => {
+    const initialize = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
+        await handleLogout();
+        return;
+      }
+    };
+
+    initialize();
+
+    // Auth state listener only for signouts
     const {
       data: { subscription },
-    } = billzpaddi.auth.onAuthStateChange(async (event, session) => {
+    } = billzpaddi.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
-        await handleLogout();
-      } else if (session) {
-        await checkSession();
+        handleLogout();
       }
     });
-
-    // Initial session check
-    checkSession();
 
     return () => subscription?.unsubscribe();
   }, []);
@@ -95,7 +122,7 @@ export const GlobalProvider = ({ children }) => {
         isSidebarOpen,
         setIsSidebarOpen,
         handleLogout,
-        checkSession,
+        getUserIdFromToken,
       }}
     >
       {children}
