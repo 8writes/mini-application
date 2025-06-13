@@ -47,20 +47,6 @@ export default function ServicesPage() {
       ],
     },
     {
-      name: "",
-      //  icon: <FaGamepad className="w-6 h-6" />,
-      href: "/",
-      description: "",
-      features: [],
-    },
-    {
-      name: "BillzPaddi Store",
-      icon: <HiOutlineShoppingCart className="w-6 h-6" />,
-      href: "/store",
-      description: "Shop for products",
-      features: ["Wide range of products", "Secure payments", "Fast delivery"],
-    },
-    {
       name: "Business Solutions",
       icon: <HiOutlineClipboardCheck className="w-6 h-6" />,
       href: "/generate-invoice",
@@ -100,7 +86,8 @@ export default function ServicesPage() {
           Explore Our Services
         </h2>
         <p className="text-base sm:text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
-          Airtime, Discounted Data, Game Top-ups & More — Fast, affordable, and always reliable.
+          Airtime, Discounted Data, Game Top-ups & More — Fast, affordable, and
+          always reliable.
         </p>
         <div className="mb-12">
           <Link href="/auth/signup">
@@ -144,7 +131,7 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
             {services.map((service) => (
               <Link
                 key={service.name}

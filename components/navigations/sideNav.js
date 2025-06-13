@@ -109,9 +109,7 @@ export default function Sidebar() {
           <NavItem href="/tv" icon={<HiOutlineDesktopComputer />}>
             TV Subscription
           </NavItem>
-          <NavItem href="/store" icon={<HiOutlineShoppingCart />}>
-            BillzPaddi Store
-          </NavItem>
+          
           <NavItem href="/generate-invoice" icon={<HiDocumentText />}>
             Generate Invoice
           </NavItem>
