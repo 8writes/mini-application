@@ -31,11 +31,12 @@ export default function LoginPage() {
         password: formData?.password,
       });
 
-      if (!error) {
-        router.push("/dashboard");
-      } else {
+      if (error) {
         toast.error(error.message || "Login failed");
+        return
       }
+
+      router.push("/dashboard");
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
