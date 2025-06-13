@@ -247,10 +247,10 @@ const PurchaseDialog = ({
         // update discount
         await billzpaddi
           .from("users")
-          .update({ friday_data_discount: true })
+          .update({ friday_data_discount: false })
           .eq("user_id", user?.user_id);
 
-        setHasFridayDiscount(true);
+        setHasFridayDiscount(false);
       }
 
       // 4. Update transaction based on response
