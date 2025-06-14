@@ -5,6 +5,7 @@ import { useGlobalContextData } from "@/context/GlobalContextData";
 import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 export default function Page() {
@@ -226,11 +227,10 @@ export default function Page() {
   return (
     <div className="px-4 py-10 md:p-10 w-full md:max-w-3xl mx-auto">
       <div className="pb-6">
-        <Link
-          href="/wallet"
-          className="px-4 py-4 text-white bg-gray-700 rounded-md hover:bg-gray-600  cursor-pointer"
-        >
-          ← Back to Wallet
+        <Link href="/wallet" className="">
+          <button className="flex items-center py-4 gap-2 text-gray-200 hover:bg-gray-600 rounded-md px-4 transition-all duration-150  cursor-pointer mb-6">
+            <FaArrowLeft /> Back to Transactions
+          </button>
         </Link>
       </div>
       <h1 className="text-2xl md:text-3xl mb-6">Send Funds</h1>

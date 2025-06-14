@@ -5,6 +5,7 @@ import { HiSearch, HiFilter, HiArrowDown, HiArrowUp } from "react-icons/hi";
 import { FaCopy, FaExchangeAlt } from "react-icons/fa";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 export default function TransactionsPage() {
   // All hooks must be called unconditionally at the top
@@ -139,10 +140,81 @@ export default function TransactionsPage() {
                 key={txn.id}
                 className="hover:bg-gray-700/50 transition-colors"
               >
-                {/* Mobile View */}
-                <div className="md:hidden p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-3">
+                <Link href={`/transactions/info/${txn.id}`} className="block">
+                  {/* Mobile View */}
+                  <div className="md:hidden p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`p-2 rounded-lg ${
+                            txn.type === "credit"
+                              ? "bg-green-900/20 text-green-400"
+                              : "bg-red-900/20 text-red-400"
+                          }`}
+                        >
+                          {txn.type === "credit" ? (
+                            <HiArrowDown className="text-lg" />
+                          ) : (
+                            <HiArrowUp className="text-lg" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">
+                            {txn.description}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {new Date(txn.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p
+                          className={`font-semibold ${
+                            txn.type === "credit"
+                              ? "text-green-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {txn.type === "credit" ? "+" : "-"}₦
+                          {txn.amount?.toLocaleString()}
+                        </p>
+                        <span
+                          className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
+                            txn.status === "completed"
+                              ? "bg-green-900/20 text-green-400"
+                              : txn.status === "pending"
+                              ? "bg-yellow-900/20 text-yellow-400"
+                              : "bg-red-900/20 text-red-400"
+                          }`}
+                        >
+                          {txn.status.charAt(0).toUpperCase() +
+                            txn.status.slice(1)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-2 text-sm text-gray-400">
+                      <p>₦{txn.amount?.toLocaleString()}</p>
+                      <p className="text-xs flex items-center text-gray-400">
+                        {txn.reference}
+                        <span
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(txn.reference);
+                            toast.success("Reference copied!");
+                          }}
+                          className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                          title="Copy Reference"
+                        >
+                          <FaCopy className="h-3 w-3" />
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Desktop View */}
+                  <div className="hidden md:grid md:grid-cols-5 gap-4 p-4 items-center">
+                    <div className="col-span-2 flex items-center gap-3">
                       <div
                         className={`p-2 rounded-lg ${
                           txn.type === "credit"
@@ -157,13 +229,26 @@ export default function TransactionsPage() {
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-sm">{txn.description}</p>
-                        <p className="text-xs text-gray-400">
-                          {new Date(txn.created_at).toLocaleDateString()}
+                        <p className="text-sm font-medium">{txn.description}</p>
+                        <p className="text-xs flex items-center text-gray-400">
+                          {txn.reference}
+                          <span
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigator.clipboard.writeText(txn.reference);
+                              toast.success("Reference copied!");
+                            }}
+                            className="text-gray-400 cursor-pointer hover:text-white ml-2"
+                            title="Copy Reference"
+                          >
+                            <FaCopy className="h-3 w-3" />
+                          </span>
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
+
+                    <div className="text-center">
                       <p
                         className={`font-semibold ${
                           txn.type === "credit"
@@ -174,8 +259,23 @@ export default function TransactionsPage() {
                         {txn.type === "credit" ? "+" : "-"}₦
                         {txn.amount?.toLocaleString()}
                       </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm">
+                        {new Date(txn.created_at).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(txn.created_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
                       <span
-                        className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                           txn.status === "completed"
                             ? "bg-green-900/20 text-green-400"
                             : txn.status === "pending"
@@ -188,99 +288,7 @@ export default function TransactionsPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center mt-2 text-sm text-gray-400">
-                    <p>₦{txn.amount?.toLocaleString()}</p>
-                    <p className="text-xs flex items-center text-gray-400">
-                      {txn.reference}
-                      <span
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText(txn.reference);
-                          toast.success("Reference copied!");
-                        }}
-                        className="text-gray-400 cursor-pointer hover:text-white ml-2"
-                        title="Copy Reference"
-                      >
-                        <FaCopy className="h-3 w-3" />
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Desktop View */}
-                <div className="hidden md:grid md:grid-cols-5 gap-4 p-4 items-center">
-                  <div className="col-span-2 flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-lg ${
-                        txn.type === "credit"
-                          ? "bg-green-900/20 text-green-400"
-                          : "bg-red-900/20 text-red-400"
-                      }`}
-                    >
-                      {txn.type === "credit" ? (
-                        <HiArrowDown className="text-lg" />
-                      ) : (
-                        <HiArrowUp className="text-lg" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{txn.description}</p>
-                      <p className="text-xs flex items-center text-gray-400">
-                        {txn.reference}
-                        <span
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(txn.reference);
-                            toast.success("Reference copied!");
-                          }}
-                          className="text-gray-400 cursor-pointer hover:text-white ml-2"
-                          title="Copy Reference"
-                        >
-                          <FaCopy className="h-3 w-3" />
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="text-center">
-                    <p
-                      className={`font-semibold ${
-                        txn.type === "credit"
-                          ? "text-green-400"
-                          : "text-red-400"
-                      }`}
-                    >
-                      {txn.type === "credit" ? "+" : "-"}₦
-                      {txn.amount?.toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-sm">
-                      {new Date(txn.created_at).toLocaleDateString()}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {new Date(txn.created_at).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-
-                  <div className="text-right">
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                        txn.status === "completed"
-                          ? "bg-green-900/20 text-green-400"
-                          : txn.status === "pending"
-                          ? "bg-yellow-900/20 text-yellow-400"
-                          : "bg-red-900/20 text-red-400"
-                      }`}
-                    >
-                      {txn.status.charAt(0).toUpperCase() + txn.status.slice(1)}
-                    </span>
-                  </div>
-                </div>
+                </Link>
               </li>
             ))}
           </ul>

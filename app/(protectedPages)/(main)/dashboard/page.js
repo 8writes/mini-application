@@ -143,61 +143,64 @@ export default function DashboardPage() {
                   key={txn.id}
                   className="px-4 py-2 hover:bg-gray-700/50 transition-colors"
                 >
-                  <div className="flex items-center justify-between">
-                    {/* Transaction Details (Left Side) */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <div
-                          className={`p-2 rounded-lg ${
+                  {" "}
+                  <Link href={`/transactions/info/${txn.id}`} className="block">
+                    <div className="flex items-center justify-between">
+                      {/* Transaction Details (Left Side) */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <div
+                            className={`p-2 rounded-lg ${
+                              txn.type === "credit"
+                                ? "bg-green-900/20 text-green-400"
+                                : "bg-red-900/20 text-red-400"
+                            }`}
+                          >
+                            {txn.type === "credit" ? (
+                              <HiArrowDown className="text-lg" />
+                            ) : (
+                              <HiArrowUp className="text-lg" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {txn.description}
+                            </p>
+                            <p className="text-sm text-gray-400">
+                              {new Date(txn.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Amount and Status (Right Side) */}
+                      <div className="text-right ml-4">
+                        <p
+                          className={`font-medium ${
                             txn.type === "credit"
+                              ? "text-green-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {txn.type === "credit" ? "+" : "-"}₦
+                          {txn.amount?.toLocaleString()}
+                        </p>
+
+                        <span
+                          className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
+                            txn.status === "completed"
                               ? "bg-green-900/20 text-green-400"
+                              : txn.status === "pending"
+                              ? "bg-yellow-900/20 text-yellow-400"
                               : "bg-red-900/20 text-red-400"
                           }`}
                         >
-                          {txn.type === "credit" ? (
-                            <HiArrowDown className="text-lg" />
-                          ) : (
-                            <HiArrowUp className="text-lg" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">
-                            {txn.description}
-                          </p>
-                          <p className="text-sm text-gray-400">
-                            {new Date(txn.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
+                          {txn.status?.charAt(0).toUpperCase() +
+                            txn.status?.slice(1) || "Pending"}
+                        </span>
                       </div>
                     </div>
-
-                    {/* Amount and Status (Right Side) */}
-                    <div className="text-right ml-4">
-                      <p
-                        className={`font-medium ${
-                          txn.type === "credit"
-                            ? "text-green-400"
-                            : "text-red-400"
-                        }`}
-                      >
-                        {txn.type === "credit" ? "+" : "-"}₦
-                        {txn.amount?.toLocaleString()}
-                      </p>
-
-                      <span
-                        className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
-                          txn.status === "completed"
-                            ? "bg-green-900/20 text-green-400"
-                            : txn.status === "pending"
-                            ? "bg-yellow-900/20 text-yellow-400"
-                            : "bg-red-900/20 text-red-400"
-                        }`}
-                      >
-                        {txn.status?.charAt(0).toUpperCase() +
-                          txn.status?.slice(1) || "Pending"}
-                      </span>
-                    </div>
-                  </div>
+                  </Link>
                 </li>
               ))}
             </ul>
