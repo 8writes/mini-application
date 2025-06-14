@@ -258,7 +258,7 @@ const PurchaseDialog = ({
           metadata: {
             ...data,
             updated_at: new Date().toISOString(),
-            plan: selectedPlan.name,
+            plan: selectedPlan?.name,
           },
         })
         .eq("reference", uniqueRequestId);

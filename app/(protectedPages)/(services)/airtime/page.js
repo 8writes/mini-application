@@ -233,7 +233,7 @@ const PurchaseDialog = ({
           metadata: {
             ...data,
             updated_at: new Date().toISOString(),
-            plan: `${selectedISP?.name || ""} ${amount || ""}`,
+            plan: `${selectedISP?.name || ""} ₦${amount.toLocaleString() || ""}`,
           },
         })
         .eq("reference", uniqueRequestId);
