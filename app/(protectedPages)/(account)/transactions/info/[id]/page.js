@@ -31,12 +31,13 @@ export default function TransactionInfoPage() {
   };
 
   // Memoize transaction details to prevent unnecessary recalculations
-  const { transactionDetails, transactionData } = useMemo(() => {
+  const { transactionDetails, transactionData, transactionData1 } = useMemo(() => {
     if (!transaction?.metadata?.content?.transactions) {
-      return { transactionDetails: [], transactionData: null };
+      return { transactionDetails: [], transactionData: null, transactionData1: null };
     }
 
     const txnData = transaction.metadata.content.transactions;
+    const txnData1 = transaction.metadata;
     const details = [];
 
     // Essential fields
@@ -51,6 +52,13 @@ export default function TransactionInfoPage() {
       details.push({
         label: "Recipient",
         value: txnData.unique_element,
+      });
+    }
+
+    if (txnData1.plan) {
+      details.push({
+        label: "Plan",
+        value: txnData1.plan,
       });
     }
 
@@ -75,7 +83,11 @@ export default function TransactionInfoPage() {
       });
     }
 
-    return { transactionDetails: details, transactionData: txnData };
+    return {
+      transactionDetails: details,
+      transactionData: txnData,
+      transactionData1: txnData1,
+    };
   }, [transaction]);
 
   if (isLoading || !transaction) {
@@ -144,12 +156,20 @@ export default function TransactionInfoPage() {
                 <p className="text-sm text-gray-400">Description</p>
                 <p className="text-gray-300">{transaction?.description}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-400">Recipient</p>
-                <p className="text-gray-300">
-                  {transactionData?.unique_element ?? "N/A"}
-                </p>
-              </div>
+              {transactionData1?.plan && (
+                <div>
+                  <p className="text-sm text-gray-400">Plan</p>
+                  <p className="text-gray-300">{transactionData1?.plan}</p>
+                </div>
+              )}
+              {transactionData?.unique_element && (
+                <div>
+                  <p className="text-sm text-gray-400">Recipient</p>
+                  <p className="text-gray-300">
+                    {transactionData?.unique_element ?? "N/A"}
+                  </p>
+                </div>
+              )}
               <div>
                 <p className="text-sm text-gray-400">Type</p>
                 <p className="text-gray-300 capitalize">{transaction?.type}</p>
@@ -169,7 +189,7 @@ export default function TransactionInfoPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-400">Status</p>
-                <p className="text-gray-300">
+                <p className="text-gray-300 uppercase">
                   {transaction?.metadata?.response_description
                     ? transaction?.metadata.response_description
                     : transaction?.status

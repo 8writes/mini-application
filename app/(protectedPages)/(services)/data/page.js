@@ -289,6 +289,7 @@ const PurchaseDialog = ({
           metadata: {
             ...data, // Store full API response
             updated_at: new Date().toISOString(),
+            plan: selectedPlan.name,
           },
         })
         .eq("reference", uniqueRequestId);
