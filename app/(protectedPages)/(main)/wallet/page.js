@@ -109,7 +109,7 @@ export default function WalletPage() {
     return amountNum + percentageFee;
   }
 
-  const amountToCredit = calculateAmountToCreditPaystack(amount);
+  const amountToCredit = parseFloat(amount); // calculateAmountToCreditPaystack(amount);
 
   useEffect(() => {
     getUniqueRequestId();
@@ -366,7 +366,7 @@ export default function WalletPage() {
 
     try {
      // toast.info("Currently Unavailable.");
-      await initializePaymentInactive();
+      await initializePayment();
     } catch (error) {
       console.error("Payment error:", error);
     } finally {
