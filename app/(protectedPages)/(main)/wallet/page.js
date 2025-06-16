@@ -109,7 +109,7 @@ export default function WalletPage() {
     return amountNum + percentageFee;
   }
 
-  const amountToCredit = parseFloat(amount); // calculateAmountToCreditPaystack(amount);
+  const amountToCredit = calculateAmountToCreditPaystack(amount);
 
   useEffect(() => {
     getUniqueRequestId();
