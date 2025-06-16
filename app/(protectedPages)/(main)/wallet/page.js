@@ -330,8 +330,8 @@ export default function WalletPage() {
 
     const amountValue = parseFloat(amount);
 
-    if (amountValue < 500) {
-      toast.error(`Minimum deposit is ₦500`);
+    if (amountValue < 1000) {
+      toast.error(`Minimum deposit is ₦1,000`);
       return;
     }
 
@@ -531,7 +531,7 @@ export default function WalletPage() {
                   onChange={handleAmountChange}
                   placeholder={
                     activeTab === "instant"
-                      ? "(minimum ₦500)"
+                      ? "(minimum ₦1,000)"
                       : "(minimum ₦500)"
                   }
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 pl-12 outline-none"
