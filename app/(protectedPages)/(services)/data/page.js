@@ -818,10 +818,19 @@ export default function Page() {
                   onClick={() => handlePlanClick(plan)}
                   className="bg-gray-800 p-3 rounded-md border cursor-pointer border-gray-700 hover:border-blue-400 transition-all text-sm md:text-base"
                 >
-                  <FaWifi className="text-blue-400 text-lg mb-1" />
+                  <div className="flex justify-between items-center mb-2 w-full">
+                    <h3 className="text-blue-300 font-bold text-base md:text-lg">
+                      {plan.name.match(/\d+(?:\.\d+)?\s?(?:MB|GB)/)?.[0] || ""}
+                    </h3>
+                    <FaWifi className="text-blue-400 text-lg inline-block mb-1" />
+                  </div>
+
                   <h3 className="text-white tracking-wider font-semibold text-sm md:text-base">
-                    {plan.name}
+                    <span className="text-gray-300 text-xs md:text-sm">
+                      {plan.name.replace(/\d+(?:\.\d+)?\s?(?:MB|GB)/, "")}
+                    </span>
                   </h3>
+
                   <p className="text-blue-200 mt-1">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
                   </p>
