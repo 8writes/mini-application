@@ -298,7 +298,7 @@ const PurchaseDialog = ({
       // Show appropriate toast
       transactionToast.show({
         status: toastType,
-        message: message || getDefaultMessage(transactionStatus),
+        message: toastMessage || getDefaultMessage(transactionStatus),
         uniqueRequestId,
       });
 
