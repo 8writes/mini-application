@@ -59,7 +59,7 @@ export default function Page() {
         {
           name: "Generate Invoice",
           icon: <HiOutlineDocumentText className="text-2xl text-red-500" />,
-          link: "/invoice",
+          link: "/generate-invoice",
         },
       ],
     },
