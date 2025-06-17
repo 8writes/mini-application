@@ -54,6 +54,15 @@ export default function SignupPage() {
       referral_code: formData.referral_code.trim(),
     };
 
+    const result = loginSchema.safeParse(trimmedData);
+
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
+      const firstError = Object.values(errors)[0]?.[0];
+      toast.error(firstError || "Invalid input");
+      return;
+    }
+
     try {
       const { data, error: signUpError } = await billzpaddi.auth.signUp({
         email: trimmedData?.email,

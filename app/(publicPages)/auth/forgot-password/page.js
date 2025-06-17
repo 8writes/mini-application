@@ -27,7 +27,7 @@ export default function LoginPage() {
       const { data, error } = await billzpaddi.auth.resetPasswordForEmail(
         formData.email,
         {
-          redirectTo: "https://billzpaddi.com.ng/update-password",
+          redirectTo: "https://www.billzpaddi.com.ng/update-password",
         }
       );
 
