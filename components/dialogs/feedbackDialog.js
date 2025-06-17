@@ -134,7 +134,9 @@ export default function TransactionStatusModal({
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">{icon}</div>
               <h3 className="text-xl font-bold mb-2">{title}</h3>
-              <p className="text-gray-300 mb-6">{message || defaultMessage}</p>
+              <p className="text-white mb-6 bg-amber-50/10 backdrop-blur-sm px-2 py-1 uppercase">
+                {message || defaultMessage}
+              </p>
 
               {/* Action buttons */}
               <div className="flex gap-3 w-full">

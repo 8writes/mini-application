@@ -280,7 +280,7 @@ const PurchaseDialog = ({
       console.error("Purchase error:", err);
       transactionToast.show({
         status: "error",
-        message: `You were not debited for this transaction.`,
+        message: `You were not debited for this transaction`,
         uniqueRequestId,
       });
 
