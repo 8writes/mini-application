@@ -9,6 +9,7 @@ import {
   HiChartBar,
   HiOutlinePhone,
   HiDocumentText,
+  HiOutlineFire,
 } from "react-icons/hi";
 import { FaHistory, FaGamepad } from "react-icons/fa";
 import Link from "next/link";
@@ -45,26 +46,33 @@ export default function DashboardPage() {
         <div className="max-w-5xl pb-7 mx-auto">
           <BillzPaddiCarousel />
         </div>
-        <h1 className="text-2xl md:text-3xl uppercase pb-5">Dashboard</h1>
       </section>
 
       {/* Wallet Summary */}
       <section className="mb-8">
         <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h2 className="text-lg text-gray-400 mb-1">Wallet Balance</h2>
-              <div className="flex flex-wrap items-end gap-2">
-                <p className="text-xl md:text-3xl font-bold">
-                  ₦
-                  {wallet?.balance?.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }) ?? "0.00"}
-                </p>
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-4">
+              <div>
+                <h2 className="text-sm text-gray-400 mb-1">Wallet Balance</h2>
+                <div className="flex flex-wrap items-end gap-2">
+                  <p className="text-xl md:text-3xl font-bold">
+                    ₦
+                    {wallet?.balance?.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }) ?? "0.00"}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex gap-3">
+            <Link href="/wallet" passHref>
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-sm cursor-pointer flex items-center gap-2 text-sm transition-colors">
+                <HiArrowDown className="text-lg" />
+                Add Money
+              </button>
+            </Link>
+            {false && (
               <button
                 onClick={() => window.location.reload()}
                 className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-sm cursor-pointer flex items-center gap-2 text-sm transition-colors"
@@ -72,48 +80,48 @@ export default function DashboardPage() {
                 <HiRefresh className="text-lg" />
                 Refresh
               </button>
-            </div>
+            )}
           </div>
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            {/* Fund Wallet Button */}
-            <Link href="/wallet" passHref>
-              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-                <div className="bg-green-500/20 p-3 rounded-full mb-2">
-                  <HiArrowDown className="text-green-400 text-xl" />
-                </div>
-                <span className="text-sm md:text-base">Fund Wallet</span>
-              </button>
-            </Link>
-
+          {/* Quick Actions - Made smaller */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
             {/* Buy Data Button */}
             <Link href="/data" passHref>
-              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-                <div className="bg-purple-500/20 p-3 rounded-full mb-2">
-                  <HiChartBar className="text-purple-400 text-xl" />
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-3 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-purple-500/20 p-2 rounded-full mb-1">
+                  <HiChartBar className="text-purple-400 text-lg" />
                 </div>
-                <span className="text-sm md:text-base">Buy Data</span>
-              </button>
-            </Link>
-
-            {/* Convert Bet Code Button */}
-            <Link href="/generate-invoice" passHref>
-              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-                <div className="bg-blue-500/20 p-3 rounded-full mb-2">
-                  <HiDocumentText className="text-blue-400 text-xl" />
-                </div>
-                <span className="text-sm md:text-base">Invoice</span>
+                <span className="text-sm">Buy Data</span>
               </button>
             </Link>
 
             {/* Pay Bills Button */}
             <Link href="/airtime" passHref>
-              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-4 rounded-lg flex flex-col items-center transition-colors">
-                <div className="bg-yellow-500/20 p-3 rounded-full mb-2">
-                  <HiOutlinePhone className="text-yellow-400 text-xl" />
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-3 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-yellow-500/20 p-2 rounded-full mb-1">
+                  <HiOutlinePhone className="text-yellow-400 text-lg" />
                 </div>
-                <span className="text-sm md:text-base">Buy Airtime</span>
+                <span className="text-sm">Buy Airtime</span>
+              </button>
+            </Link>
+
+            {/* Convert Invoice Code Button */}
+            <Link href="/generate-invoice" passHref>
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-3 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-blue-500/20 p-2 rounded-full mb-1">
+                  <HiDocumentText className="text-blue-400 text-lg" />
+                </div>
+                <span className="text-sm">Invoice</span>
+              </button>
+            </Link>
+
+            {/* Another service button if needed */}
+            <Link href="/all-services" passHref>
+              <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-3 rounded-lg flex flex-col items-center transition-colors">
+                <div className="bg-gray-400/20 p-2 rounded-full mb-1">
+                  <HiOutlineFire className="text-gray-300 text-lg" />
+                </div>
+                <span className="text-sm">All Services</span>
               </button>
             </Link>
           </div>
