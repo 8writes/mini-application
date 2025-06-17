@@ -1,9 +1,9 @@
-// components/TransactionStatusModal.jsx
 "use client";
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiX, FiCheckCircle, FiClock, FiAlertCircle } from "react-icons/fi";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function TransactionStatusModal({
   status = "success",
@@ -138,18 +138,14 @@ export default function TransactionStatusModal({
 
               {/* Action buttons */}
               <div className="flex gap-3 w-full">
-               
                 {uniqueRequestId && (
                   <Link
                     href={`/transactions/info/${uniqueRequestId}`}
-                    passHref
-                    className="flex-1"
+                    className={`flex-1 w-full py-3 px-4 text-center rounded-md ${statusColor.bg} ${statusColor.text} transition-colors`}
+                    onClick={onClose}
+                    prefetch={true}
                   >
-                    <button
-                      className={`w-full py-3 px-4 cursor-pointer rounded-md ${statusColor.bg} ${statusColor.text} transition-colors`}
-                    >
-                      View Details
-                    </button>
+                    View Details
                   </Link>
                 )}
               </div>
