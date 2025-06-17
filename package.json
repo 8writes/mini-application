@@ -18,6 +18,7 @@
     "cookie": "^1.0.2",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "framer-motion": "^12.18.1",
     "jose": "^6.0.10",
     "jsonwebtoken": "^9.0.2",
     "lru-cache": "^11.1.0",

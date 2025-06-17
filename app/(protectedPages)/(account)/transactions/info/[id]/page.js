@@ -16,7 +16,7 @@ export default function TransactionInfoPage() {
 
   useEffect(() => {
     fetchTransactions().then(() => {
-      const foundTxn = transactions.find((txn) => txn.id === id);
+      const foundTxn = transactions.find((txn) => txn.reference === id);
       setTransaction(foundTxn);
       setIsLoading(false);
     });

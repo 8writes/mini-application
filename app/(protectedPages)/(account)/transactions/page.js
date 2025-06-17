@@ -140,7 +140,10 @@ export default function TransactionsPage() {
                 key={txn.id}
                 className="hover:bg-gray-700/50 transition-colors"
               >
-                <Link href={`/transactions/info/${txn.id}`} className="block">
+                <Link
+                  href={`/transactions/info/${txn.reference}`}
+                  className="block"
+                >
                   {/* Mobile View */}
                   <div className="md:hidden p-4">
                     <div className="flex justify-between items-start mb-2">

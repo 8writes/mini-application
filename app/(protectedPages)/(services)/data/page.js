@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import CountUpTimer from "@/components/count/countUpTimer";
 import { set } from "zod";
+import transactionToast from "@/lib/transactionToast";
 
 const CustomDropdown = ({
   options,
@@ -295,8 +296,10 @@ const PurchaseDialog = ({
         .eq("reference", uniqueRequestId);
 
       // Show appropriate toast
-      toast[toastType](toastMessage || getDefaultMessage(transactionStatus), {
-        autoClose: false,
+      transactionToast.show({
+        status: toastType,
+        message: message || getDefaultMessage(transactionStatus),
+        uniqueRequestId,
       });
 
       if (transactionStatus === "completed") {
@@ -305,13 +308,29 @@ const PurchaseDialog = ({
       }
     } catch (err) {
       console.error("Purchase error:", err);
-      toast.error(err.message || "Purchase failed. Please try again.");
+      transactionToast.show({
+        status: "error",
+        message: `You were not debited for this transaction.`,
+        uniqueRequestId,
+      });
 
-      // Ensure wallet is refunded if error occurs after deduction
-      await billzpaddi
-        .from("wallets")
-        .update({ balance: wallet?.balance })
-        .eq("user_id", user?.user_id);
+      // Attempt to refund if error occurred after deduction
+      try {
+        await billzpaddi
+          .from("wallets")
+          .update({ balance: wallet?.balance })
+          .eq("user_id", user.user_id);
+
+        // Update transaction status
+        await billzpaddi
+          .from("transactions")
+          .update({
+            status: "refunded",
+          })
+          .eq("reference", uniqueRequestId);
+      } catch (refundError) {
+        console.error("Refund error:", refundError);
+      }
     } finally {
       fetchWallet();
       fetchTransactions();
@@ -324,7 +343,7 @@ const PurchaseDialog = ({
   function getDefaultMessage(status) {
     const messages = {
       completed: "Data purchase successful!",
-      pending: "Transaction pending...",
+      pending: "Transaction is still processing...",
       failed: "Transaction failed. Funds refunded.",
     };
     return messages[status] || "Transaction processed";
@@ -758,7 +777,7 @@ export default function Page() {
           placeholder="Enter phone number"
           value={phone || ""}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-3 rounded-lg outline-none bg-gray-800 text-white border border-gray-600"
+          className="w-full md:w-1/2 px-4 py-3 rounded-lg tracking-widest outline-none bg-gray-800 text-white border border-gray-600"
         />
       </div>
 
@@ -800,7 +819,7 @@ export default function Page() {
                   className="bg-gray-800 p-3 rounded-md border cursor-pointer border-gray-700 hover:border-blue-400 transition-all text-sm md:text-base"
                 >
                   <FaWifi className="text-blue-400 text-lg mb-1" />
-                  <h3 className="text-white font-semibold text-sm md:text-base">
+                  <h3 className="text-white tracking-wider font-semibold text-sm md:text-base">
                     {plan.name}
                   </h3>
                   <p className="text-blue-200 mt-1">

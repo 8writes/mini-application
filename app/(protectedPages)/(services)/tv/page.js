@@ -9,6 +9,7 @@ import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
 import axios from "axios";
 import CountUpTimer from "@/components/count/countUpTimer";
+import transactionToast from "@/lib/transactionToast";
 
 const CustomDropdown = ({
   options,
@@ -263,8 +264,11 @@ const PurchaseDialog = ({
         })
         .eq("reference", uniqueRequestId);
 
-      toast[toastType](toastMessage || getDefaultMessage(transactionStatus), {
-        autoClose: false,
+      // Show appropriate toast
+      transactionToast.show({
+        status: toastType,
+        message: message || getDefaultMessage(transactionStatus),
+        uniqueRequestId,
       });
 
       if (transactionStatus === "completed") {
@@ -273,13 +277,29 @@ const PurchaseDialog = ({
       }
     } catch (err) {
       console.error("Purchase error:", err);
-      toast.error(err.message || "Purchase failed. Please try again.");
+      transactionToast.show({
+        status: "error",
+        message: `You were not debited for this transaction.`,
+        uniqueRequestId,
+      });
 
-      // Refund wallet if error occurs
-      await billzpaddi
-        .from("wallets")
-        .update({ balance: wallet?.balance })
-        .eq("user_id", user?.user_id);
+      // Attempt to refund if error occurred after deduction
+      try {
+        await billzpaddi
+          .from("wallets")
+          .update({ balance: wallet?.balance })
+          .eq("user_id", user.user_id);
+
+        // Update transaction status
+        await billzpaddi
+          .from("transactions")
+          .update({
+            status: "refunded",
+          })
+          .eq("reference", uniqueRequestId);
+      } catch (refundError) {
+        console.error("Refund error:", refundError);
+      }
     } finally {
       fetchWallet();
       fetchTransactions();
@@ -291,7 +311,7 @@ const PurchaseDialog = ({
   function getDefaultMessage(status) {
     const messages = {
       completed: "TV subscription successful!",
-      pending: "Transaction pending...",
+      pending: "Transaction is still processing...",
       failed: "Transaction failed. Funds refunded.",
     };
     return messages[status] || "Transaction processed";
@@ -613,7 +633,7 @@ export default function TvSubscriptionPage() {
           placeholder="Enter smart card/decoder number"
           value={smartCardNumber}
           onChange={(e) => setSmartCardNumber(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-3 rounded-lg bg-gray-800 outline-none text-white border border-gray-600"
+          className="w-full md:w-1/2 px-4 py-3 rounded-lg tracking-widest bg-gray-800 outline-none text-white border border-gray-600"
         />
       </div>
 

@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
 import CountUpTimer from "@/components/count/countUpTimer";
+import transactionToast from "@/lib/transactionToast";
+import { formatPhoneNumber } from "@/utils/phoneFormatter";
 
 // Custom dropdown
 const CustomDropdown = ({
@@ -233,14 +235,18 @@ const PurchaseDialog = ({
           metadata: {
             ...data,
             updated_at: new Date().toISOString(),
-            plan: `${selectedISP?.name || ""} ₦${amount.toLocaleString() || ""}`,
+            plan: `${selectedISP?.name || ""} ₦${
+              amount.toLocaleString() || ""
+            }`,
           },
         })
         .eq("reference", uniqueRequestId);
 
-      // Show appropriate notification
-      toast[toastType](message || getStatusMessage(newStatus), {
-        autoClose: false,
+      // Show appropriate toast
+      transactionToast.show({
+        status: toastType,
+        message: message || getStatusMessage(newStatus),
+        uniqueRequestId,
       });
 
       if (newStatus === "completed") {
@@ -249,7 +255,11 @@ const PurchaseDialog = ({
       }
     } catch (err) {
       console.error("Purchase error:", err);
-      toast.error(err.message || "Transaction failed");
+      transactionToast.show({
+        status: "error",
+        message: `You were not debited for this transaction.`,
+        uniqueRequestId,
+      });
 
       // Attempt to refund if error occurred after deduction
       try {
@@ -257,8 +267,16 @@ const PurchaseDialog = ({
           .from("wallets")
           .update({ balance: wallet?.balance })
           .eq("user_id", user.user_id);
+
+        // Update transaction status
+        await billzpaddi
+          .from("transactions")
+          .update({
+            status: "refunded",
+          })
+          .eq("reference", uniqueRequestId);
       } catch (refundError) {
-        console.error("Refund failed:", refundError);
+        console.error("Refund error:", refundError);
       }
     } finally {
       // Refresh data
@@ -273,7 +291,7 @@ const PurchaseDialog = ({
   function getStatusMessage(status) {
     const messages = {
       completed: "Airtime purchase successful!",
-      pending: "Transaction in progress...",
+      pending: "Transaction is still processing...",
       failed: "Transaction failed. Funds refunded.",
     };
     return messages[status] || "Transaction processed";
@@ -510,6 +528,8 @@ export default function Page() {
     setShowDialog(true);
   };
 
+  const formattedPhone = formatPhoneNumber(phone);
+
   if (!user || isLoading) {
     return (
       <div className="flex items-center justify-center h-[30rem]">
@@ -544,7 +564,7 @@ export default function Page() {
           placeholder="Enter phone number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 outline-none"
+          className="w-full md:w-1/2 px-4 py-3 rounded-lg tracking-widest bg-gray-800 text-white border border-gray-600 outline-none"
         />
       </div>
 

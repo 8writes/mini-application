@@ -152,7 +152,7 @@ export default function DashboardPage() {
                   className="px-4 py-2 hover:bg-gray-700/50 transition-colors"
                 >
                   {" "}
-                  <Link href={`/transactions/info/${txn.id}`} className="block">
+                  <Link href={`/transactions/info/${txn.reference}`} className="block">
                     <div className="flex items-center justify-between">
                       {/* Transaction Details (Left Side) */}
                       <div className="flex-1">
