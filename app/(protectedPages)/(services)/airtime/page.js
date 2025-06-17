@@ -9,8 +9,8 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
 import CountUpTimer from "@/components/count/countUpTimer";
-import transactionToast from "@/lib/transactionToast";
 import { formatPhoneNumber } from "@/utils/phoneFormatter";
+import { useTransactionToast } from "@/context/TransactionToastContext";
 
 // Custom dropdown
 const CustomDropdown = ({
@@ -117,6 +117,7 @@ const PurchaseDialog = ({
   } = useGlobalContextData();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
+  const transactionToast = useTransactionToast();
 
   const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
 

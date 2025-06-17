@@ -9,7 +9,7 @@ import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
 import axios from "axios";
 import CountUpTimer from "@/components/count/countUpTimer";
-import transactionToast from "@/lib/transactionToast";
+import { useTransactionToast } from "@/context/TransactionToastContext";
 
 const CustomDropdown = ({
   options,
@@ -119,6 +119,7 @@ const PurchaseDialog = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
   const [isRenewal, setIsRenewal] = useState(true);
+  const transactionToast = useTransactionToast();
 
   const amount =
     isRenewal && verificationData?.Renewal_Amount

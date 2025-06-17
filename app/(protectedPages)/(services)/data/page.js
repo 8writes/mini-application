@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import CountUpTimer from "@/components/count/countUpTimer";
 import { set } from "zod";
-import transactionToast from "@/lib/transactionToast";
+import { useTransactionToast } from "@/context/TransactionToastContext";
 
 const CustomDropdown = ({
   options,
@@ -119,6 +119,7 @@ const PurchaseDialog = ({
   } = useGlobalContextData();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
+  const transactionToast = useTransactionToast();
 
   useEffect(() => {
     if (open && user) {
