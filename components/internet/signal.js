@@ -75,7 +75,7 @@ const NetworkIndicator = () => {
         default:
           // For unknown types, show speed if available
           const label =
-            downlinkSpeed > 0 ? `${downlinkSpeed.toFixed(1)} Mbps` : "Online";
+            downlinkSpeed > 0 ? `${downlinkSpeed.toFixed(1)} Mbps` : "";
           setStatus({
             icon: <FaWifi />,
             color: "text-green-500",

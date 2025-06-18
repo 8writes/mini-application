@@ -458,7 +458,24 @@ export default function Page() {
   const [openTooltipId, setOpenTooltipId] = useState(null);
   const tooltipRef = useRef(null);
 
-  const tabOrder = ["Daily", "Weekly", "Monthly", "Others"];
+  const tabOrder = [
+    "Daily",
+    "Weekly",
+    "Special",
+    "Monthly",
+    "Mega",
+    "Social",
+    "TV",
+    "Campus",
+    "2-Weeks",
+    "SME",
+    "MiFi",
+    "Others",
+  ];
+
+  useEffect(() => {
+    setActiveTab("Daily");
+  }, [selectedISP]);
 
   useEffect(() => {
     fetchWallet();
@@ -627,38 +644,142 @@ export default function Page() {
   }, [phone, isps]);
 
   const cleanPlanName = (name) => {
-    return name;
+    if (!name) return "";
+
+    // Remove price references (Naira, amounts)
+    let cleaned = name.replace(/\d{1,3}(?:,\d{3})*\.?\d*\s*Naira/gi, "");
+
+    // Remove hyphens and trim whitespace
+    cleaned = cleaned.replace(/-/g, " ").trim();
+
+    // Remove anything in parentheses that contains numbers
+    cleaned = cleaned.replace(/\(.*?\d+.*?\)/g, "");
+
+    // Remove duplicate whitespace
+    cleaned = cleaned.replace(/\s+/g, " ");
+
+    // Remove trailing/leading special characters
+    cleaned = cleaned.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, "");
+
+    // Capitalize first letter of each word (optional)
+    cleaned = cleaned.replace(/\b\w/g, (char) => char.toUpperCase());
+
+    return cleaned || name; // Fallback to original if empty
   };
 
-  const categorizePlans = (variations) => {
-    const groups = { Daily: [], Weekly: [], Monthly: [], Others: [] };
+  const categorizedPlans = (variations) => {
+    const groups = {
+      Daily: [],
+      Weekly: [],
+      Monthly: [],
+      Mega: [],
+      Social: [],
+      Special: [],
+      TV: [],
+      Campus: [],
+      "2-Weeks": [],
+      SME: [],
+      MiFi: [],
+      Others: [],
+    };
+
     variations.forEach((plan) => {
-      const name = cleanPlanName(plan.name).toLowerCase();
-      if (
-        name.includes("24 hrs") ||
-        name.includes("1 day") ||
-        name.includes("1day") ||
-        name.includes("2 day") ||
-        name.includes("2days")
-      )
-        groups.Daily.push(plan);
-      else if (name.includes("7 days") || name.includes("week"))
-        groups.Weekly.push(plan);
+      const cleanName = cleanPlanName(plan.name).toLowerCase();
+      const variationCode = plan.variation_code.toLowerCase();
+
+      // General categorization
+      if (cleanName.includes("sme") || variationCode.includes("sme")) {
+        groups.SME.push(plan);
+      } else if (cleanName.includes("social") || variationCode.includes("social")) {
+        groups.Social.push(plan);
+      } else if (cleanName.includes("special") || variationCode.includes("special")) {
+        groups.Special.push(plan);
+      } else if (
+        cleanName.includes("campus") ||
+        variationCode.includes("campus")
+      ) {
+        groups.Campus.push(plan);
+      } else if (
+        cleanName.includes("mifi") ||
+        variationCode.includes("mifi") ||
+        cleanName.includes("router")
+      ) {
+        groups.MiFi.push(plan);
+      } else if (cleanName.includes("tv") || variationCode.includes("tv")) {
+        groups.TV.push(plan);
+      } else if (cleanName.includes("mega") || variationCode.includes("mega")) {
+        groups.Mega.push(plan);
+      }
+      // Duration-based categorization
       else if (
-        name.includes("30 days") ||
-        name.includes("month") ||
-        name.includes("30days") ||
-        name.includes("monthly")
-      )
+        cleanName.includes("1day") ||
+        cleanName.includes("1 day") ||
+        cleanName.includes("24hr") ||
+        cleanName.includes("24 hr") ||
+        /(^|\s)n50($|\s)/.test(cleanName) ||
+        /(^|\s)n100($|\s)/.test(cleanName) ||
+        /(^|\s)n75($|\s)/.test(cleanName) ||
+        /(^|\s)n200($|\s)/.test(cleanName)
+      ) {
+        groups.Daily.push(plan);
+      } else if (
+        cleanName.includes("2day") ||
+        cleanName.includes("2 day") ||
+        cleanName.includes("3day") ||
+        cleanName.includes("daily") ||
+        cleanName.includes("weekend") ||
+        cleanName.includes("3 day")
+      ) {
+        groups.Daily.push(plan);
+      } else if (
+        cleanName.includes("7day") ||
+        cleanName.includes("7 day") ||
+        cleanName.includes("week") ||
+        cleanName.includes("7days")
+      ) {
+        groups.Weekly.push(plan);
+      } else if (
+        cleanName.includes("14day") ||
+        cleanName.includes("14 day") ||
+        cleanName.includes("2week") ||
+        cleanName.includes("2 week")
+      ) {
+        groups["2-Weeks"].push(plan);
+      } else if (
+        cleanName.includes("30day") ||
+        cleanName.includes("30 day") ||
+        cleanName.includes("month") ||
+        cleanName.includes("30days")
+      ) {
         groups.Monthly.push(plan);
-      else groups.Others.push(plan);
+      } else if (
+        cleanName.includes("90day") ||
+        cleanName.includes("120day") ||
+        cleanName.includes("365day") ||
+        cleanName.includes("90 day") ||
+        cleanName.includes("oneoff") ||
+        cleanName.includes("120 day") ||
+        cleanName.includes("365 day")
+      ) {
+        groups.Monthly.push(plan);
+      } else {
+        groups.Others.push(plan);
+      }
     });
 
-    // Sort each category by price (lowest to highest)
+    // Sort each category by price (ascending)
     Object.keys(groups).forEach((category) => {
       groups[category].sort(
-        (a, b) => Number(a.variation_amount) - Number(b.variation_amount)
+        (a, b) =>
+          parseFloat(a.variation_amount) - parseFloat(b.variation_amount)
       );
+    });
+
+    // Remove empty categories
+    Object.keys(groups).forEach((category) => {
+      if (groups[category].length === 0) {
+        delete groups[category];
+      }
     });
 
     return groups;
@@ -711,7 +832,7 @@ export default function Page() {
           name: cleanPlanName(v.name),
         }));
 
-        setPlans(categorizePlans(cleaned));
+        setPlans(categorizedPlans(cleaned));
       } catch (err) {
         console.error("Error fetching data plans:", err);
         toast.error("Failed to load data plans");
@@ -793,21 +914,26 @@ export default function Page() {
         </div>
       ) : (
         <>
-          {/* Tabs */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            {tabOrder.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveTab(category)}
-                className={`px-4 py-2 rounded-full border cursor-pointer transition ${
-                  activeTab === category
-                    ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-gray-800 text-white border-gray-700"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          {/* Tabs Container */}
+          <div className="mb-6">
+            {/* Scrollable Tabs - Only show tabs that have plans */}
+            <div className="flex space-x-2 pb-2 overflow-x-auto custom-scrollbar">
+              {tabOrder
+                .filter((category) => plans[category]?.length > 0) // Only show tabs with plans
+                .map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setActiveTab(category)}
+                    className={`flex-shrink-0 px-3 py-1 text-sm rounded-full border cursor-pointer transition whitespace-nowrap ${
+                      activeTab === category
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "bg-gray-800 text-white border-gray-700 hover:bg-gray-700"
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+            </div>
           </div>
 
           {/* Plans for active tab */}
@@ -880,8 +1006,8 @@ export default function Page() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-center pt-4">
-              Check "Others" for plans
+            <p className="text-gray-300 text-center pt-4">
+              Check "Others" for all plans
             </p>
           )}
         </>
