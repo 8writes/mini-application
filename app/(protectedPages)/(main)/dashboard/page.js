@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import BillzPaddiCarousel from "@/components/carousel/dashboardCarousel";
 import { useEffect } from "react";
+import { format } from "date-fns";
 
 export default function DashboardPage() {
   const { user, isLoading } = useGlobalContext();
@@ -175,7 +176,7 @@ export default function DashboardPage() {
                               {txn.description}
                             </p>
                             <p className="text-sm text-gray-400">
-                              {new Date(txn.created_at).toLocaleDateString()}
+                              {format(new Date(txn?.created_at), "PPpp")}
                             </p>
                           </div>
                         </div>

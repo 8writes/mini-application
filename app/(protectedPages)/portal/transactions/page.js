@@ -2,16 +2,16 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useState, useEffect } from "react";
 import { HiSearch, HiFilter, HiArrowDown, HiArrowUp } from "react-icons/hi";
-import { FaCopy, FaExchangeAlt } from "react-icons/fa";
+import { FaArrowLeft, FaCopy, FaExchangeAlt } from "react-icons/fa";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { toast } from "react-toastify";
-import { format } from "date-fns";
 import Link from "next/link";
+import { billzpaddi } from "@/lib/client";
 
 export default function TransactionsPage() {
   // All hooks must be called unconditionally at the top
   const { user, isLoading } = useGlobalContext();
-  const { transactions, fetchTransactions } = useGlobalContextData();
+  const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
@@ -20,6 +20,23 @@ export default function TransactionsPage() {
   const transactionsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Fetch user transactions
+  const fetchTransactions = async () => {
+    try {
+      const { data, error } = await billzpaddi
+        .from("transactions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setTransactions(data);
+    } catch (err) {
+      console.error("Transactions fetch error:", err);
+      toast.error("Failed to load transactions");
+    }
+  };
+
+  // Fetch data
   useEffect(() => {
     fetchTransactions();
   }, []);
@@ -31,7 +48,8 @@ export default function TransactionsPage() {
       result = result.filter(
         (txn) =>
           txn.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          txn.reference.toLowerCase().includes(searchTerm.toLowerCase())
+          txn.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          txn.email.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -74,9 +92,15 @@ export default function TransactionsPage() {
 
   return (
     <div className="p-4 md:p-6">
+      <Link href={`/portal/users`} className="">
+        <button className="flex items-center py-4 gap-2 hover:bg-gray-600 rounded-md px-4 transition-all duration-150 text-gray-200 cursor-pointer mb-6">
+          <FaArrowLeft /> Back
+        </button>
+      </Link>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold">Transaction History</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Transactions History</h1>
       </div>
 
       {/* Controls - Stacked on mobile */}
@@ -142,7 +166,7 @@ export default function TransactionsPage() {
                 className="hover:bg-gray-700/50 transition-colors"
               >
                 <Link
-                  href={`/transactions/info/${txn.reference}`}
+                  href={`/portal/users/detail/transaction/${txn.reference}`}
                   className="block"
                 >
                   {/* Mobile View */}
@@ -166,8 +190,11 @@ export default function TransactionsPage() {
                           <p className="font-medium text-sm">
                             {txn.description}
                           </p>
+                          <p className="text-xs flex items-center text-yellow-400">
+                            {txn.email}
+                          </p>
                           <p className="text-xs text-gray-400">
-                            {format(new Date(txn?.created_at), "PPpp")}
+                            {new Date(txn.created_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
@@ -234,6 +261,9 @@ export default function TransactionsPage() {
                       </div>
                       <div>
                         <p className="text-sm font-medium">{txn.description}</p>
+                        <p className="text-xs flex items-center text-yellow-400">
+                          {txn.email}
+                        </p>
                         <p className="text-xs flex items-center text-gray-400">
                           {txn.reference}
                           <span
@@ -270,7 +300,10 @@ export default function TransactionsPage() {
                         {new Date(txn.created_at).toLocaleDateString()}
                       </p>
                       <p className="text-xs text-gray-400">
-                        {format(new Date(txn?.created_at), "PPpp")}
+                        {new Date(txn.created_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </p>
                     </div>
 

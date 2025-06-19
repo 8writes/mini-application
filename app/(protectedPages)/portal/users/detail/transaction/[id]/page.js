@@ -6,17 +6,42 @@ import { FaCopy, FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import Link from "next/link";
+import { billzpaddi } from "@/lib/client";
 
 export default function TransactionInfoPage() {
-  const { transactions, fetchTransactions } = useGlobalContextData();
+  const [transactions, setTransactions] = useState(null);
   const [transaction, setTransaction] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
   const router = useRouter();
 
+  // Fetch user transactions
+  const fetchTransactions = async () => {
+    if (!id) return;
+    try {
+      const { data, error } = await billzpaddi
+        .from("transactions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setTransactions(data);
+    } catch (err) {
+      console.error("Transactions fetch error:", err);
+      toast.error("Failed to load transactions");
+    }
+  };
+
+  // Fetch data
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
   useEffect(() => {
     fetchTransactions().then(() => {
-      const foundTxn = transactions.find((txn) => txn.reference === id);
+      const foundTxn = transactions
+        ? transactions.find((txn) => txn.reference === id)
+        : null;
       setTransaction(foundTxn);
       setIsLoading(false);
     });
@@ -31,64 +56,70 @@ export default function TransactionInfoPage() {
   };
 
   // Memoize transaction details to prevent unnecessary recalculations
-  const { transactionDetails, transactionData, transactionData1 } = useMemo(() => {
-    if (!transaction?.metadata?.content?.transactions) {
-      return { transactionDetails: [], transactionData: null, transactionData1: null };
-    }
+  const { transactionDetails, transactionData, transactionData1 } =
+    useMemo(() => {
+      if (!transaction?.metadata?.content?.transactions) {
+        return {
+          transactionDetails: [],
+          transactionData: null,
+          transactionData1: null,
+        };
+      }
 
-    const txnData = transaction.metadata.content.transactions;
-    const txnData1 = transaction.metadata;
-    const details = [];
+      const txnData = transaction.metadata.content.transactions;
+      const txnData1 = transaction.metadata;
+      const details = [];
 
-    // Essential fields
-    if (txnData.product_name) {
-      details.push({
-        label: "Product",
-        value: txnData.product_name,
-      });
-    }
+      // Essential fields
+      if (txnData.product_name) {
+        details.push({
+          label: "Product",
+          value: txnData.product_name,
+        });
+      }
 
-    if (txnData.unique_element) {
-      details.push({
-        label: "Recipient",
-        value: txnData.unique_element,
-      });
-    }
+      if (txnData.unique_element) {
+        details.push({
+          label: "Recipient",
+          value: txnData.unique_element,
+        });
+      }
 
-    if (txnData1.plan) {
-      details.push({
-        label: "Plan",
-        value: txnData1.plan,
-      });
-    }
+      if (txnData1.plan) {
+        details.push({
+          label: "Plan",
+          value: txnData1.plan,
+        });
+      }
 
-    if (txnData.amount) {
-      details.push({
-        label: "Amount",
-        value: formatAmount(txnData.amount),
-      });
-    }
+      if (txnData.amount) {
+        details.push({
+          label: "Amount",
+          value: formatAmount(txnData.amount),
+        });
+      }
 
-    if (txnData.status) {
-      details.push({
-        label: "Service Status",
-        value: txnData.status.charAt(0).toUpperCase() + txnData.status.slice(1),
-      });
-    }
+      if (txnData.status) {
+        details.push({
+          label: "Service Status",
+          value:
+            txnData.status.charAt(0).toUpperCase() + txnData.status.slice(1),
+        });
+      }
 
-    if (txnData.transaction_date) {
-      details.push({
-        label: "Processed On",
-        value: format(new Date(txnData.transaction_date), "PPpp"),
-      });
-    }
+      if (txnData.transaction_date) {
+        details.push({
+          label: "Processed On",
+          value: format(new Date(txnData.transaction_date), "PPpp"),
+        });
+      }
 
-    return {
-      transactionDetails: details,
-      transactionData: txnData,
-      transactionData1: txnData1,
-    };
-  }, [transaction]);
+      return {
+        transactionDetails: details,
+        transactionData: txnData,
+        transactionData1: txnData1,
+      };
+    }, [transaction]);
 
   if (isLoading || !transaction) {
     return (
@@ -104,9 +135,9 @@ export default function TransactionInfoPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
-      <Link href="/transactions" className="">
+      <Link href={`/portal/users/detail/${transaction?.user_id}`} className="">
         <button className="flex items-center py-4 gap-2 hover:bg-gray-600 rounded-md px-4 transition-all duration-150 text-gray-200 cursor-pointer mb-6">
-          <FaArrowLeft /> Back to Transactions
+          <FaArrowLeft /> Back
         </button>
       </Link>
 

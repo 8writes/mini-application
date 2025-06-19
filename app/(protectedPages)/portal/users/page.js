@@ -341,9 +341,14 @@ export default function Page() {
             <p className="text-2xl font-bold text-blue-400">
               ₦{totalSales.toLocaleString()}
             </p>
-            <p className="text-sm text-gray-300 pt-1">
-              {transactionCount} transactions
-            </p>
+            <Link
+              href="/portal/transactions"
+              className="text-sm text-gray-300 pt-1"
+            >
+              <p className="text-sm text-gray-300 pt-1">
+                {transactionCount} transactions
+              </p>
+            </Link>
           </div>
 
           <div className="bg-gray-800 p-4 rounded-lg shadow">
@@ -453,7 +458,7 @@ export default function Page() {
                           </td>
                           <td className="p-3 border text-center whitespace-nowrap">
                             <Link
-                              href={`/portal/users/${u.user_id}`}
+                              href={`/portal/users/detail/${u.user_id}`}
                               className="text-blue-600 hover:underline pr-4 cursor-pointer"
                             >
                               View

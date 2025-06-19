@@ -136,10 +136,10 @@ const PurchaseDialog = ({
   const applyDiscount = !hasDiscount || hasFridayDiscount;
 
   const discountRates = {
-    "mtn-data": 0.007, // 0.5%
-    "glo-data": 0.007, // 1%
-    "airtel-data": 0.007, // 0.7%
-    "etisalat-data": 0.007, // 1%
+    "mtn-data": 0.012, // 1.2%
+    "glo-data": 0.014, // 1.4%
+    "airtel-data": 0.013, // 1.3%
+    "etisalat-data": 0.014, // 1.4%
   };
 
   const totalAmount = selectedPlan
@@ -151,7 +151,7 @@ const PurchaseDialog = ({
           return Math.round(amount * 0.98);
         } else {
           // Use selectedISP rate or fallback to 1%
-          const rate = discountRates[selectedISP?.serviceID] || 0.007;
+          const rate = discountRates[selectedISP?.serviceID] || 0.01;
           const discount = Math.min(amount * rate, 300);
           return Math.round(amount - discount);
         }
@@ -541,14 +541,14 @@ export default function Page() {
     } else {
       // Define discount rates per ISP
       const discountRates = {
-        "mtn-data": 0.007, // 1%
-        "glo-data": 0.007, // 1%
-        "airtel-data": 0.007, // 1%
-        "etisalat-data": 0.007, // 1%
+        "mtn-data": 0.012, // 1.2%
+        "glo-data": 0.014, // 1.4%
+        "airtel-data": 0.013, // 1.3%
+        "etisalat-data": 0.014, // 1.4%
       };
 
       // Use 1% as default if not found
-      const rate = discountRates[selectedISP?.serviceID] || 0.007;
+      const rate = discountRates[selectedISP?.serviceID] || 0.01;
 
       // Apply discount with ₦150 cap
       const discount = Math.min(amount * rate, 300);
@@ -855,10 +855,10 @@ export default function Page() {
 
   // Define discount rates per ISP
   const discountRates = {
-    "mtn-data": 0.007, // 0.5%
-    "glo-data": 0.007, // 1%
-    "airtel-data": 0.007, // 0.7%
-    "etisalat-data": 0.007, // 1%
+    "mtn-data": 0.012, // 1.2%
+    "glo-data": 0.014, // 1.4%
+    "airtel-data": 0.013, // 1.3%
+    "etisalat-data": 0.014, // 1.4%
   };
 
   // Use 1% as default if not found
@@ -994,7 +994,7 @@ export default function Page() {
                                   : "hidden"
                               }`}
                             >
-                              Discount capped at ₦250.
+                              Discount capped at ₦300.
                               <span className="absolute w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></span>
                             </span>
                           </span>

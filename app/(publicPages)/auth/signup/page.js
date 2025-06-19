@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -7,6 +6,7 @@ import Link from "next/link";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { billzpaddi } from "@/lib/client";
 import Image from "next/image";
+import { signupSchema } from "@/utils/inputValidation";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -20,6 +20,8 @@ export default function SignupPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [receivePromotions, setReceivePromotions] = useState(false);
 
   // Get referral code from URL if present
   useEffect(() => {
@@ -44,6 +46,12 @@ export default function SignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!acceptedTerms) {
+      toast.info("You must accept the terms and conditions");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const trimmedData = {
@@ -52,14 +60,17 @@ export default function SignupPage() {
       last_name: formData.last_name.trim(),
       email: formData.email.trim().toLowerCase(),
       referral_code: formData.referral_code.trim(),
+      accepted_terms: acceptedTerms,
+      marketing_consent: receivePromotions,
     };
 
-    const result = loginSchema.safeParse(trimmedData);
+    const result = signupSchema.safeParse(trimmedData);
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
       const firstError = Object.values(errors)[0]?.[0];
       toast.error(firstError || "Invalid input");
+      setIsSubmitting(false);
       return;
     }
 
@@ -67,6 +78,16 @@ export default function SignupPage() {
       const { data, error: signUpError } = await billzpaddi.auth.signUp({
         email: trimmedData?.email,
         password: trimmedData?.password,
+        options: {
+          data: {
+            first_name: trimmedData.first_name,
+            last_name: trimmedData.last_name,
+            role: trimmedData.role,
+            referral_code: trimmedData.referral_code,
+            accepted_terms: trimmedData.accepted_terms,
+            marketing_consent: trimmedData.marketing_consent,
+          },
+        },
       });
 
       if (signUpError) {
@@ -213,10 +234,58 @@ export default function SignupPage() {
             />
           </div>
 
+          {/* Terms and Conditions Checkbox */}
+          <div className="flex items-start">
+            <div className="flex items-center h-5">
+              <input
+                id="terms"
+                name="terms"
+                type="checkbox"
+                required
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 outline-none cursor-pointer"
+              />
+            </div>
+            <label
+              htmlFor="terms"
+              className="ms-2 text-sm text-gray-800 cursor-pointer"
+            >
+              I agree to the{" "}
+              <Link href="/terms" className="text-blue-600 hover:underline">
+                Terms and Conditions
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-blue-600 hover:underline">
+                Privacy Policy
+              </Link>
+            </label>
+          </div>
+
+          {/* Promotional Emails Checkbox */}
+          <div className="flex items-start">
+            <div className="flex items-center h-5">
+              <input
+                id="promotions"
+                name="promotions"
+                type="checkbox"
+                checked={receivePromotions}
+                onChange={(e) => setReceivePromotions(e.target.checked)}
+                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 outline-none cursor-pointer"
+              />
+            </div>
+            <label
+              htmlFor="promotions"
+              className="ms-2 text-sm text-gray-800 cursor-pointer"
+            >
+              I want to receive promotional emails and updates
+            </label>
+          </div>
+
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50"
+            disabled={isSubmitting || !acceptedTerms}
+            className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Signing up... " : "Sign Up"}
           </button>

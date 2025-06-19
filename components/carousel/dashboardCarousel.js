@@ -3,11 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const banners = [
-  {
-    image: "/banners/banner-discount.png",
-    link: "/data",
-    alt: "Buy Affordable Data Plans",
-  },
+  
   {
     image: "/banners/banner-funding.png",
     link: "/wallet",

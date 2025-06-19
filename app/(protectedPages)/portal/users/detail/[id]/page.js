@@ -8,6 +8,7 @@ import NotificationDialog from "@/components/dialogs/notificationDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
 import Link from "next/link";
 import { FaUserFriends, FaWallet } from "react-icons/fa";
+import { format } from "date-fns";
 
 export default function Page() {
   const router = useRouter();
@@ -100,7 +101,6 @@ export default function Page() {
   // 🚀 Fetch referral data
   const fetchReferralData = async (code) => {
     try {
-      setLoading(true);
 
       // 1. Get all users who used this referral code
       const { data: referredUsers, error: referralError } = await billzpaddi
@@ -148,7 +148,6 @@ export default function Page() {
       console.error("Error fetching referrals:", error);
       toast.error("Failed to load referral data");
     } finally {
-      setLoading(false);
     }
   };
 
@@ -546,7 +545,15 @@ export default function Page() {
                           </span>
                         </td>
                         <td className="p-3">
-                          {new Date(txn.created_at).toLocaleString()}
+                          {format(new Date(txn?.created_at), "PPpp")}
+                        </td>
+                        <td className="p-3">
+                          <Link
+                            href={`/portal/users/detail/transaction/${txn.reference}`}
+                            className="text-blue-400 hover:underline"
+                          >
+                            View Details
+                          </Link>
                         </td>
                       </tr>
                     ))}
