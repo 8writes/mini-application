@@ -42,12 +42,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 md:p-6 md:pt-0">
-      <section className="">
-        {/* Welcome Section */}{" "}
-        <div className="max-w-5xl pb-7 mx-auto">
-          <BillzPaddiCarousel />
-        </div>
-      </section>
+      
 
       {/* Wallet Summary */}
       <section className="mb-8">
