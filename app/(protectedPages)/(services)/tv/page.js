@@ -644,7 +644,7 @@ export default function TvSubscriptionPage() {
           placeholder="Enter phone number"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg bg-gray-800 outline-none text-white border border-gray-600"
+          className="w-full px-4 py-3 rounded-lg bg-gray-800  tracking-widest outline-none text-white border border-gray-600"
         />
       </div>
 

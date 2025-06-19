@@ -5,12 +5,14 @@ import { billzpaddi } from "@/lib/client";
 import axios from "axios";
 import { use, useEffect, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import Image from "next/image";
 import CountUpTimer from "@/components/count/countUpTimer";
 import { formatPhoneNumber } from "@/utils/phoneFormatter";
 import { useTransactionToast } from "@/context/TransactionToastContext";
+import { FiX } from "react-icons/fi";
 
 // Custom dropdown
 const CustomDropdown = ({
@@ -302,11 +304,25 @@ const PurchaseDialog = ({
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-lg border border-gray-700 w-full max-w-md">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="bg-gray-800 rounded-lg border border-gray-700 w-full max-w-md"
+      >
         <div className="p-6">
-          <h2 className="text-xl font-bold text-white mb-4">
-            Confirm Purchase
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-white">Confirm Purchase</h2>
+            {/* Close button */}
+            <button
+              onClick={() => onOpenChange(false)}
+              className="cursor-pointer text-gray-100 hover:text-gray-200 transition-colors"
+              aria-label="Close modal"
+            >
+              <FiX className="w-7 h-7" />
+            </button>
+          </div>
 
           <div className="space-y-4">
             <div className="flex justify-between">
@@ -315,7 +331,7 @@ const PurchaseDialog = ({
             </div>
 
             <div className="flex justify-between">
-              <span className="text-gray-400">Mobile Number:</span>
+              <span className="text-gray-400">Phone:</span>
               <span className="text-white">{phoneNumber}</span>
             </div>
 
@@ -326,23 +342,22 @@ const PurchaseDialog = ({
               </span>
             </div>
 
-            <div className="flex justify-between">
-              <span className="text-gray-400">Available Balance:</span>
+            <div className="flex justify-between bg-gray-700 p-3 rounded-md space-y-1">
+              <span className="text-gray-400">Wallet Balance:</span>
               <span
-                className={
+                className={`${
                   wallet?.balance >= totalAmount
                     ? "text-green-500"
                     : "text-red-500"
-                }
+                }`}
               >
                 ₦{wallet?.balance.toLocaleString()}
               </span>
             </div>
-
             {wallet?.balance < totalAmount && (
               <Link
                 href="/wallet"
-                className="flex justify-end bg-gray-700 w-fit ml-auto px-2 py-1 rounded-sm text-sm"
+                className="flex justify-end bg-green-700 w-fit ml-auto px-2 py-1 rounded-sm text-sm"
               >
                 Top Up
               </Link>
@@ -355,17 +370,17 @@ const PurchaseDialog = ({
             <button
               onClick={() => onOpenChange(false)}
               disabled={isProcessing}
-              className="px-4 py-2 bg-gray-700 cursor-pointer text-white rounded-md hover:bg-gray-600 disabled:opacity-50"
+              className="px-4 py-2 bg-gray-600 cursor-pointer text-white rounded-md hover:bg-gray-500 disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handlePurchase}
               disabled={isProcessing || wallet?.balance < totalAmount}
-              className={`px-7 py-2 rounded-md cursor-pointer text-white ${
+              className={`px-7 py-2 rounded-md text-white ${
                 wallet?.balance >= totalAmount
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-gray-600 cursor-not-allowed"
+                  ? "bg-green-600 hover:bg-green-700 cursor-pointer "
+                  : "bg-gray-700 cursor-not-allowed"
               } disabled:opacity-80`}
             >
               {isProcessing ? (
@@ -379,7 +394,7 @@ const PurchaseDialog = ({
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
