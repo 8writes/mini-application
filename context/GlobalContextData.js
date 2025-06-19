@@ -75,7 +75,7 @@ export const GlobalProviderData = ({ children }) => {
     const token = tokenString ? JSON.parse(tokenString) : null;
 
     if (!token) {
-      toast.error("Please login again", {
+      toast.error("Please login", {
         toastId: "auth",
       });
       router.push("/auth/login");

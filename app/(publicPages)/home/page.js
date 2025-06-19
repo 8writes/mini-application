@@ -78,6 +78,34 @@ export default function ServicesPage() {
     },
   ];
 
+  // Add this new comparison data
+  const dataDiscountComparison = [
+    {
+      provider: "MTN",
+      billzPaddiDiscount: "1.2%",
+      icon: "/icons/mtn-logo.webp",
+      amount: 5000,
+    },
+    {
+      provider: "Glo",
+      billzPaddiDiscount: "1.4%",
+      icon: "/icons/glo-logo.webp",
+      amount: 5000,
+    },
+    {
+      provider: "Airtel",
+      billzPaddiDiscount: "1.3%",
+      icon: "/icons/airtel-logo.webp",
+      amount: 5000,
+    },
+    {
+      provider: "9mobile",
+      billzPaddiDiscount: "1.4%",
+      icon: "/icons/9mobile-logo.webp",
+      amount: 5000,
+    },
+  ];
+
   return (
     <div className="min-h-[80dvh] text-white bg-gray-800">
       {/** Hero section */}
@@ -86,8 +114,8 @@ export default function ServicesPage() {
           Explore Our Services
         </h2>
         <p className="text-base sm:text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
-          Airtime, Discounted Data, Business Tools & More — Fast, affordable, and
-          always reliable.
+          Airtime, Discounted Data, Business Tools & More — Fast, affordable,
+          and always reliable.
         </p>
         <div className="mb-12">
           <Link href="/auth/signup">
@@ -164,6 +192,96 @@ export default function ServicesPage() {
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Updated comparison section with ₦2,500 savings */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              Save More with BillzPaddi
+            </h2>
+            <p className="text-gray-300 max-w-2xl mx-auto">
+              See how much you save when you buy ₦5,000 data bundles
+            </p>
+          </div>
+
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="min-w-full divide-y divide-gray-700">
+                <thead>
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Network
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Discount Rate
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      You Pay
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Savings
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-700">
+                  {dataDiscountComparison.map((item, index) => {
+                    const discount = parseFloat(item.billzPaddiDiscount) / 100;
+                    const savings = item.amount * discount;
+                    const youPay = item.amount - savings;
+
+                    return (
+                      <tr key={index} className="hover:bg-gray-700/50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-8 w-8">
+                              <img
+                                className="h-8 w-8 rounded-full"
+                                src={item.icon}
+                                alt={item.provider}
+                              />
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium">
+                                {item.provider}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-green-400 font-semibold">
+                          {item.billzPaddiDiscount}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          ₦{youPay.toLocaleString("en-NG")}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-green-400 font-semibold">
+                          ₦{savings.toFixed(0)} saved
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-8 bg-gray-700/50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-2 text-center">
+                Example Calculation
+              </h3>
+              <p className="text-gray-300 text-sm text-center">
+                For ₦5,000 data with 1.4% discount: ₦5,000 - (1.4% of ₦5,000) =
+                ₦4,930
+              </p>
+            </div>
+            <div className="mt-6 text-center">
+              <Link href="/data">
+                <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-7 cursor-pointer rounded-md transition duration-200">
+                  Buy Data Now
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
