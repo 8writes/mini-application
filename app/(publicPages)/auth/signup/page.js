@@ -272,8 +272,8 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="min-h-[100dvh] bg-gradient-to-r from-gray-700 to-gray-800 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white mt-10 p-6 rounded-2xl shadow-lg">
+    <main className="min-h-[100dvh] bg-gradient-to-r from-gray-700 to-gray-800 flex items-center justify-center pt-20 pb-10 px-4">
+      <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
         <div className="text-center mb-6">
           <div className="text-3xl font-bold text-blue-900 mb-2 flex items-center gap-1 justify-center">
             <Image
@@ -327,7 +327,7 @@ export default function SignupPage() {
             <label className="block mb-1 text-sm font-medium text-gray-800">
               Email Address
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col md:flex-row gap-2">
               <input
                 type="email"
                 required
@@ -344,7 +344,7 @@ export default function SignupPage() {
                   type="button"
                   onClick={sendVerificationCode}
                   disabled={isSubmitting || isVerified || countdown > 0}
-                  className="px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer gap-1"
+                  className="px-3 py-2 bg-gray-600 text-white justify-center rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer gap-1"
                 >
                   {countdown > 0 ? (
                     `${Math.floor(countdown / 60)}:${(countdown % 60)
