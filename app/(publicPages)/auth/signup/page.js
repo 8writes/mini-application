@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { HiEye, HiEyeOff } from "react-icons/hi";
+import { HiEye, HiEyeOff, HiRefresh } from "react-icons/hi";
 import { billzpaddi } from "@/lib/client";
 import Image from "next/image";
 import { signupSchema } from "@/utils/inputValidation";
@@ -22,6 +22,10 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [receivePromotions, setReceivePromotions] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
   // Get referral code from URL if present
   useEffect(() => {
@@ -44,11 +48,153 @@ export default function SignupPage() {
     }
   }, [router]);
 
+  const getVerificationCodeTemplate = (code) => `
+<div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+  <div style="text-align: center; margin-bottom: 24px;">
+    <div style="font-size: 24px; font-weight: 700; color: #111827;">
+      <img 
+        src="https://www.billzpaddi.com.ng/billzpaddi-logo-icon.png" 
+        alt="BillzPaddi Logo"
+        width="20" height="20"
+        style="vertical-align: middle; margin-right: 8px;" 
+      />
+      𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
+    </div>
+  </div>
+  
+  <div style="background-color: white; padding: 32px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <h2 style="color: #111827; font-size: 20px; font-weight: 600; margin-top: 0; margin-bottom: 16px;">Your Verification Code</h2>
+    <p style="color: #4b5563; margin-bottom: 16px;">Please use the following verification code to complete your signup process:</p>
+    
+    <div style="background-color: #f3f4f6; padding: 16px; border-radius: 6px; text-align: center; margin-bottom: 24px;">
+      <span style="font-size: 24px; font-weight: 700; letter-spacing: 2px; color: #111827;">${code}</span>
+    </div>
+    
+    <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">This code will expire in 5 minutes.</p>
+    <p style="color: #6b7280; font-size: 14px; margin-bottom: 0;">If you didn't request this code, please ignore this email or contact support.</p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 24px; color: #9ca3af; font-size: 14px;">
+    <p>© ${new Date().getFullYear()} BillzPaddi. All rights reserved.</p>
+  </div>
+</div>
+`;
+
+  // Countdown timer
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
+  const generateVerificationCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
+  // API call functions
+  const sendEmail = async (email, subject, html) => {
+    try {
+      const response = await fetch("/api/sendpulse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          subject,
+          message: html,
+        }),
+      });
+
+      const data = await response.json();
+      return data.success;
+    } catch (error) {
+      console.error("Error sending email:", error);
+      return false;
+    }
+  };
+
+  const sendVerificationCode = async () => {
+    if (!formData.email) {
+      toast.info("Please enter your email first");
+      return;
+    }
+
+    try {
+      const code = generateVerificationCode();
+      sessionStorage.setItem(
+        "verificationCode",
+        JSON.stringify({
+          code,
+          email: formData.email,
+          expires: Date.now() + 5 * 60 * 1000, // 5 minutes expiration
+        })
+      );
+
+      // Here we'll send the email
+      const emailSent = await sendEmail(
+        formData.email,
+        "Your Email Verification Code",
+        getVerificationCodeTemplate(code)
+      );
+
+      if (emailSent) {
+        toast.success(`Verification code sent to ${formData.email}`);
+        setIsCodeSent(true);
+        setCountdown(120); // 2 minutes countdown
+      } else {
+        throw new Error("Failed to send email");
+      }
+
+      setIsCodeSent(true);
+      setCountdown(120); // 2 minutes countdown
+    } catch (error) {
+      console.error("Error sending verification code:", error);
+      toast.error("Failed to send verification code");
+    }
+  };
+
+  const verifyCode = () => {
+    const storedData = sessionStorage.getItem("verificationCode");
+    if (!storedData) {
+      toast.error("No verification code found. Please request a new one.");
+      return;
+    }
+
+    const { code, email, expires } = JSON.parse(storedData);
+
+    if (email !== formData.email) {
+      toast.error("This code was sent to a different email");
+      return;
+    }
+
+    if (Date.now() > expires) {
+      toast.error("Verification code has expired");
+      sessionStorage.removeItem("verificationCode");
+      setIsCodeSent(false);
+      return;
+    }
+
+    if (verificationCode === code) {
+      setIsVerified(true);
+      toast.success("Email verified successfully!");
+    } else {
+      toast.error("Invalid verification code");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!acceptedTerms) {
       toast.info("You must accept the terms and conditions");
+      return;
+    }
+
+    if (!isVerified) {
+      toast.info("Please verify your email first");
       return;
     }
 
@@ -86,6 +232,7 @@ export default function SignupPage() {
             referral_code: trimmedData.referral_code,
             accepted_terms: trimmedData.accepted_terms,
             marketing_consent: trimmedData.marketing_consent,
+            email_verified: true, // Mark as verified
           },
         },
       });
@@ -180,18 +327,71 @@ export default function SignupPage() {
             <label className="block mb-1 text-sm font-medium text-gray-800">
               Email Address
             </label>
-            <input
-              type="email"
-              required
-              placeholder="Email"
-              disabled={isSubmitting}
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-400 rounded-md outline-none"
-            />
+            <div className="flex gap-2">
+              <input
+                type="email"
+                required
+                placeholder="Email"
+                disabled={isSubmitting || isVerified}
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="flex-1 px-4 py-2 border border-gray-400 rounded-md outline-none"
+              />
+              {!isVerified && (
+                <button
+                  type="button"
+                  onClick={sendVerificationCode}
+                  disabled={isSubmitting || isVerified || countdown > 0}
+                  className="px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer gap-1"
+                >
+                  {countdown > 0 ? (
+                    `${Math.floor(countdown / 60)}:${(countdown % 60)
+                      .toString()
+                      .padStart(2, "0")}`
+                  ) : (
+                    <>
+                      {isCodeSent ? <HiRefresh size={16} /> : null}
+                      {isCodeSent ? "Resend" : "Get Code"}
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
+
+          {isCodeSent && !isVerified && (
+            <div>
+              <label className="block mb-1 text-sm font-medium text-gray-800">
+                Verification Code
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Enter 6-digit code"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  maxLength={6}
+                  className="flex-1 px-4 py-2 border border-gray-400 rounded-md outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={verifyCode}
+                  disabled={verificationCode.length !== 6}
+                  className="px-3 py-2 bg-blue-600 text-white cursor-pointer rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Verify
+                </button>
+              </div>
+            </div>
+          )}
+
+          {isVerified && (
+            <div className="text-green-600 text-sm">
+              Email verified successfully!
+            </div>
+          )}
 
           <div>
             <label className="block mb-1 text-sm font-medium text-gray-800">
@@ -284,7 +484,7 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            disabled={isSubmitting || !acceptedTerms}
+            disabled={isSubmitting || !acceptedTerms || !isVerified}
             className="w-full py-3 bg-gray-600 cursor-pointer hover:bg-gray-800 transition duration-150 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Signing up... " : "Sign Up"}
