@@ -7,6 +7,7 @@ import { useGlobalContextData } from "@/context/GlobalContextData";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { billzpaddi } from "@/lib/client";
+import { format } from "date-fns";
 
 export default function TransactionsPage() {
   // All hooks must be called unconditionally at the top
@@ -193,8 +194,8 @@ export default function TransactionsPage() {
                           <p className="text-xs flex items-center text-yellow-400">
                             {txn.email}
                           </p>
-                          <p className="text-xs text-gray-400">
-                            {new Date(txn.created_at).toLocaleDateString()}
+                          <p className="text-xs">
+                            {format(new Date(txn?.created_at), "PPpp")}
                           </p>
                         </div>
                       </div>
@@ -297,7 +298,7 @@ export default function TransactionsPage() {
 
                     <div>
                       <p className="text-sm">
-                        {new Date(txn.created_at).toLocaleDateString()}
+                        {format(new Date(txn?.created_at), "PPpp")}
                       </p>
                       <p className="text-xs text-gray-400">
                         {new Date(txn.created_at).toLocaleTimeString([], {
