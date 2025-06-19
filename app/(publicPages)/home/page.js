@@ -86,7 +86,7 @@ export default function ServicesPage() {
           Explore Our Services
         </h2>
         <p className="text-base sm:text-lg text-gray-200 mb-6 max-w-2xl mx-auto">
-          Airtime, Discounted Data, Game Top-ups & More — Fast, affordable, and
+          Airtime, Discounted Data, Business Tools & More — Fast, affordable, and
           always reliable.
         </p>
         <div className="mb-12">
