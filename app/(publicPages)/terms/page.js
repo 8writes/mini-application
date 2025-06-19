@@ -30,9 +30,9 @@ export default function Page() {
               2. Service Description
             </h2>
             <p className="mb-4">
-              BillzPaddi provides digital payment solutions including but not
-              limited to airtime purchase, data bundles, TV subscriptions, and
-              utility bill payments.
+              BillzPaddi platform provides comprehensive digital services including
+              but not limited to airtime purchase, data bundles, TV
+              subscriptions, and utility bill payments.
             </p>
           </section>
 

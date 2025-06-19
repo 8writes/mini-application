@@ -20,8 +20,7 @@ export default function Page() {
             </h2>
             <p className="mb-4">
               We collect personal information including but not limited to:
-              name, email, phone number, transaction history, and device
-              information necessary for service provision.
+              name, email, phone number, necessary for service provision.
             </p>
           </section>
 
@@ -32,6 +31,7 @@ export default function Page() {
             <ul className="list-disc pl-6 space-y-2">
               <li>To provide and maintain our services</li>
               <li>To process transactions</li>
+              <li>To send app updates notifications</li>
               <li>To improve user experience</li>
               <li>To comply with legal obligations</li>
               <li>To prevent fraud and enhance security</li>
