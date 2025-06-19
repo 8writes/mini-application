@@ -74,14 +74,7 @@ export default function GlobalNavbar() {
             >
               Home
             </Link>
-            <Link
-              href="/store"
-              className={`hover:bg-gray-800 px-4 py-2 rounded-md transition-all duration-200 ${
-                pathname === "/store" ? "bg-gray-800" : ""
-              }`}
-            >
-              Store
-            </Link>
+
             <Link
               href="/faq"
               className={`hover:bg-gray-800 px-4 py-2 rounded-md transition-all duration-200 ${
@@ -145,15 +138,6 @@ export default function GlobalNavbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
-              </Link>
-              <Link
-                href="/store"
-                className={`hover:bg-gray-700 px-4 py-3 rounded-md transition-all duration-200 ${
-                  pathname === "/store" ? "bg-gray-700" : ""
-                }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Store
               </Link>
               <Link
                 href="/faq"
