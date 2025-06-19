@@ -117,7 +117,6 @@ const PurchaseDialog = ({
     fetchTransactions,
   } = useGlobalContextData();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState("");
   const [isRenewal, setIsRenewal] = useState(true);
   const transactionToast = useTransactionToast();
 
@@ -363,7 +362,7 @@ const PurchaseDialog = ({
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Amount:</span>
-              <span className="text-white">
+              <span className="text-white text-lg">
                 ₦{totalAmount.toLocaleString()}
               </span>
             </div>
@@ -393,14 +392,14 @@ const PurchaseDialog = ({
               </div>
             </div>
 
-            <div className="flex justify-between">
-              <span className="text-gray-400">Balance:</span>
+            <div className="flex justify-between bg-gray-700 p-3 rounded-md space-y-1">
+              <span className="text-gray-400">Wallet Balance:</span>
               <span
-                className={
+                className={`${
                   wallet?.balance >= totalAmount
                     ? "text-green-500"
                     : "text-red-500"
-                }
+                }`}
               >
                 ₦{wallet?.balance.toLocaleString()}
               </span>
@@ -408,20 +407,18 @@ const PurchaseDialog = ({
             {wallet?.balance < totalAmount && (
               <Link
                 href="/wallet"
-                className="flex justify-end bg-gray-700 w-fit ml-auto px-2 py-1 rounded-sm text-sm"
+                className="flex justify-end bg-green-700 w-fit ml-auto px-2 py-1 rounded-sm text-sm"
               >
                 Top Up
               </Link>
             )}
           </div>
 
-          {error && <div className="mt-4 text-red-500 text-sm">{error}</div>}
-
           <div className="mt-6 flex justify-end gap-3">
             <button
               onClick={() => onOpenChange(false)}
               disabled={isProcessing}
-              className="px-4 py-2 bg-gray-700 cursor-pointer text-white rounded-md hover:bg-gray-600 disabled:opacity-50"
+              className="px-4 py-2 bg-gray-600 cursor-pointer text-white rounded-md hover:bg-gray-500 disabled:opacity-50"
             >
               Cancel
             </button>
@@ -432,9 +429,9 @@ const PurchaseDialog = ({
                 wallet?.balance < totalAmount ||
                 isRenewal === null
               }
-              className={`px-7 py-2 rounded-md text-sm md:text-base cursor-pointer text-white ${
+              className={`px-7 py-2 rounded-md text-sm md:text-base text-white ${
                 wallet?.balance >= totalAmount && isRenewal !== null
-                  ? "bg-green-600 hover:bg-green-700"
+                  ? "bg-green-600 hover:bg-green-700 cursor-pointer"
                   : "bg-gray-600 cursor-not-allowed"
               } disabled:opacity-80`}
             >
@@ -547,7 +544,7 @@ export default function TvSubscriptionPage() {
   // Verify smart card before showing purchase dialog for DSTV/GOtv
   const verifyAndPurchase = async (plan) => {
     if (!smartCardNumber) {
-      toast.error("Please enter your smart card number");
+      toast.info("Enter your smart card number");
       return;
     }
 

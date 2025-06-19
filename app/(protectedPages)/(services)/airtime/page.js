@@ -337,7 +337,7 @@ const PurchaseDialog = ({
 
             <div className="flex justify-between">
               <span className="text-gray-400">Amount:</span>
-              <span className="text-white">
+              <span className="text-white text-lg">
                 ₦{totalAmount?.toLocaleString()}
               </span>
             </div>
