@@ -308,6 +308,7 @@ export default function Page() {
               onClick={() => {
                 fetchUsers();
                 fetchTransactions();
+                fetchWalletBalance();
               }}
               className=" cursor-pointer bg-gray-600 px-3 py-2 rounded flex items-center gap-2"
               disabled={loading || txnLoading}
