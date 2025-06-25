@@ -194,7 +194,7 @@ export default function TransactionsPage() {
                           <p className="text-xs flex items-center text-yellow-400">
                             {txn.email}
                           </p>
-                          <p className="text-xs">
+                          <p className="text-xs whitespace-nowrap">
                             {format(new Date(txn?.created_at), "PPpp")}
                           </p>
                         </div>

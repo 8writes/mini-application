@@ -544,7 +544,7 @@ export default function Page() {
                             {txn.status}
                           </span>
                         </td>
-                        <td className="p-3">
+                        <td className="p-3 whitespace-nowrap">
                           {format(new Date(txn?.created_at), "PPpp")}
                         </td>
                         <td className="p-3">
