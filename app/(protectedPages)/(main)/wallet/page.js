@@ -365,7 +365,7 @@ export default function WalletPage() {
     }
 
     try {
-     // toast.info("Currently Unavailable.");
+      // toast.info("Currently Unavailable.");
       await initializePayment();
     } catch (error) {
       console.error("Payment error:", error);
@@ -735,9 +735,7 @@ export default function WalletPage() {
                 </div>
               </div>
             )}
-            {activeTab === "instant" && (
-              <button
-                type="submit"
+            {/** 
                 disabled={
                   (!copiedRef && activeTab === "bank") ||
                   isFunding ||
@@ -745,7 +743,11 @@ export default function WalletPage() {
                   (activeTab === "instant"
                     ? parseFloat(amount) < 100
                     : parseFloat(amount) < 500)
-                }
+                }*/}
+            {activeTab === "instant" && (
+              <button
+                type="submit"
+                disabled={true}
                 className={`w-full py-3 rounded-md transition-colors font-medium ${
                   (!copiedRef && activeTab === "bank") ||
                   isFunding ||
@@ -757,8 +759,8 @@ export default function WalletPage() {
                     : "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
                 }`}
               >
-                {isFunding
-                  ? "Processing..."
+                {true
+                  ? "Unavailable"
                   : activeTab === "instant"
                   ? "Fund Wallet (Instant)"
                   : "Confirm Transfer"}
