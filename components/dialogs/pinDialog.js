@@ -72,13 +72,6 @@ export const PinDialog = ({
                     autoComplete="off"
                     autoSave="off"
                   />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-white"
-                    onClick={() => setShowPin(!showPin)}
-                  >
-                    {showPin ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-                  </button>
                 </div>
               </div>
               <div className="flex w-full gap-3 pt-2">
