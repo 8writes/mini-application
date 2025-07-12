@@ -62,7 +62,7 @@ export const PinDialog = ({
                 </label>
                 <div className="relative">
                   <input
-                    type={showPin ? "tel" : "password"}
+                    type={showPin ? "tel" : "tel"}
                     value={pin}
                     onChange={handlePinChange}
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none"
