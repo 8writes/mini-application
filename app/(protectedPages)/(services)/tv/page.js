@@ -10,6 +10,7 @@ import Link from "next/link";
 import axios from "axios";
 import CountUpTimer from "@/components/count/countUpTimer";
 import { useTransactionToast } from "@/context/TransactionToastContext";
+import { usePin } from "@/context/PinContext";
 
 const CustomDropdown = ({
   options,
@@ -119,6 +120,7 @@ const PurchaseDialog = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isRenewal, setIsRenewal] = useState(true);
   const transactionToast = useTransactionToast();
+  const { showPinDialog } = usePin();
 
   const amount =
     isRenewal && verificationData?.Renewal_Amount
@@ -160,6 +162,11 @@ const PurchaseDialog = ({
 
     if (wallet?.balance < totalAmount) {
       toast.error("Insufficient funds");
+      return;
+    }
+
+    const isPinValid = await showPinDialog();
+    if (!isPinValid) {
       return;
     }
 

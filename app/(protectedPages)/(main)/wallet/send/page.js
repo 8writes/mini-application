@@ -2,6 +2,7 @@
 
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import { usePin } from "@/context/PinContext";
 import { billzpaddi } from "@/lib/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ export default function Page() {
   const [showRecipientDropdown, setShowRecipientDropdown] = useState(false);
   const [recipientInfo, setRecipientInfo] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
+  const { showPinDialog } = usePin();
 
   // Calculate total amount whenever amount changes
   useEffect(() => {
@@ -131,6 +133,11 @@ export default function Page() {
 
     if (amountNumber < 500) {
       toast.info("Minimum amount of ₦500");
+      return;
+    }
+
+    const isPinValid = await showPinDialog();
+    if (!isPinValid) {
       return;
     }
 

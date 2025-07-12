@@ -16,6 +16,7 @@
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.0",
     "cookie": "^1.0.2",
+    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.18.1",

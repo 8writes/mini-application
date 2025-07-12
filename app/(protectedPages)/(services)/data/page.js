@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { set } from "zod";
 import { useTransactionToast } from "@/context/TransactionToastContext";
 import { FiX, FiCheckCircle, FiClock, FiAlertCircle } from "react-icons/fi";
+import { usePin } from "@/context/PinContext";
 
 const CustomDropdown = ({
   options,
@@ -122,6 +123,7 @@ const PurchaseDialog = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
   const transactionToast = useTransactionToast();
+    const { showPinDialog } = usePin();
 
   useEffect(() => {
     if (open && user) {
@@ -178,6 +180,11 @@ const PurchaseDialog = ({
 
     if (wallet?.balance < totalAmount) {
       toast.error("Insufficient funds");
+      return;
+    }
+
+    const isPinValid = await showPinDialog();
+    if (!isPinValid) {
       return;
     }
 

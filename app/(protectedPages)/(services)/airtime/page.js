@@ -13,6 +13,7 @@ import CountUpTimer from "@/components/count/countUpTimer";
 import { formatPhoneNumber } from "@/utils/phoneFormatter";
 import { useTransactionToast } from "@/context/TransactionToastContext";
 import { FiX } from "react-icons/fi";
+import { usePin } from "@/context/PinContext";
 
 // Custom dropdown
 const CustomDropdown = ({
@@ -120,6 +121,7 @@ const PurchaseDialog = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
   const transactionToast = useTransactionToast();
+  const { showPinDialog } = usePin();
 
   const totalAmount = amount ? Math.round(Number(amount) * 1) : 0;
 
@@ -148,6 +150,11 @@ const PurchaseDialog = ({
 
     if (wallet?.balance < totalAmount) {
       toast.error("Insufficient balance");
+      return;
+    }
+
+    const isPinValid = await showPinDialog();
+    if (!isPinValid) {
       return;
     }
 
