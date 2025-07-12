@@ -70,6 +70,7 @@ export const PinDialog = ({
                     inputMode="numeric"
                     autoFocus
                     autoComplete="off"
+                    autoSave="off"
                   />
                   <button
                     type="button"
