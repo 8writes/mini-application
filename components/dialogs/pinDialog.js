@@ -69,6 +69,7 @@ export const PinDialog = ({
                     placeholder="••••"
                     inputMode="numeric"
                     autoFocus
+                    autoComplete="off"
                   />
                   <button
                     type="button"
