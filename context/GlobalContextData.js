@@ -122,7 +122,6 @@ export const GlobalProviderData = ({ children }) => {
       setWallet(result);
     } catch (err) {
       console.error("Wallet fetch error:", err);
-      toast.error("Failed to load wallet data");
     }
   };
 
