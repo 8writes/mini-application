@@ -3,11 +3,13 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { usePin } from "@/context/PinContext";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { callApi } from "@/utils/apiClient";
 
 export default function Page() {
   const { user } = useGlobalContext();
@@ -145,43 +147,28 @@ export default function Page() {
 
     try {
       // 1. Verify sender has sufficient balance (including fee)
-      const { data: senderWallet, error: senderError } = await billzpaddi
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", user.user_id)
-        .single();
-
-      if (senderError) throw senderError;
-
-      if (senderWallet.balance < totalAmount) {
+      if (wallet.balance < totalAmount) {
         throw new Error(`Insufficient balance`);
       }
 
       // 2. Perform the transfer with fee
       // Deduct from sender (amount + fee)
-      const { error: deductError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: senderWallet.balance - totalAmount })
-        .eq("user_id", user.user_id);
-
-      if (deductError) throw deductError;
+      await callApi("wallet/update", "PUT", {
+        user_id: user.user_id,
+        newBalance: wallet.balance - totalAmount,
+      });
 
       // Add to recipient (only the amount, not the fee)
-      const { data: recipientWallet, error: recipientWalletError } =
-        await billzpaddi
-          .from("wallets")
-          .select("balance")
-          .eq("user_id", recipientInfo.userId)
-          .single();
+      // fetch recipient wallet
+      const recipientWallet = await callApi("wallet/fetch", "POST", {
+        user_id: recipientInfo.userId,
+      });
 
-      if (recipientWalletError) throw recipientWalletError;
-
-      const { error: addError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: (recipientWallet.balance || 0) + amountNumber })
-        .eq("user_id", recipientInfo.userId);
-
-      if (addError) throw addError;
+      // update wallet
+      await callApi("wallet/update", "PUT", {
+        user_id: recipientInfo.userId,
+        newBalance: (recipientWallet.balance || 0) + amountNumber,
+      });
 
       // 3. Record the transactions
       const { error: transactionError } = await billzpaddi

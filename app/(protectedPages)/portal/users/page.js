@@ -2,13 +2,15 @@
 
 import UserDialog from "@/components/dialogs/userDialog";
 import { useGlobalContext } from "@/context/GlobalContext";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { HiOutlineSearch } from "react-icons/hi";
 import { toast } from "react-toastify";
+import { callApi } from "@/utils/apiClient";
 
 export default function Page() {
   const { user, isLoading } = useGlobalContext();
@@ -74,11 +76,7 @@ export default function Page() {
 
       if (usersError) throw usersError;
 
-      const { data: walletsData, error: walletsError } = await billzpaddi
-        .from("wallets")
-        .select("*");
-
-      if (walletsError) throw walletsError;
+      const walletsData = await callApi("wallet/fetch", "POST", {});
 
       const usersWithBalance = usersData.map((user) => {
         const wallet = walletsData.find((w) => w.user_id === user.user_id);

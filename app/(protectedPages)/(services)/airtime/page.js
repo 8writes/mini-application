@@ -1,7 +1,8 @@
 "use client";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import axios from "axios";
 import { use, useEffect, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
@@ -14,6 +15,7 @@ import { formatPhoneNumber } from "@/utils/phoneFormatter";
 import { useTransactionToast } from "@/context/TransactionToastContext";
 import { FiX } from "react-icons/fi";
 import { usePin } from "@/context/PinContext";
+import { callApi } from "@/utils/apiClient";
 
 // Custom dropdown
 const CustomDropdown = ({
@@ -180,12 +182,10 @@ const PurchaseDialog = ({
       if (txError) throw new Error("Failed to record transaction");
 
       // 2. Deduct from wallet immediately
-      const { error: walletError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: wallet?.balance - totalAmount })
-        .eq("user_id", user?.user_id);
-
-      if (walletError) throw new Error("Failed to deduct from wallet");
+      await callApi("wallet/update", "PUT", {
+        user_id: user?.user_id,
+        newBalance: wallet?.balance - totalAmount,
+      });
 
       const { token } = await fetch("/api/wrapper/auth-check").then((res) =>
         res.json()
@@ -230,10 +230,10 @@ const PurchaseDialog = ({
         case "016": // Failed
         default:
           // Refund wallet if failed
-          await billzpaddi
-            .from("wallets")
-            .update({ balance: wallet.balance })
-            .eq("user_id", user.user_id);
+          await callApi("wallet/update", "PUT", {
+            user_id: user?.user_id,
+            newBalance: wallet?.balance,
+          });
           break;
       }
 
@@ -273,10 +273,10 @@ const PurchaseDialog = ({
 
       // Attempt to refund if error occurred after deduction
       try {
-        await billzpaddi
-          .from("wallets")
-          .update({ balance: wallet?.balance })
-          .eq("user_id", user.user_id);
+        await callApi("wallet/update", "PUT", {
+          user_id: user?.user_id,
+          newBalance: wallet?.balance,
+        });
 
         // Update transaction status
         await billzpaddi

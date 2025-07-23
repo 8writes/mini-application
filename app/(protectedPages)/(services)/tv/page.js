@@ -5,12 +5,14 @@ import { FaTv, FaChevronDown, FaSync, FaExchangeAlt } from "react-icons/fa";
 import Image from "next/image";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { toast } from "react-toastify";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import Link from "next/link";
 import axios from "axios";
 import CountUpTimer from "@/components/count/countUpTimer";
 import { useTransactionToast } from "@/context/TransactionToastContext";
 import { usePin } from "@/context/PinContext";
+import { callApi } from "@/utils/apiClient";
 
 const CustomDropdown = ({
   options,
@@ -194,10 +196,10 @@ const PurchaseDialog = ({
       if (createError) throw new Error("Failed to record transaction");
 
       // 2. Deduct from wallet
-      const { error: updateError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: wallet?.balance - totalAmount })
-        .eq("user_id", user?.user_id);
+      await callApi("wallet/update", "PUT", {
+        user_id: user?.user_id,
+        newBalance: wallet?.balance - totalAmount,
+      });
 
       if (updateError) throw new Error("Failed to update wallet balance");
 
@@ -251,10 +253,10 @@ const PurchaseDialog = ({
         default:
           transactionStatus = "failed";
           // Refund if failed
-          await billzpaddi
-            .from("wallets")
-            .update({ balance: wallet?.balance })
-            .eq("user_id", user?.user_id);
+          await callApi("wallet/update", "PUT", {
+            user_id: user?.user_id,
+            newBalance: wallet?.balance,
+          });
           break;
       }
 
@@ -292,10 +294,10 @@ const PurchaseDialog = ({
 
       // Attempt to refund if error occurred after deduction
       try {
-        await billzpaddi
-          .from("wallets")
-          .update({ balance: wallet?.balance })
-          .eq("user_id", user.user_id);
+        await callApi("wallet/update", "PUT", {
+          user_id: user?.user_id,
+          newBalance: wallet?.balance,
+        });
 
         // Update transaction status
         await billzpaddi

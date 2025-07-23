@@ -6,7 +6,8 @@ import { FaCopy, FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import Link from "next/link";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 
 export default function TransactionInfoPage() {
   const [transactions, setTransactions] = useState(null);

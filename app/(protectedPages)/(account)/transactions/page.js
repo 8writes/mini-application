@@ -19,9 +19,9 @@ export default function TransactionsPage() {
   const [conversionRate] = useState(50);
   const transactionsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
-
+  
   useEffect(() => {
-    fetchTransactions();
+    fetchTransactions()
   }, []);
 
   useEffect(() => {

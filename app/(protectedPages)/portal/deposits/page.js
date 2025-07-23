@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { toast } from "react-toastify";
 import {
   FaCheck,
@@ -10,6 +11,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import { useGlobalContextData } from "@/context/GlobalContextData";
+import { callApi } from "@/utils/apiClient";
 
 export default function DepositApprovalPage() {
   const {
@@ -45,12 +47,9 @@ export default function DepositApprovalPage() {
       ];
 
       // Fetch wallets for these users
-      const { data: walletsData, error: walletsError } = await billzpaddi
-        .from("wallets")
-        .select("user_id, balance, users(email)")
-        .in("user_id", userIds);
-
-      if (walletsError) throw walletsError;
+     const walletsData = await callApi("wallet/fetch", "POST", {
+       user_ids: userIds,
+     });
 
       // Create a wallet map for quick lookup
       const walletMap = {};
@@ -97,12 +96,10 @@ export default function DepositApprovalPage() {
       const newBalance = userWallet.balance + deposit.amount;
 
       // Update wallet balance
-      const { error: balanceError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: newBalance })
-        .eq("user_id", deposit.user_id);
-
-      if (balanceError) throw balanceError;
+      await callApi("wallet/update", "PUT", {
+        user_id: deposit.user_id,
+        newBalance,
+      });
 
       // Update transaction status
       const { error: transactionError } = await billzpaddi

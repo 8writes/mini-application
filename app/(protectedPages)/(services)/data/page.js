@@ -5,7 +5,8 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import { FaWifi, FaChevronDown } from "react-icons/fa";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import Link from "next/link";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import CountUpTimer from "@/components/count/countUpTimer";
@@ -14,6 +15,7 @@ import { set } from "zod";
 import { useTransactionToast } from "@/context/TransactionToastContext";
 import { FiX, FiCheckCircle, FiClock, FiAlertCircle } from "react-icons/fi";
 import { usePin } from "@/context/PinContext";
+import { callApi } from "@/utils/apiClient";
 
 const CustomDropdown = ({
   options,
@@ -212,12 +214,10 @@ const PurchaseDialog = ({
       if (createError) throw new Error("Failed to record transaction");
 
       // 2. Deduct from wallet immediately (for pending transaction)
-      const { error: updateError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: wallet?.balance - totalAmount })
-        .eq("user_id", user?.user_id);
-
-      if (updateError) throw new Error("Failed to update wallet balance");
+      await callApi("wallet/update", "PUT", {
+        user_id: user?.user_id,
+        newBalance: wallet?.balance - totalAmount,
+      });
 
       const { token } = await fetch("/api/wrapper/auth-check").then((res) =>
         res.json()
@@ -285,10 +285,10 @@ const PurchaseDialog = ({
         default:
           transactionStatus = "failed";
           // Refund if failed
-          await billzpaddi
-            .from("wallets")
-            .update({ balance: wallet?.balance })
-            .eq("user_id", user?.user_id);
+           await callApi("wallet/update", "PUT", {
+             user_id: user?.user_id,
+             newBalance: wallet?.balance,
+           });
           break;
       }
 
@@ -326,10 +326,10 @@ const PurchaseDialog = ({
 
       // Attempt to refund if error occurred after deduction
       try {
-        await billzpaddi
-          .from("wallets")
-          .update({ balance: wallet?.balance })
-          .eq("user_id", user.user_id);
+        await callApi("wallet/update", "PUT", {
+          user_id: user?.user_id,
+          newBalance: wallet?.balance,
+        });
 
         // Update transaction status
         await billzpaddi

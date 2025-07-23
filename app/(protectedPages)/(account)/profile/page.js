@@ -14,7 +14,8 @@ import {
 } from "react-icons/hi";
 import { FaUserShield, FaHistory } from "react-icons/fa";
 import Image from "next/image";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import CryptoJS from "crypto-js";

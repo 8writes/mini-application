@@ -2,10 +2,12 @@
 "use client";
 import { createContext, useContext, useState } from "react";
 import CryptoJS from "crypto-js";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { PinDialog } from "@/components/dialogs/pinDialog";
 import { useGlobalContext } from "./GlobalContext";
 import { toast } from "react-toastify";
+import { callApi } from "@/utils/apiClient";
 
 const PinContext = createContext();
 
@@ -24,14 +26,12 @@ export const PinProvider = ({ children }) => {
   };
 
   const verifyPin = async (userId, enteredPin) => {
-    try {
-      const { data, error } = await billzpaddi
-        .from("wallets")
-        .select("pin")
-        .eq("user_id", userId)
-        .single();
+    try { 
+      const data = await callApi("wallet/fetch", "POST", {
+        user_id: userId,
+      });
 
-      if (error || !data) {
+      if (!data) {
         throw new Error("No PIN found for this user");
       }
 

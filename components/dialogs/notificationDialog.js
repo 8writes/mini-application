@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { toast } from "react-toastify";
 
 export default function NotificationDialog({ userId, onClose }) {

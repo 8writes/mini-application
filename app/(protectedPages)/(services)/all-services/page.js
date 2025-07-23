@@ -13,6 +13,7 @@ import {
   HiOutlineDocumentText,
   HiOutlineSearch,
   HiChartBar,
+  HiShoppingBag,
 } from "react-icons/hi";
 
 export default function Page() {
@@ -60,6 +61,11 @@ export default function Page() {
           name: "Generate Invoice",
           icon: <HiOutlineDocumentText className="text-2xl text-red-500" />,
           link: "/generate-invoice",
+        },
+        {
+          name: "My Store",
+          icon: <HiOutlineShoppingBag className="text-2xl text-pink-500" />,
+          link: "/my-store",
         },
       ],
     },

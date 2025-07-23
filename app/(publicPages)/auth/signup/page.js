@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { HiEye, HiEyeOff, HiRefresh } from "react-icons/hi";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import Image from "next/image";
 import { signupSchema } from "@/utils/inputValidation";
+import { callApi } from "@/utils/apiClient";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -124,6 +126,7 @@ export default function SignupPage() {
 
     try {
       const code = generateVerificationCode();
+
       sessionStorage.setItem(
         "verificationCode",
         JSON.stringify({
@@ -251,8 +254,7 @@ export default function SignupPage() {
         return;
       }
 
-      await billzpaddi.from("wallets").insert({
-        balance: 0,
+      await callApi("wallet/create", "POST", {
         email: trimmedData?.email,
       });
 

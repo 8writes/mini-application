@@ -9,11 +9,13 @@ import {
   FaCopy,
   FaPaperPlane,
 } from "react-icons/fa";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { toast } from "react-toastify";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { TbTransfer } from "react-icons/tb";
 import Link from "next/link";
+import { callApi } from "@/utils/apiClient";
 
 export default function WalletPage() {
   const [PaystackPop, setPaystackPop] = useState(null);
@@ -51,6 +53,7 @@ export default function WalletPage() {
 
   useEffect(() => {
     fetchWallet();
+    fetchTransactions();
   }, []);
 
   useEffect(() => {
@@ -65,7 +68,8 @@ export default function WalletPage() {
   }, []);
 
   const handleBankTabClick = () => {
-    if (isMobile) {
+    if (true) {
+      //isMobile
       setActiveTab("bank");
     } else {
       toast.info("Bank Transfer is only available on mobile.");
@@ -195,13 +199,11 @@ export default function WalletPage() {
       const currentBalance = parseFloat(wallet?.balance || 0);
       const newBalance = currentBalance + fundingAmount;
 
-      // Update wallet balance
-      const { error: walletError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: newBalance })
-        .eq("user_id", user?.user_id);
-
-      if (walletError) throw walletError;
+      // update wallet
+      await callApi("wallet/update", "PUT", {
+        user_id: user?.user_id,
+        newBalance,
+      });
 
       // Create transaction record
       const { error: transactionError } = await billzpaddi
@@ -255,20 +257,8 @@ export default function WalletPage() {
 
     setIsFunding(true);
 
-    // Fetch current wallet balance
-    const { data: walletData, error: fetchError } = await billzpaddi
-      .from("wallets")
-      .select("balance")
-      .eq("user_id", user?.user_id)
-      .single();
+    const currentBalance = wallet?.balance + parseFloat(amount);
 
-    if (fetchError || !walletData) {
-      toast.error("Failed to fetch wallet balance");
-      setIsFunding(false);
-      return;
-    }
-
-    const currentBalance = walletData?.balance + parseFloat(amount);
     if (currentBalance > wallet?.limit) {
       toast.error(`Max wallet balance of ₦${wallet?.limit.toLocaleString()}`);
       setIsFunding(false);
@@ -342,24 +332,10 @@ export default function WalletPage() {
 
     setIsFunding(true);
 
-    // Fetch current wallet balance
-    const { data: walletData, error: fetchError } = await billzpaddi
-      .from("wallets")
-      .select("balance")
-      .eq("user_id", user?.user_id)
-      .single();
+    const currentBalance = wallet?.balance + parseFloat(amount);
 
-    if (fetchError || !walletData) {
-      toast.error("Failed to fetch wallet balance");
-
-      setIsFunding(false);
-      return;
-    }
-
-    const currentBalance = walletData?.balance + parseFloat(amount);
     if (currentBalance > wallet?.limit) {
       toast.error(`Max wallet balance of ₦${wallet?.limit.toLocaleString()}`);
-
       setIsFunding(false);
       return;
     }

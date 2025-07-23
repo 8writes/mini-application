@@ -5,7 +5,8 @@ import { FaDownload, FaEnvelope, FaEye, FaPlus, FaTrash } from "react-icons/fa";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { toast } from "react-toastify";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { HiDocumentText } from "react-icons/hi";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import CountUpTimer from "@/components/count/countUpTimer";

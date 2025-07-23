@@ -13,8 +13,10 @@ import {
   FaChevronLeft,
 } from "react-icons/fa";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { toast } from "react-toastify";
+import { callApi } from "@/utils/apiClient";
 
 export default function ReferralPage() {
   const { user, fetchData, isLoading } = useGlobalContext();
@@ -115,14 +117,12 @@ export default function ReferralPage() {
 
     try {
       // 1. Update wallet balance
-      const { error: walletError } = await billzpaddi
-        .from("wallets")
-        .update({ balance: wallet.balance + 1500 })
-        .eq("user_id", user.user_id);
+      await callApi("wallet/update", "PUT", {
+        user_id: user.user_id,
+        newBalance: wallet.balance + 1500,
+      });
 
-      if (walletError) throw walletError;
-
-      // 1. Update wallet balance
+      // 2. Update user claim
       const { error: userError } = await billzpaddi
         .from("users")
         .update({ has_claimed_referral: true })

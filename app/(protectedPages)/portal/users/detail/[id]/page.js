@@ -1,6 +1,6 @@
 "use client";
 
-import { billzpaddi } from "@/lib/client";
+import { billzpaddi } from "@/app/api/client/client";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter, usePathname } from "next/navigation";
@@ -9,6 +9,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import Link from "next/link";
 import { FaUserFriends, FaWallet } from "react-icons/fa";
 import { format } from "date-fns";
+import { callApi } from "@/utils/apiClient";
 
 export default function Page() {
   const router = useRouter();
@@ -61,14 +62,9 @@ export default function Page() {
 
         if (userError) throw userError;
 
-        // Fetch wallet balance
-        const { data: walletData, error: walletError } = await billzpaddi
-          .from("wallets")
-          .select("balance")
-          .eq("user_id", userId)
-          .single();
-
-        if (walletError) throw walletError;
+        const walletData = await callApi("wallet/fetch", "POST", {
+          user_id: userId,
+        });
 
         // Fetch transactions
         const { data: transactionsData, error: transactionsError } =
@@ -101,7 +97,6 @@ export default function Page() {
   // 🚀 Fetch referral data
   const fetchReferralData = async (code) => {
     try {
-
       // 1. Get all users who used this referral code
       const { data: referredUsers, error: referralError } = await billzpaddi
         .from("users")

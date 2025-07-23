@@ -13,7 +13,8 @@ import {
   HiOutlineUser,
 } from "react-icons/hi";
 import Link from "next/link";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { FaHeadset } from "react-icons/fa";
 import NetworkIndicator from "../internet/signal";
 
@@ -99,7 +100,8 @@ export default function NavBar() {
           >
             <ul className="py-2 text-sm text-gray-700">
               <li className="text-base px-4 py-2 text-white border-b mb-2 border-gray-700">
-                {user?.last_name ?? "Fetching..."} {user?.first_name?.charAt(0)}.
+                {user?.last_name ?? "Fetching..."} {user?.first_name?.charAt(0)}
+                .
               </li>
               <Link href="/profile" onClick={() => setIsDropdownOpen(false)}>
                 <li
@@ -112,20 +114,9 @@ export default function NavBar() {
                 </li>
               </Link>
 
-              <Link href="/support" onClick={() => setIsDropdownOpen(false)}>
-                <li
-                  className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
-                    pathname === "/support" ? "bg-gray-700 w-full" : ""
-                  }`}
-                >
-                  <FaHeadset className="text-xl" />
-                  Support
-                </li>
-              </Link>
-
               <li
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 mt-2 text-white hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
               >
                 <HiOutlineLogout className="text-xl" />
                 Logout

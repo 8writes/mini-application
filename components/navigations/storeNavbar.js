@@ -11,9 +11,12 @@ import {
   HiOutlineSupport,
   HiOutlineUserCircle,
   HiOutlineUser,
+  HiOutlineClipboardList,
+  HiOutlineTruck,
 } from "react-icons/hi";
 import Link from "next/link";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { FaHeadset } from "react-icons/fa";
 import NetworkIndicator from "../internet/signal";
 
@@ -66,7 +69,9 @@ export default function StoreNavBar() {
               />{" "}
               𝗕𝗶𝗹𝗹𝘇𝗣𝗮𝗱𝗱𝗶
             </span>
-            <span className="text-xs font-semibold top-6 absolute right-0">STORE</span>
+            <span className="text-xs font-semibold top-6 absolute right-0">
+              STORE
+            </span>
           </div>
         </div>
 
@@ -112,14 +117,25 @@ export default function StoreNavBar() {
                 </li>
               </Link>
 
-              <Link href="/support" onClick={() => setIsDropdownOpen(false)}>
+              <Link href="/orders" onClick={() => setIsDropdownOpen(false)}>
                 <li
                   className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
-                    pathname === "/support" ? "bg-gray-700 w-full" : ""
+                    pathname === "/orders" ? "bg-gray-700 w-full" : ""
                   }`}
                 >
-                  <FaHeadset className="text-xl" />
-                  Support
+                  <HiOutlineClipboardList className="text-xl" />
+                  Orders
+                </li>
+              </Link>
+
+              <Link href="/shipping" onClick={() => setIsDropdownOpen(false)}>
+                <li
+                  className={`flex items-center gap-2 text-white w-full px-4 py-2 hover:bg-gray-700 transition-colors duration-200 cursor-pointer ${
+                    pathname === "/shipping" ? "bg-gray-700 w-full" : ""
+                  }`}
+                >
+                  <HiOutlineTruck className="text-xl" />
+                  Shipping
                 </li>
               </Link>
 

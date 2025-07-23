@@ -13,7 +13,6 @@ export default function PagesLayout({ children }) {
         <section>
           <StoreNavBar />
           <div className="flex">
-            <SideNav />
             <main className="flex-1 bg-gray-700 py-24 md:px-10 md:py-28">
               {children}
             </main>

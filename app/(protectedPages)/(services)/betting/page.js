@@ -14,7 +14,8 @@
   import { HiClipboardCopy, HiOutlineArrowRight } from "react-icons/hi";
   import { setErrorMap } from "zod";
   import { useGlobalContextData } from "@/context/GlobalContextData";
-  import { billzpaddi } from "@/lib/client";
+  
+import { billzpaddi } from "@/app/api/client/client";
   import BetTopUp from "@/components/betting/topUp";
 import CountUpTimer from "@/components/count/countUpTimer";
   // import Select from "react-select";

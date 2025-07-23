@@ -6,7 +6,8 @@ import { FaArrowLeft, FaCopy, FaExchangeAlt } from "react-icons/fa";
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import { format } from "date-fns";
 
 export default function TransactionsPage() {

@@ -109,8 +109,8 @@ export default function Sidebar() {
           <NavItem href="/tv" icon={<HiOutlineDesktopComputer />}>
             TV Subscription
           </NavItem>
-          <NavItem href="/generate-invoice" icon={<HiDocumentText />}>
-            Generate Invoice
+          <NavItem href="/my-store" icon={<HiOutlineShoppingBag />}>
+            My Store
           </NavItem>
           <NavItem href="/all-services" icon={<HiOutlineFire />}>
             All Services

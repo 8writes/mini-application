@@ -1,6 +1,7 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { useGlobalContextData } from "@/context/GlobalContextData";
-import { billzpaddi } from "@/lib/client";
+
+import { billzpaddi } from "@/app/api/client/client";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaCoins, FaSpinner } from "react-icons/fa";

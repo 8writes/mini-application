@@ -1,5 +1,6 @@
 "use client";
-import { billzpaddi } from "@/lib/client";
+import { billzpaddi } from "@/app/api/client/client";
+import { callApi } from "@/utils/apiClient";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -112,15 +113,13 @@ export const GlobalProviderData = ({ children }) => {
   // Fetch user wallet
   const fetchWallet = async () => {
     if (!user) return;
-    try {
-      const { data, error } = await billzpaddi
-        .from("wallets")
-        .select()
-        .eq("user_id", user?.user_id)
-        .single();
 
-      if (error) throw error;
-      setWallet(data);
+    try {
+      const result = await callApi("wallet/fetch", "POST", {
+        user_id: user.user_id,
+      });
+
+      setWallet(result);
     } catch (err) {
       console.error("Wallet fetch error:", err);
       toast.error("Failed to load wallet data");
