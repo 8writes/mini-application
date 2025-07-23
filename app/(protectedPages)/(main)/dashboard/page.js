@@ -11,6 +11,7 @@ import {
   HiDocumentText,
   HiOutlineFire,
   HiShoppingBag,
+  HiOutlineDocumentText,
 } from "react-icons/hi";
 import { FaHistory, FaGamepad } from "react-icons/fa";
 import Link from "next/link";
@@ -108,12 +109,12 @@ export default function DashboardPage() {
             </Link>
 
             {/* Convert Invoice Code Button */}
-            <Link href="/my-store" passHref>
+            <Link href="/generate-invoice" passHref>
               <button className="w-full bg-gray-700 cursor-pointer hover:bg-gray-600 p-3 rounded-lg flex flex-col items-center transition-colors">
-                <div className="bg-pink-500/20 p-2 rounded-full mb-1">
-                  <HiShoppingBag className="text-pink-400 text-lg" />
+                <div className="bg-blue-500/20 p-2 rounded-full mb-1">
+                  <HiOutlineDocumentText className="text-blue-400 text-lg" />
                 </div>
-                <span className="text-sm">My Store</span>
+                <span className="text-sm">Invoice</span>
               </button>
             </Link>
 

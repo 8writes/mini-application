@@ -513,6 +513,7 @@ export default function TvSubscriptionPage() {
         const filteredServices = (res.data.content || []).filter(
           (service) => service.serviceID.toLowerCase() !== "showmax"
         );
+      //  setSelectedService(filteredServices[0])
         setTvServices(filteredServices);
       } catch (err) {
         console.error("Error fetching TV services:", err);

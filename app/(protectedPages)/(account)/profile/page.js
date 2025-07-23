@@ -469,7 +469,6 @@ export default function ProfilePage() {
                     value={formData.phone || ""}
                     onChange={handleInputChange}
                     className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 outline-none"
-                    required
                     disabled={isSaving}
                   />
                 </div>
@@ -675,8 +674,8 @@ export default function ProfilePage() {
                     <div className="flex flex-col gap-4">
                       <div>
                         <p className="text-sm text-gray-400 mb-2">
-                          To set/reset your PIN, we'll send a verification code to
-                          your registered email.
+                          To set/reset your PIN, we'll send a verification code
+                          to your registered email.
                         </p>
                         <button
                           onClick={handleForgotPin}

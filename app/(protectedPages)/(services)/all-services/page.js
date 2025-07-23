@@ -38,16 +38,6 @@ export default function Page() {
       name: "Bill Payments",
       services: [
         {
-          name: "Electricity",
-          icon: <HiOutlineLightningBolt className="text-2xl text-blue-500" />,
-          link: "/electricity",
-        },
-        {
-          name: "Education",
-          icon: <HiOutlineAcademicCap className="text-2xl text-indigo-500" />,
-          link: "/education",
-        },
-        {
           name: "TV Subscription",
           icon: <HiOutlineHome className="text-2xl text-green-500" />,
           link: "/tv",
@@ -59,7 +49,7 @@ export default function Page() {
       services: [
         {
           name: "Generate Invoice",
-          icon: <HiOutlineDocumentText className="text-2xl text-red-500" />,
+          icon: <HiOutlineDocumentText className="text-2xl text-blue-500" />,
           link: "/generate-invoice",
         },
       ],

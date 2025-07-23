@@ -493,9 +493,10 @@ export default function Page() {
 
   // 2. When phone input changes, detect ISP
   useEffect(() => {
-    const defaultISP = isps.find((i) => i.serviceID === "airtel-data");
+    const defaultISP = isps.find((i) => i.serviceID === "airtel");
+
     if (defaultISP) {
-      setSelectedISP(defaultISP);
+     setSelectedISP(defaultISP);
     }
     if (phone?.length >= 4 && isps?.length > 0) {
       const detectedISP = detectISPFromPhone(phone);
