@@ -62,11 +62,6 @@ export default function Page() {
           icon: <HiOutlineDocumentText className="text-2xl text-red-500" />,
           link: "/generate-invoice",
         },
-        {
-          name: "My Store",
-          icon: <HiOutlineShoppingBag className="text-2xl text-pink-500" />,
-          link: "/my-store",
-        },
       ],
     },
     {
