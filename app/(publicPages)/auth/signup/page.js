@@ -72,7 +72,7 @@ export default function SignupPage() {
       <span style="font-size: 24px; font-weight: 700; letter-spacing: 2px; color: #111827;">${code}</span>
     </div>
     
-    <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">This code will expire in 5 minutes.</p>
+    <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">This code will expire in 1 minute.</p>
     <p style="color: #6b7280; font-size: 14px; margin-bottom: 0;">If you didn't request this code, please ignore this email or contact support.</p>
   </div>
   
@@ -132,7 +132,7 @@ export default function SignupPage() {
         JSON.stringify({
           code,
           email: formData.email,
-          expires: Date.now() + 5 * 60 * 1000, // 5 minutes expiration
+          expires: Date.now() + 1 * 60 * 1000, // 1 minute expiration
         })
       );
 

@@ -29,7 +29,7 @@ const SECURITY_HEADERS = Object.freeze({
 const ALLOWED_DOMAINS = new Set([
   "https://billzpaddi.com.ng",
   "https://www.billzpaddi.com.ng",
-  "http://localhost:3000",
+ // "http://localhost:3000",
 ]);
 
 // Error response templates
