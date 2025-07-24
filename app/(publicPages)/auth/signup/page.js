@@ -198,13 +198,13 @@ export default function SignupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-   const now = new Date();
-   const hour = now.getHours();
+    const now = new Date();
+    const hour = now.getHours();
 
-   if (hour < 8 || hour >= 21) {
-     toast.info("Please try again by 8AM");
-     return;
-   }
+    if (hour < 8 || hour >= 21) {
+      toast.info("Please try again by 8AM");
+      return;
+    }
 
     if (!acceptedTerms) {
       toast.info("You must accept the terms and conditions");
@@ -271,6 +271,7 @@ export default function SignupPage() {
 
       await callApi("wallet/create", "POST", {
         email: trimmedData?.email,
+        user_id: data.user.id,
       });
 
       await billzpaddi.from("invoice_generations").insert({
