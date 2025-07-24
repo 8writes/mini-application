@@ -122,7 +122,7 @@ export async function POST(req) {
   try {
     const { email, user_id } = await req.json();
 
-    if (!email, user_id) {
+    if (!email, !user_id) {
       return ERROR_RESPONSES.serverError("Unauthorized");
     }
 
