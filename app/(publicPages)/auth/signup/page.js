@@ -28,6 +28,7 @@ export default function SignupPage() {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [isSending, setIsSending] = useState(false);
 
   // Get referral code from URL if present
   useEffect(() => {
@@ -72,7 +73,7 @@ export default function SignupPage() {
       <span style="font-size: 24px; font-weight: 700; letter-spacing: 2px; color: #111827;">${code}</span>
     </div>
     
-    <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">This code will expire in 1 minute.</p>
+    <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">This code will expire in 5 minutes.</p>
     <p style="color: #6b7280; font-size: 14px; margin-bottom: 0;">If you didn't request this code, please ignore this email or contact support.</p>
   </div>
   
@@ -124,6 +125,10 @@ export default function SignupPage() {
       return;
     }
 
+    if (isSending) return; // Prevent multiple clicks
+
+    setIsSending(true); // Start loading
+
     try {
       const code = generateVerificationCode();
 
@@ -132,7 +137,7 @@ export default function SignupPage() {
         JSON.stringify({
           code,
           email: formData.email,
-          expires: Date.now() + 1 * 60 * 1000, // 1 minute expiration
+          expires: Date.now() + 5 * 60 * 1000, // 5 minutes expiration
         })
       );
 
@@ -156,6 +161,8 @@ export default function SignupPage() {
     } catch (error) {
       console.error("Error sending verification code:", error);
       toast.error("Failed to send verification code");
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -353,7 +360,9 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={sendVerificationCode}
-                  disabled={isSubmitting || isVerified || countdown > 0}
+                  disabled={
+                    isSubmitting || isVerified || countdown > 0 || isSending
+                  }
                   className="px-3 py-2 bg-gray-600 text-white justify-center rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center cursor-pointer gap-1"
                 >
                   {countdown > 0 ? (

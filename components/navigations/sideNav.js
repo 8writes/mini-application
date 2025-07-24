@@ -72,20 +72,6 @@ export default function Sidebar() {
         `}
       >
         <nav className="flex flex-col mt-4 space-y-1">
-          {/* ACCOUNT */}
-          {user?.role === "super_admin" && (
-            <>
-              <div className="px-6 text-xs text-gray-400 uppercase mt-6 mb-1">
-                Portal
-              </div>
-              <NavItem href="/portal/users" icon={<HiOutlineUser />}>
-                Users
-              </NavItem>
-              <NavItem href="/portal/deposits" icon={<HiOutlineCash />}>
-                Deposits
-              </NavItem>
-            </>
-          )}
           {/* MAIN */}
           <div className="px-6 text-xs text-gray-400 uppercase mt-4 mb-1">
             Main
@@ -128,6 +114,20 @@ export default function Sidebar() {
           <NavItem href="/support" icon={<FaHeadset />}>
             Support
           </NavItem>
+          {/* ACCOUNT */}
+          {user?.role === "super_admin" && (
+            <>
+              <div className="px-6 text-xs text-gray-400 uppercase mt-6 mb-1">
+                Portal
+              </div>
+              <NavItem href="/portal/users" icon={<HiOutlineUser />}>
+                Users
+              </NavItem>
+              <NavItem href="/portal/deposits" icon={<HiOutlineCash />}>
+                Deposits
+              </NavItem>
+            </>
+          )}
         </nav>
       </div>
     </>
