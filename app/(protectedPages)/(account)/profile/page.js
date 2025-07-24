@@ -394,13 +394,6 @@ export default function ProfilePage() {
               <p className="text-gray-400">@{user?.email || "user"}</p>
             </div>
           </div>
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className="flex ml-auto items-center gap-2 bg-gray-700 cursor-pointer hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
-          >
-            <HiPencilAlt />
-            {isEditing ? "Cancel Editing" : "Edit Profile"}
-          </button>
         </div>
       </section>
 
@@ -409,9 +402,18 @@ export default function ProfilePage() {
         {/* Personal Information */}
         <div className="lg:col-span-2 space-y-3">
           <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              Personal Information
-            </h2>
+            <div className="flex justify-between flex-wrap items-center gap-4">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                Personal Information
+              </h2>
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className="flex ml-auto items-center gap-2 bg-gray-700 cursor-pointer hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
+              >
+                <HiPencilAlt />
+                {isEditing ? "Cancel Editing" : "Edit Profile"}
+              </button>
+            </div>
 
             {isEditing ? (
               <form onSubmit={handleSubmit} className="space-y-4">
