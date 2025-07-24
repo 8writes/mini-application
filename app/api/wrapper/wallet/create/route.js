@@ -126,10 +126,10 @@ export async function POST(req) {
       return ERROR_RESPONSES.serverError("Unauthorized");
     }
 
-    await billzpaddiAuth.from("wallets").insert({
+    const { data, error } =  await billzpaddiAuth.from("wallets").insert({
       balance: 0,
       email,
-      user_id: user_id
+      user_id: user_id,
     });
 
     if (error) {
