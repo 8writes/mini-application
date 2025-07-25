@@ -55,14 +55,8 @@ export default function ReferralPage() {
     try {
       setLoading(true);
 
-      // 1. Get all users who used this referral code
-      const { data: referredUsers, error: referralError } = await billzpaddi
-        .from("users")
-        .select("user_id, email, created_at")
-        .eq("referral_code", code)
-        .order("created_at", { ascending: false });
-
-      if (referralError) throw referralError;
+      // 1. Get all users who used this referral code      
+      const referredUsers = await callApi("users/fetch", "POST", { code });
 
       // 2. Check which referrals are qualified (total credit transactions >= 2000)
       const qualifiedReferrals = await Promise.all(

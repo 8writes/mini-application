@@ -68,14 +68,10 @@ export default function Page() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const { data: usersData, error: usersError } = await billzpaddi
-        .from("users")
-        .select("*")
-        .neq("role", "super_admin")
-        .order("created_at", { ascending: false });
+      // fetch users
+      const usersData = await callApi("users/fetch", "POST", {});
 
-      if (usersError) throw usersError;
-
+      // fetch wallets data
       const walletsData = await callApi("wallet/fetch", "POST", {});
 
       const usersWithBalance = usersData.map((user) => {

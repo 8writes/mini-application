@@ -54,13 +54,9 @@ export default function Page() {
       setLoading(true);
       try {
         // Fetch user data
-        const { data: userData, error: userError } = await billzpaddi
-          .from("users")
-          .select("*")
-          .eq("user_id", userId)
-          .single();
-
-        if (userError) throw userError;
+        const userData = await callApi("users/fetch", "POST", {
+          user_id: userId,
+        });
 
         const walletData = await callApi("wallet/fetch", "POST", {
           user_id: userId,
@@ -98,12 +94,7 @@ export default function Page() {
   const fetchReferralData = async (code) => {
     try {
       // 1. Get all users who used this referral code
-      const { data: referredUsers, error: referralError } = await billzpaddi
-        .from("users")
-        .select("user_id, email, created_at")
-        .eq("referral_code", code);
-
-      if (referralError) throw referralError;
+      const referredUsers = await callApi("users/fetch", "POST", { code });
 
       // 2. Check which referrals are qualified (total credit transactions >= 2000)
       const qualifiedReferrals = await Promise.all(

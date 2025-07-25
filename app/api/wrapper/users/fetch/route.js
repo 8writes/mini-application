@@ -120,17 +120,32 @@ export async function POST(req) {
   }
 
   try {
-    const { user_id, user_ids } = await req.json();
 
-    let query = billzpaddiAuth
-      .from("wallets")
-      .select("user_id, balance, updated_at, limit, users(email), pin");
+    const { user_id, code } = await req.json();
+    
+   let query;
 
-    if (user_id) query = query.eq("user_id", user_id).single();
+   if (user_id) {
+     query = billzpaddiAuth
+       .from("users")
+       .select("*")
+       .eq("user_id", user_id)
+       .single();
+   } else if (code) {
+     query = billzpaddiAuth
+       .from("users")
+       .select("user_id, email, created_at")
+       .eq("referral_code", code)
+       .order("created_at", { ascending: false });
+   } else {
+     query = billzpaddiAuth
+       .from("users")
+       .select("*")
+       .neq("role", "super_admin")
+       .order("created_at", { ascending: false });
+   }
 
-    if (user_ids) query = query.in("user_id", user_ids);
-
-    const { data, error } = await query;
+   const { data, error } = await query;
 
     if (error) {
       return ERROR_RESPONSES.serverError(error.message);
