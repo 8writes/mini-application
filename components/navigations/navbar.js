@@ -53,7 +53,7 @@ export default function NavBar() {
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             aria-label="Toggle menu"
-            className="text-2xl p-1 md:hidden focus:outline-none cursor-pointer z-50 bg-gray-800 rounded-md transition-colors duration-200"
+            className="text-2xl p-1 lg:hidden focus:outline-none cursor-pointer z-50 bg-gray-800 rounded-md transition-colors duration-200"
           >
             {isSidebarOpen ? <HiX size={30} /> : <HiMenu size={30} />}
           </button>

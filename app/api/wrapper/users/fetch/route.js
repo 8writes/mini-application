@@ -120,32 +120,36 @@ export async function POST(req) {
   }
 
   try {
+    const { user_id, code, currentUser } = await req.json();
 
-    const { user_id, code } = await req.json();
-    
-   let query;
+    let query;
 
-   if (user_id) {
-     query = billzpaddiAuth
-       .from("users")
-       .select("*")
-       .eq("user_id", user_id)
-       .single();
-   } else if (code) {
-     query = billzpaddiAuth
-       .from("users")
-       .select("user_id, email, created_at")
-       .eq("referral_code", code)
-       .order("created_at", { ascending: false });
-   } else {
-     query = billzpaddiAuth
-       .from("users")
-       .select("*")
-       .neq("role", "super_admin")
-       .order("created_at", { ascending: false });
-   }
+    if (user_id) {
+      query = billzpaddiAuth
+        .from("users")
+        .select("*")
+        .eq("user_id", user_id)
+        .single();
+    } else if (code) {
+      query = billzpaddiAuth
+        .from("users")
+        .select("user_id, email, created_at")
+        .eq("referral_code", code)
+        .order("created_at", { ascending: false });
+    } else if (currentUser) {
+      query = billzpaddiAuth
+        .from("users")
+        .select("user_id, email, first_name, last_name")
+        .neq("user_id", currentUser);
+    } else {
+      query = billzpaddiAuth
+        .from("users")
+        .select("*")
+        .neq("role", "super_admin")
+        .order("created_at", { ascending: false });
+    }
 
-   const { data, error } = await query;
+    const { data, error } = await query;
 
     if (error) {
       return ERROR_RESPONSES.serverError(error.message);

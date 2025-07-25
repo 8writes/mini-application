@@ -47,12 +47,10 @@ export default function Page() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data, error } = await billzpaddi
-          .from("users")
-          .select("user_id, email, first_name, last_name")
-          .neq("user_id", user?.user_id);
+        const data = await callApi("users/fetch", "POST", {
+          currentUser: user?.user_id,
+        });
 
-        if (error) throw error;
         setUsers(data || []);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -92,14 +90,10 @@ export default function Page() {
 
     setVerifying(true);
     try {
-      const { data, error } = await billzpaddi
-        .from("users")
-        .select("user_id, first_name, last_name, email")
-        .eq("email", recipientEmail)
-        .neq("user_id", user.user_id)
-        .single();
+     
+     const data = users.find((user) => user.email.toLowerCase() === recipientEmail.toLowerCase());
 
-      if (error || !data) {
+      if (!data) {
         setRecipientInfo(null);
       } else {
         setRecipientInfo({

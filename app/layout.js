@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "BillzPaddi - Affordable Data Bundles, Game Top-ups and more",
+  title: "BillzPaddi - Affordable Data Bundles, Airtime Top-ups and more",
   description:
-    "BillzPaddi - Purchase of Airtime, Cheap Internet Data Bundles, Games Direct Top up. Fast, secure, and reliable solutions for your everyday digital needs.",
+    "BillzPaddi - Purchase of Airtime, Cheap Internet Data Bundles, Airtime Top up. Fast, secure, and reliable solutions for your everyday digital needs.",
   openGraph: {
-    title: "BillzPaddi - Affordable Data Bundles, Game Top-ups and more",
+    title: "BillzPaddi - Affordable Data Bundles, Airtime Top-ups and more",
     description:
-      "BillzPaddi - Purchase of Airtime, Cheap Internet Data Bundles, Games Direct Top up. Fast, secure, and reliable solutions for your everyday digital needs.",
+      "BillzPaddi - Purchase of Airtime, Cheap Internet Data Bundles, Airtime Top up. Fast, secure, and reliable solutions for your everyday digital needs.",
     url: "https://www.billzpaddi.com.ng",
     siteName: "BillzPaddi",
     images: [
