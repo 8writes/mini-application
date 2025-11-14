@@ -1008,7 +1008,7 @@ export default function Page() {
                   className="bg-gray-800 p-3 rounded-md border cursor-pointer border-gray-700 hover:border-blue-400 transition-all text-sm md:text-base"
                 >
                   <div className="flex justify-between items-center mb-2 w-full">
-                    <h3 className="text-blue-300 font-bold text-base md:text-lg">
+                    <h3 className="text-white px-2 bg-blue-600 rounded-sm text-base md:text-lg">
                       {plan.name.match(/\d+(?:\.\d+)?\s?(?:MB|GB)/)?.[0] || ""}
                     </h3>
                     <FaWifi className="text-blue-400 text-lg inline-block mb-1" />
@@ -1020,50 +1020,18 @@ export default function Page() {
                     </span>
                   </h3>
 
-                  <p className="text-blue-200 mt-1">
+                  <p className="text-blue-200 mt-1 font-semibold text-lg md:text-xl">
                     ₦{addGain(plan?.variation_amount).toLocaleString()}
                   </p>
-                  <p className="mt-1">
-                    {!hasDiscount || hasFridayDiscount ? (
-                      <span className="inline-flex items-center bg-green-50 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
-                        2% discount
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></span>
-                        {(rate * 100).toFixed(1)}% discount
-                        {Number(plan?.variation_amount || 0) * rate > 300 && (
-                          <span className="relative ml-1.5" ref={tooltipRef}>
-                            <span
-                              onClick={(e) =>
-                                toggleTooltip(plan.variation_code, e)
-                              }
-                              className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-200 text-blue-700 cursor-pointer select-none"
-                            >
-                              i
-                            </span>
 
-                            <span
-                              id={`tooltip-${plan.variation_code}`}
-                              className={`absolute z-50 w-20 p-2 text-xs text-gray-700 bg-white border border-gray-200 rounded-md shadow-md
-                              left-1/2 -translate-x-1/2
-                              bottom-5 mb-2
-                               sm:mt-2
-                              ${
-                                openTooltipId === plan.variation_code
-                                  ? "block"
-                                  : "hidden"
-                              }`}
-                            >
-                              Discount capped at ₦300.
-                              <span className="absolute w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></span>
-                            </span>
-                          </span>
-                        )}
-                      </span>
-                    )}
-                  </p>
+                  <h3 className="text-white pt-2 tracking-wider font-semibold text-sm md:text-base flex items-center gap-2">
+                    {" "}
+                    {/* Info icon */}
+                    <FiAlertCircle className="w-4 h-4 text-gray-400 cursor-pointer hover:text-white transition" />
+                    <span className="text-gray-300 text-xs md:text-xs">
+                      {plan.variation_code}
+                    </span>
+                  </h3>
                 </div>
               ))}
             </div>
