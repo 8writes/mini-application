@@ -3,7 +3,7 @@ export default function manifest() {
       name: "BillzPaddi",
       short_name: "BillzPaddi",
       description: "Affordable Data Bundles, Game Top-ups and more",
-      start_url: "/auth/login",
+      start_url: "dashboard",
       display: "standalone",
       background_color: "#1f2937",
       theme_color: "#000000",
