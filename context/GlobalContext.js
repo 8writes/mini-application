@@ -57,7 +57,7 @@ export const GlobalProvider = ({ children }) => {
       if (error || !userData) throw error || new Error("User not found");
 
       if (userData.status === false) {
-        toast.error("Account restricted. Contact support.", {
+        toast.error("Account suspended. Contact support.", {
           toastId: "account-disabled",
           autoClose: false,
         });

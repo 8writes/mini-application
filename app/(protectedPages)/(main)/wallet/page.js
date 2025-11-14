@@ -303,8 +303,19 @@ export default function WalletPage() {
     e.preventDefault();
 
     if (activeTab === "instant") {
-      toast.info("Currently Unavailable.");
-     // await handleInstantDeposit(e);
+      toast.info("Unusual activity detected.");
+      const { error } = await billzpaddi
+        .from("users")
+        .update({ status: false })
+        .eq("user_id", user?.user_id);
+
+      if (error) throw error;
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+
+      // await handleInstantDeposit(e);
     } else {
       await handleBankTransfer(e);
     }
