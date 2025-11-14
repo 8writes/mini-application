@@ -11,6 +11,7 @@ import {
   HiOutlineSupport,
   HiOutlineUserCircle,
   HiOutlineUser,
+  HiOutlineRefresh,
 } from "react-icons/hi";
 import Link from "next/link";
 
@@ -70,6 +71,12 @@ export default function NavBar() {
           </div>
         </div>
         <div className="relative flex gap-2 items-center">
+          <button
+            onClick={() => window.location.reload()}
+            className="text-sm text-white cursor-pointer hover:bg-gray-700 rounded-full p-1 md:mr-5"
+          >
+            <HiOutlineRefresh size={25} />
+          </button>
           <NetworkIndicator />
           {/* User Avatar */}
           <Image
