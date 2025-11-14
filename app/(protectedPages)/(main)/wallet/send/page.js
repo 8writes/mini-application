@@ -85,7 +85,8 @@ export default function Page() {
   const verifyRecipient = async () => {
     if (!recipientEmail.includes("@")) {
       setRecipientInfo(null);
-      return;
+      return; 
+      
     }
 
     setVerifying(true);

@@ -125,7 +125,7 @@ const PurchaseDialog = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
   const transactionToast = useTransactionToast();
-    const { showPinDialog } = usePin();
+  const { showPinDialog } = usePin();
 
   useEffect(() => {
     if (open && user) {
@@ -285,10 +285,10 @@ const PurchaseDialog = ({
         default:
           transactionStatus = "failed";
           // Refund if failed
-           await callApi("wallet/update", "PUT", {
-             user_id: user?.user_id,
-             newBalance: wallet?.balance,
-           });
+          await callApi("wallet/update", "PUT", {
+            user_id: user?.user_id,
+            newBalance: wallet?.balance,
+          });
           break;
       }
 
@@ -493,6 +493,7 @@ export default function Page() {
     "2-Weeks",
     "SME",
     "MiFi",
+    "Always-On",
     "Others",
   ];
 
@@ -703,97 +704,126 @@ export default function Page() {
       "2-Weeks": [],
       SME: [],
       MiFi: [],
+      "Always-On": [],
       Others: [],
     };
 
     variations.forEach((plan) => {
-      const cleanName = cleanPlanName(plan.name).toLowerCase();
-      const variationCode = plan.variation_code.toLowerCase();
+      const name = plan.name.toLowerCase();
+      const code = plan.variation_code.toLowerCase();
 
-      // General categorization
-      if (cleanName.includes("sme") || variationCode.includes("sme")) {
-        groups.SME.push(plan);
-      } else if (
-        cleanName.includes("social") ||
-        variationCode.includes("social")
+      // ---- SME ----
+      if (
+        code.includes("sme") ||
+        name.includes("sme") ||
+        code.startsWith("glo-dg-") ||
+        name.startsWith("glo-dg-")
       ) {
-        groups.Social.push(plan);
-      } else if (
-        cleanName.includes("special") ||
-        variationCode.includes("special")
-      ) {
-        groups.Special.push(plan);
-      } else if (
-        cleanName.includes("campus") ||
-        variationCode.includes("campus")
-      ) {
-        groups.Campus.push(plan);
-      } else if (
-        cleanName.includes("mifi") ||
-        variationCode.includes("mifi") ||
-        cleanName.includes("router")
-      ) {
-        groups.MiFi.push(plan);
-      } else if (cleanName.includes("tv") || variationCode.includes("tv")) {
-        groups.TV.push(plan);
-      } else if (cleanName.includes("mega") || variationCode.includes("mega")) {
-        groups.Mega.push(plan);
+        return groups.SME.push(plan);
       }
-      // Duration-based categorization
-      else if (
-        cleanName.includes("1day") ||
-        cleanName.includes("1 day") ||
-        cleanName.includes("24hr") ||
-        cleanName.includes("24 hr") ||
-        /(^|\s)n50($|\s)/.test(cleanName) ||
-        /(^|\s)n100($|\s)/.test(cleanName) ||
-        /(^|\s)n75($|\s)/.test(cleanName) ||
-        /(^|\s)n200($|\s)/.test(cleanName)
+
+      // ---- Social ----
+      if (
+        (code.includes("social") || name.includes("social")) &&
+        !code.includes("airt") &&
+        !name.includes("airt")
       ) {
-        groups.Daily.push(plan);
-      } else if (
-        cleanName.includes("2day") ||
-        cleanName.includes("2 day") ||
-        cleanName.includes("3day") ||
-        cleanName.includes("daily") ||
-        cleanName.includes("weekend") ||
-        cleanName.includes("3 day")
-      ) {
-        groups.Daily.push(plan);
-      } else if (
-        cleanName.includes("7day") ||
-        cleanName.includes("7 day") ||
-        cleanName.includes("week") ||
-        cleanName.includes("7days")
-      ) {
-        groups.Weekly.push(plan);
-      } else if (
-        cleanName.includes("14day") ||
-        cleanName.includes("14 day") ||
-        cleanName.includes("2week") ||
-        cleanName.includes("2 week")
-      ) {
-        groups["2-Weeks"].push(plan);
-      } else if (
-        cleanName.includes("30day") ||
-        cleanName.includes("30 day") ||
-        cleanName.includes("month") ||
-        cleanName.includes("30days")
-      ) {
-        groups.Monthly.push(plan);
-      } else if (
-        cleanName.includes("90day") ||
-        cleanName.includes("120day") ||
-        cleanName.includes("365day") ||
-        cleanName.includes("90 day") ||
-        cleanName.includes("oneoff") ||
-        cleanName.includes("120 day") ||
-        cleanName.includes("365 day")
-      ) {
-        groups.Monthly.push(plan);
-      } else {
-        groups.Others.push(plan);
+        return groups.Social.push(plan);
       }
+
+      // ---- Special ----
+      if (code.includes("special") || name.includes("special")) {
+        return groups.Special.push(plan);
+      }
+
+      // ---- Always On ----
+      if (code.includes("always on") || name.includes("always on")) {
+        return groups["Always-On"].push(plan);
+      }
+
+      // ---- Campus ----
+      if (
+        code.includes("campus") ||
+        name.includes("campus") ||
+        code.includes("camp") ||
+        name.includes("camp")
+      ) {
+        return groups.Campus.push(plan);
+      }
+
+      // ---- MiFi ----
+      if (
+        code.includes("mifi") ||
+        name.includes("mifi") ||
+        code.includes("router") ||
+        name.includes("router")
+      ) {
+        return groups.MiFi.push(plan);
+      }
+
+      // ---- TV ----
+      if (code.includes("tv") || name.includes("tv")) {
+        return groups.TV.push(plan);
+      }
+
+      // ---- Mega ----
+      if (code.includes("mega") || name.includes("mega")) {
+        return groups.Mega.push(plan);
+      }
+
+      // ---- Daily ----
+      if (
+        code.includes("daily") ||
+        name.includes("daily") ||
+        code.includes("1day") ||
+        name.includes("1day") ||
+        code.includes("1 day") ||
+        name.includes("1 day") ||
+        code.includes("1-day") ||
+        name.includes("1-day") ||
+        code.includes("2days") ||
+        name.includes("2 days") ||
+        code.includes("2-day") ||
+        name.includes("2-day") ||
+        code.includes("3days") ||
+        name.includes("3 days") ||
+        name.includes("3-day")
+      ) {
+        return groups.Daily.push(plan);
+      }
+
+      // ---- Weekly ----
+      if (
+        code.includes("weekly") ||
+        name.includes("weekly") ||
+        code.includes("7days") ||
+        name.includes("7 day") ||
+        code.includes("7day") ||
+        name.includes("week")
+      ) {
+        return groups.Weekly.push(plan);
+      }
+
+      // ---- Monthly ----
+      if (
+        code.includes("monthly") ||
+        name.includes("monthly") ||
+        code.includes("30") ||
+        name.includes("30") ||
+        name.includes("90") ||
+        code.includes("90") ||
+        name.includes("120") ||
+        code.includes("120") ||
+        name.includes("365") ||
+        code.includes("365") ||
+        name.includes("month") ||
+        code.includes("month")
+      ) {
+        return groups.Monthly.push(plan);
+      }
+
+      // ---- Others ----
+      groups.Others.push(plan);
     });
 
     // Sort each category by price (ascending)
@@ -856,9 +886,12 @@ export default function Page() {
 
         const variations = res.data.content.variations || [];
 
+        console.log("Fetched variations:", variations);
+
         const cleaned = variations.map((v) => ({
           ...v,
-          name: cleanPlanName(v.name),
+          //  name: cleanPlanName(v.name),
+          name: v.name,
         }));
 
         setPlans(categorizedPlans(cleaned));
@@ -983,7 +1016,7 @@ export default function Page() {
 
                   <h3 className="text-white tracking-wider font-semibold text-sm md:text-base">
                     <span className="text-gray-300 text-xs md:text-sm">
-                      {plan.name.replace(/\d+(?:\.\d+)?\s?(?:MB|GB)/, "")}
+                      {plan.name}
                     </span>
                   </h3>
 

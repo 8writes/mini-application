@@ -303,8 +303,8 @@ export default function WalletPage() {
     e.preventDefault();
 
     if (activeTab === "instant") {
-      //toast.info("Currently Unavailable.");
-      await handleInstantDeposit(e);
+      toast.info("Currently Unavailable.");
+     // await handleInstantDeposit(e);
     } else {
       await handleBankTransfer(e);
     }
@@ -665,9 +665,9 @@ export default function WalletPage() {
                           toast.success("Reference copied!");
                           setCopiedRef(true);
                         }}
-                        className="bg-blue-600 cursor-pointer w-full md:w-fit hover:bg-blue-700 text-white px-3 py-2 rounded"
+                        className="bg-green-600 cursor-pointer w-full md:w-fit hover:bg-green-700 text-white px-3 py-2 rounded"
                       >
-                        Copy Reference
+                        Copy Reference & Place Request
                       </button>
                     </div>
                   </div>
@@ -732,7 +732,7 @@ export default function WalletPage() {
                     ? parseFloat(amount) < 100
                     : parseFloat(amount) < 500)
                     ? "bg-gray-700 text-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
+                    : "bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white cursor-pointer"
                 }`}
               >
                 {true
