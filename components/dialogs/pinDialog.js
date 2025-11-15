@@ -3,7 +3,7 @@
 import { useGlobalContextData } from "@/context/GlobalContextData";
 import Link from "next/link";
 import { useState } from "react";
-import { HiX, HiCheck, HiEye, HiEyeOff } from "react-icons/hi";
+import { HiX, HiCheck, HiEye, HiEyeOff, HiOutlineEyeOff, HiOutlineEye } from "react-icons/hi";
 
 export const PinDialog = ({
   isOpen,
@@ -62,7 +62,7 @@ export const PinDialog = ({
                 </label>
                 <div className="relative">
                   <input
-                    type={showPin ? "tel" : "tel"}
+                    type={showPin ? "tel" : "password"}
                     value={pin}
                     onChange={handlePinChange}
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none"
@@ -72,6 +72,16 @@ export const PinDialog = ({
                     autoComplete="off"
                     autoSave="off"
                   />
+                  <span
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-200 cursor-pointer"
+                    onClick={() => setShowPin(!showPin)}
+                  >
+                    {showPin ? (
+                      <HiOutlineEyeOff size={25} />
+                    ) : (
+                      <HiOutlineEye size={25} />
+                    )}
+                  </span>
                 </div>
               </div>
               <div className="flex w-full gap-3 pt-2">
