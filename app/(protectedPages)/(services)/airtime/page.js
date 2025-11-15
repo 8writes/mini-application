@@ -139,6 +139,11 @@ const PurchaseDialog = ({
   }, []);
 
   const handlePurchase = async () => {
+    if (wallet?.balance < totalAmount) {
+      toast.error("Insufficient balance");
+      return;
+    }
+
     if (isNaN(amount) || isNaN(phoneNumber)) {
       toast.error("Invalid input format");
       return;
@@ -147,11 +152,6 @@ const PurchaseDialog = ({
     if (!amount || !phoneNumber || !selectedISP || !uniqueRequestId) {
       // Validate inputs
       toast.error("Missing required information for purchase");
-      return;
-    }
-
-    if (wallet?.balance < totalAmount) {
-      toast.error("Insufficient balance");
       return;
     }
 
@@ -496,7 +496,7 @@ export default function Page() {
     const defaultISP = isps.find((i) => i.serviceID === "airtel");
 
     if (defaultISP) {
-     setSelectedISP(defaultISP);
+      setSelectedISP(defaultISP);
     }
     if (phone?.length >= 4 && isps?.length > 0) {
       const detectedISP = detectISPFromPhone(phone);
@@ -585,8 +585,11 @@ export default function Page() {
         </div>
         <input
           type="tel"
-          placeholder="Enter phone number"
-          value={phone}
+          placeholder="0XX XXXX XXXX"
+          value={phone || ""}
+          maxLength={11}
+          pattern="[0-9]*"
+          inputMode="numeric"
           onChange={(e) => setPhone(e.target.value)}
           className="w-full md:w-1/2 px-4 py-3 rounded-lg tracking-widest bg-gray-800 text-white border border-gray-600 outline-none"
         />
@@ -596,7 +599,9 @@ export default function Page() {
         <input
           type="tel"
           placeholder="(minimum ₦50)"
-          value={amount}
+          value={amount || ""}
+          inputMode="numeric"
+          pattern="[0-9]*"
           onChange={(e) => setAmount(e.target.value)}
           min="50"
           className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-600 outline-none"

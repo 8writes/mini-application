@@ -165,6 +165,11 @@ const PurchaseDialog = ({
     : 0;
 
   const handlePurchase = async () => {
+    if (wallet?.balance < totalAmount) {
+      toast.error("Insufficient funds");
+      return;
+    }
+
     if (isNaN(totalAmount) || isNaN(phoneNumber)) {
       toast.error("Invalid input format");
       return;
@@ -177,11 +182,6 @@ const PurchaseDialog = ({
 
     if (!selectedPlan?.variation_code) {
       toast.error("Poor internet connection, please refresh page");
-      return;
-    }
-
-    if (wallet?.balance < totalAmount) {
-      toast.error("Insufficient funds");
       return;
     }
 
@@ -958,8 +958,11 @@ export default function Page() {
         </div>
         <input
           type="tel"
-          placeholder="Enter phone number"
+          placeholder="0XX XXXX XXXX"
           value={phone || ""}
+          maxLength={11}
+          pattern="[0-9]*"
+          inputMode="numeric"
           onChange={(e) => setPhone(e.target.value)}
           className="w-full md:w-1/2 px-4 py-3 rounded-lg tracking-widest outline-none bg-gray-800 text-white border border-gray-600"
         />
